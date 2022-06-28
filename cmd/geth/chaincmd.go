@@ -61,10 +61,11 @@ It expects the genesis file as argument.`,
 		Name:      "dumpgenesis",
 		Usage:     "Dumps genesis block JSON configuration to stdout",
 		ArgsUsage: "",
-		Flags:     utils.NetworkFlags,
+		Flags:     append([]cli.Flag{utils.DataDirFlag}, utils.NetworkFlags...),
 		Category:  "BLOCKCHAIN COMMANDS",
 		Description: `
-The dumpgenesis command prints a genesis block as JSON. What it outputs is determined in order of preference: testnet preset if it is set, preexisting datadir, mainnet.`,
+The dumpgenesis command prints the genesis configuration of the network preset
+if one is set.  Otherwise it prints the genesis from the datadir.`,
 	}
 	importCommand = cli.Command{
 		Action:    utils.MigrateFlags(importChain),
@@ -208,7 +209,7 @@ func initGenesis(ctx *cli.Context) error {
 
 func dumpGenesis(ctx *cli.Context) error {
 	// if there is a testnet preset enabled, dump that
-	if utils.IsTestnetPreset(ctx) {
+	if utils.IsNetworkPreset(ctx) {
 		genesis := utils.MakeGenesis(ctx)
 		if err := json.NewEncoder(os.Stdout).Encode(genesis); err != nil {
 			utils.Fatalf("could not encode genesis: %s", err)
@@ -239,10 +240,7 @@ func dumpGenesis(ctx *cli.Context) error {
 	if ctx.GlobalIsSet(utils.DataDirFlag.Name) {
 		utils.Fatalf("no existing datadir at %s", stack.Config().DataDir)
 	}
-	// no datadir exists or is specified, dump mainnet
-	if err := json.NewEncoder(os.Stdout).Encode(core.DefaultGenesisBlock()); err != nil {
-		utils.Fatalf("could not encode genesis: %s", err)
-	}
+	utils.Fatalf("no network preset provided.  no exisiting genesis in the default datadir")
 	return nil
 }
 
