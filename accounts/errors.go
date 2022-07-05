@@ -20,9 +20,8 @@ import (
 	"errors"
 	"fmt"
 )
-
-// ErrUnknownAccount is returned for any requested operation for which no backend
-// provides the specified account.
+//返回的任何要求的操作都没有后端
+//提供指定的帐户。
 var ErrUnknownAccount = errors.New("unknown account")
 
 // ErrUnknownWallet is returned for any requested operation for which no backend
