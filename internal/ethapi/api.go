@@ -1987,7 +1987,7 @@ type NetAPI struct {
 	networkVersion uint64
 }
 
-// NewNetAPI creates a new net API instance.
+// NewNetapi创建了一个新的Net API实例。
 func NewNetAPI(net *p2p.Server, networkVersion uint64) *NetAPI {
 	return &NetAPI{net, networkVersion}
 }

@@ -1,20 +1,20 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package core implements the Ethereum consensus protocol.
+//包装核心实现以太坊共识协议。
 package core
 
 import (
@@ -144,20 +144,31 @@ var defaultCacheConfig = &CacheConfig{
 	SnapshotWait:   true,
 }
 
-// BlockChain represents the canonical chain given a database with a genesis
-// block. The Blockchain manages chain imports, reverts, chain reorganisations.
+//区块链代表给定具有创世纪的数据库的规范链
+// 堵塞。区块链管理链条进口，恢复，链重组。
 //
-// Importing blocks in to the block chain happens according to the set of rules
-// defined by the two stage Validator. Processing of blocks is done using the
-// Processor which processes the included transaction. The validation of the state
-// is done in the second part of the Validator. Failing results in aborting of
-// the import.
+//根据规则集，进口块进入块链
+//由两个阶段验证器定义。块的处理是使用
+//处理随附的交易的处理器。国家的验证
+//在验证器的第二部分中完成。失败的结果流产
+//导入。
 //
-// The BlockChain also helps in returning blocks from **any** chain included
-// in the database as well as blocks that represents the canonical chain. It's
-// important to note that GetBlock can return any block and does not need to be
-// included in the canonical one where as GetBlockByNumber always represents the
-// canonical chain.
+//区块链还有助于从**返回任何**链
+//在数据库以及代表规范链的块中。它是
+//重要的是要注意，GetBlock可以返回任何块，并且不需要
+//包含在getblockbynumber总是代表的规范中
+//规范链。
+
+// 1）db：连接到底层数据储存，即leveldb；
+// 2）hc：headerchain区块头链，由blockchain额外维护的另一条链，由于Header和Block的储存空间是有很大差别的，但同时Block的Hash值就是Header（RLP）的Hash值，所以维护一个headerchain可以用于快速延长链，验证通过后再下载blockchain，或者可以与blockchain进行相互验证；
+// 3）genesisBlock：创始区块；
+// 4）currentBlock：当前区块，blockchain中并不是储存链所有的block，而是通过currentBlock向前回溯直到genesisBlock，这样就构成了区块链。
+// 5）bodyCache、bodyRLPCache、blockCache、futureBlocks：区块链中的缓存结构，用于加快区块链的读取和构建；
+// 6）engine：是consensus模块中的接口，用来验证block的接口；
+// 7）processor：执行区块链交易的接口，收到一个新的区块时，要对区块中的所有交易执行一遍，一方面是验证，一方面是更新worldState；
+// 8）validator：验证数据有效性的接口
+// 9）futureBlocks：收到的区块时间大于当前头区块时间15s而小于30s的区块，可作为当前节点待处理的区块。
+
 type BlockChain struct {
 	chainConfig *params.ChainConfig // Chain & network configuration
 	cacheConfig *CacheConfig        // Cache configuration for pruning

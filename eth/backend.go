@@ -105,8 +105,9 @@ type Ethereum struct {
 
 // New creates a new Ethereum object (including the
 // initialisation of the common Ethereum object)
+// 创建全节点
 func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
-	// Ensure configuration values are compatible and sane
+	// 确保配置值兼容并理智
 	if config.SyncMode == downloader.LightSync {
 		return nil, errors.New("can't run eth.Ethereum in light sync mode, use les.LightEthereum")
 	}
@@ -128,15 +129,16 @@ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
 	}
 	log.Info("Allocated trie memory caches", "clean", common.StorageSize(config.TrieCleanCache)*1024*1024, "dirty", common.StorageSize(config.TrieDirtyCache)*1024*1024)
 
-	// Transfer mining-related config to the ethash config.
+	// 将与挖掘相关的配置传输到ETHASH配置。
 	ethashConfig := config.Ethash
 	ethashConfig.NotifyFull = config.Miner.NotifyFull
 
-	// Assemble the Ethereum object
+	// 组装以太坊对象, 数据库
 	chainDb, err := stack.OpenDatabaseWithFreezer("chaindata", config.DatabaseCache, config.DatabaseHandles, config.DatabaseFreezer, "eth/db/chaindata/", false)
 	if err != nil {
 		return nil, err
 	}
+	// 加载创世文件， 根据节点条件判断是从数据库里面读取，还是从默认配置文件读取，还是从自定义配置文件读取，或者是从代码里面获取默认值。并返回区块链的config和创世块的hash。
 	chainConfig, genesisHash, genesisErr := core.SetupGenesisBlockWithOverride(chainDb, config.Genesis, config.OverrideGrayGlacier, config.OverrideTerminalTotalDifficulty)
 	if _, ok := genesisErr.(*params.ConfigCompatError); genesisErr != nil && !ok {
 		return nil, genesisErr
@@ -152,6 +154,7 @@ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
 	if err := pruner.RecoverPruning(stack.ResolvePath(""), chainDb, stack.ResolvePath(config.TrieCleanCacheJournal)); err != nil {
 		log.Error("Failed to recover state", "error", err)
 	}
+	// 共识
 	merger := consensus.NewMerger(chainDb)
 	eth := &Ethereum{
 		config:            config,
@@ -181,7 +184,7 @@ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
 		if bcVersion != nil && *bcVersion > core.BlockChainVersion {
 			return nil, fmt.Errorf("database version is v%d, Geth %s only supports v%d", *bcVersion, params.VersionWithMeta, core.BlockChainVersion)
 		} else if bcVersion == nil || *bcVersion < core.BlockChainVersion {
-			if bcVersion != nil { // only print warning on upgrade, not on init
+			if bcVersion != nil { // 仅在升级上打印警告，而不是在init上
 				log.Warn("Upgrade blockchain database version", "from", dbVer, "to", core.BlockChainVersion)
 			}
 			rawdb.WriteDatabaseVersion(chainDb, core.BlockChainVersion)
@@ -203,24 +206,27 @@ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
 			Preimages:           config.Preimages,
 		}
 	)
+	// 初始化eth的blockchain，也就是eth的区块链
 	eth.blockchain, err = core.NewBlockChain(chainDb, cacheConfig, chainConfig, eth.engine, vmConfig, eth.shouldPreserve, &config.TxLookupLimit)
 	if err != nil {
 		return nil, err
 	}
-	// Rewind the chain in case of an incompatible config upgrade.
+	// 在不兼容的配置升级的情况下倒带链。
 	if compat, ok := genesisErr.(*params.ConfigCompatError); ok {
 		log.Warn("Rewinding chain to upgrade configuration", "err", compat)
 		eth.blockchain.SetHead(compat.RewindTo)
 		rawdb.WriteChainConfig(chainDb, genesisHash, chainConfig)
 	}
+	// 布隆过滤器
 	eth.bloomIndexer.Start(eth.blockchain)
 
 	if config.TxPool.Journal != "" {
 		config.TxPool.Journal = stack.ResolvePath(config.TxPool.Journal)
 	}
+	// 初始化eth 区块链的交易池，存储本地生产的和P2P网络同步过来的交易。
 	eth.txPool = core.NewTxPool(config.TxPool, chainConfig, eth.blockchain)
 
-	// Permit the downloader to use the trie cache allowance during fast sync
+	// 允许下载器在快速同步期间使用Trie Cache津贴
 	cacheLimit := cacheConfig.TrieCleanLimit + cacheConfig.TrieDirtyLimit + cacheConfig.SnapshotLimit
 	checkpoint := config.Checkpoint
 	if checkpoint == nil {
@@ -240,7 +246,7 @@ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
 	}); err != nil {
 		return nil, err
 	}
-
+	// 挖矿，矿工
 	eth.miner = miner.New(eth, &config.Miner, chainConfig, eth.EventMux(), eth.engine, eth.isLocalBlock)
 	eth.miner.SetExtra(makeExtraData(config.Miner.ExtraData))
 
@@ -252,9 +258,10 @@ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
 	if gpoParams.Default == nil {
 		gpoParams.Default = config.Miner.GasPrice
 	}
+	// 创建预言最新gasprice的预言机。
 	eth.APIBackend.gpo = gasprice.NewOracle(eth.APIBackend, gpoParams)
 
-	// Setup DNS discovery iterators.
+	// 设置DNS发现迭代器。
 	dnsclient := dnsdisc.NewClient(dnsdisc.Config{})
 	eth.ethDialCandidates, err = dnsclient.NewIterator(eth.config.EthDiscoveryURLs...)
 	if err != nil {
@@ -265,15 +272,15 @@ func New(stack *node.Node, config *ethconfig.Config) (*Ethereum, error) {
 		return nil, err
 	}
 
-	// Start the RPC service
+	// 启动RPC服务
 	eth.netRPCService = ethapi.NewNetAPI(eth.p2pServer, config.NetworkId)
 
-	// Register the backend on the node
+	// 在节点上注册后端
 	stack.RegisterAPIs(eth.APIs())
 	stack.RegisterProtocols(eth.Protocols())
 	stack.RegisterLifecycle(eth)
 
-	// Successful startup; push a marker and check previous unclean shutdowns.
+	// 成功的启动；按下标记并检查以前的不干净关闭。
 	eth.shutdownTracker.MarkStartup()
 
 	return eth, nil

@@ -200,7 +200,7 @@ func accountList(ctx *cli.Context) error {
 	return nil
 }
 
-// tries unlocking the specified account a few times.
+// 尝试几次解锁指定帐户。
 func unlockAccount(ks *keystore.KeyStore, address string, i int, passwords []string) (accounts.Account, string) {
 	account, err := utils.MakeAddress(ks, address)
 	if err != nil {
@@ -219,11 +219,11 @@ func unlockAccount(ks *keystore.KeyStore, address string, i int, passwords []str
 			return ambiguousAddrRecovery(ks, err, password), password
 		}
 		if err != keystore.ErrDecrypt {
-			// No need to prompt again if the error is not decryption-related.
+			//如果错误与解密有关，则无需再次提示。
 			break
 		}
 	}
-	// All trials expended to unlock account, bail out
+	// 所有试验都花在解锁帐户上，纾困
 	utils.Fatalf("Failed to unlock account %s (%v)", address, err)
 
 	return accounts.Account{}, ""
@@ -256,7 +256,7 @@ func ambiguousAddrRecovery(ks *keystore.KeyStore, err *keystore.AmbiguousAddrErr
 	return *match
 }
 
-// accountCreate creates a new account into the keystore defined by the CLI flags.
+// AccountCreate在CLI标志定义的密钥库中创建一个新帐户。
 func accountCreate(ctx *cli.Context) error {
 	cfg := gethConfig{Node: defaultNodeConfig()}
 	// Load config file.
@@ -294,8 +294,8 @@ func accountCreate(ctx *cli.Context) error {
 	return nil
 }
 
-// accountUpdate transitions an account from a previous format to the current
-// one, also providing the possibility to change the pass-phrase.
+// AccountUpdate将帐户从以前的格式转换为当前格式
+//一个，还提供了更改传递词组的可能性。
 func accountUpdate(ctx *cli.Context) error {
 	if ctx.Args().Len() == 0 {
 		utils.Fatalf("No accounts specified to update")

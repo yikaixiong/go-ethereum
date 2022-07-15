@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of go-ethereum.
+//版权所有2015年作者
+//此文件是Go-Ethereum的一部分。
 //
-// go-ethereum is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum是免费软件：您可以重新分配它和/或修改
+//根据GNU通用公共许可证的条款发布
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// go-ethereum is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// go-ethereum的分发是希望它有用的
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU通用公共许可证的副本
+//与Go-Ethereum一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package main
 
@@ -163,8 +163,8 @@ This command dumps out the state for a given block (or latest, if none provided)
 	}
 )
 
-// initGenesis will initialise the given JSON format genesis file and writes it as
-// the zero'd block (i.e. genesis) or will fail hard if it can't succeed.
+// initgenesis将初始化给定的JSON格式创世纪文件，并将其写入
+//零块（即创世纪），或者如果无法成功，将努力失败。
 func initGenesis(ctx *cli.Context) error {
 	if ctx.Args().Len() != 1 {
 		utils.Fatalf("need genesis.json file as the only argument")
@@ -183,7 +183,7 @@ func initGenesis(ctx *cli.Context) error {
 	if err := json.NewDecoder(file).Decode(genesis); err != nil {
 		utils.Fatalf("invalid genesis file: %v", err)
 	}
-	// Open and initialise both full and light databases
+	// 打开和初始化的完整数据库
 	stack, _ := makeConfigNode(ctx)
 	defer stack.Close()
 	for _, name := range []string{"chaindata", "lightchaindata"} {
@@ -330,7 +330,7 @@ func exportChain(ctx *cli.Context) error {
 	return nil
 }
 
-// importPreimages imports preimage data from the specified file.
+// ImportPreimages从指定文件导入预映射数据。
 func importPreimages(ctx *cli.Context) error {
 	if ctx.Args().Len() < 1 {
 		utils.Fatalf("This command requires an argument.")
@@ -349,7 +349,7 @@ func importPreimages(ctx *cli.Context) error {
 	return nil
 }
 
-// exportPreimages dumps the preimage data to specified json file in streaming way.
+// 导出以流方式将前图数据转输给指定的JSON文件。
 func exportPreimages(ctx *cli.Context) error {
 	if ctx.Args().Len() < 1 {
 		utils.Fatalf("This command requires an argument.")
@@ -450,7 +450,7 @@ func dump(ctx *cli.Context) error {
 	return nil
 }
 
-// hashish returns true for strings that look like hashes.
+// 大麻的回报对于看起来像哈希的字符串都是正确的。
 func hashish(x string) bool {
 	_, err := strconv.Atoi(x)
 	return err != nil

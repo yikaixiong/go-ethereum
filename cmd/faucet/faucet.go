@@ -1,20 +1,20 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of go-ethereum.
+//版权所有2017年作者
+//此文件是Go-Ethereum的一部分。
 //
-// go-ethereum is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum是免费软件：您可以重新分配它和/或修改
+//根据GNU通用公共许可证的条款发布
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// go-ethereum is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// go-ethereum的分发是希望它有用的
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU通用公共许可证的副本
+//与Go-Ethereum一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// faucet is an Ether faucet backed by a light client.
+//水龙头是由轻度客户支持的醚水龙头。
 package main
 
 import (
@@ -101,8 +101,9 @@ var (
 //go:embed faucet.html
 var websiteTmpl string
 
+// TODO： 启动测试环境
 func main() {
-	// Parse the flags and set up the logger to print everything requested
+	// 解析标志并设置记录仪以打印所有请求的所有内容
 	flag.Parse()
 	log.Root().SetHandler(log.LvlFilterHandler(log.Lvl(*logFlag), log.StreamHandler(os.Stderr, log.TerminalFormat(true))))
 
@@ -187,7 +188,7 @@ func main() {
 	}
 }
 
-// request represents an accepted funding request.
+// 请求代表公认的资金请求。
 type request struct {
 	Avatar  string             `json:"avatar"`  // Avatar URL to make the UI nicer
 	Account common.Address     `json:"account"` // Ethereum address being funded
@@ -195,7 +196,7 @@ type request struct {
 	Tx      *types.Transaction `json:"tx"`      // Transaction funding the account
 }
 
-// faucet represents a crypto faucet backed by an Ethereum light client.
+// 水龙头代表以太坊光线客户支持的加密水龙头。
 type faucet struct {
 	config *params.ChainConfig // Chain configurations for signing
 	stack  *node.Node          // Ethereum protocol stack
@@ -541,8 +542,8 @@ func (f *faucet) apiHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// refresh attempts to retrieve the latest header from the chain and extract the
-// associated faucet balance and nonce for connectivity caching.
+//刷新尝试从链条中检索最新的标头并提取
+//相关的水龙头平衡和连通性缓存的NONCE。
 func (f *faucet) refresh(head *types.Header) error {
 	// Ensure a state update does not run for too long
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -582,8 +583,8 @@ func (f *faucet) refresh(head *types.Header) error {
 	return nil
 }
 
-// loop keeps waiting for interesting events and pushes them out to connected
-// websockets.
+//循环不断等待有趣的事件，并将它们推向连接
+// Websockets。
 func (f *faucet) loop() {
 	// Wait for chain events and push them to clients
 	heads := make(chan *types.Header, 16)
@@ -658,8 +659,8 @@ func (f *faucet) loop() {
 	}
 }
 
-// sends transmits a data packet to the remote end of the websocket, but also
-// setting a write deadline to prevent waiting forever on the node.
+//将数据包发送到Websocket的遥控端，还将数据包发送到
+//设置写入截止日期，以防止在节点上永远等待。
 func send(conn *wsConn, value interface{}, timeout time.Duration) error {
 	if timeout == 0 {
 		timeout = 60 * time.Second
@@ -670,8 +671,8 @@ func send(conn *wsConn, value interface{}, timeout time.Duration) error {
 	return conn.conn.WriteJSON(value)
 }
 
-// sendError transmits an error to the remote end of the websocket, also setting
-// the write deadline to 1 second to prevent waiting forever.
+// SendError将错误传输到Websocket的遥控端，也设置
+//写截止日期为1秒，以防止永远等待。
 func sendError(conn *wsConn, err error) error {
 	return send(conn, map[string]string{"error": err.Error()}, time.Second)
 }
@@ -825,8 +826,8 @@ func authTwitterWithTokenV2(tweetID string, token string) (string, string, strin
 	return result.Data.AuthorID + "@twitter", result.Includes.Users[0].Username, result.Includes.Users[0].Avatar, address, nil
 }
 
-// authFacebook tries to authenticate a faucet request using Facebook posts,
-// returning the username, avatar URL and Ethereum address to fund on success.
+// Authfacebook尝试使用Facebook帖子来验证水龙头请求，
+//返回用户名，头像URL和以太坊地址以资助成功。
 func authFacebook(url string) (string, string, common.Address, error) {
 	// Ensure the user specified a meaningful URL, no fancy nonsense
 	parts := strings.Split(strings.Split(url, "?")[0], "/")
@@ -839,13 +840,13 @@ func authFacebook(url string) (string, string, common.Address, error) {
 	}
 	username := parts[len(parts)-3]
 
-	// Facebook's Graph API isn't really friendly with direct links. Still, we don't
-	// want to do ask read permissions from users, so just load the public posts and
-	// scrape it for the Ethereum address and profile URL.
-	//
-	// Facebook recently changed their desktop webpage to use AJAX for loading post
-	// content, so switch over to the mobile site for now. Will probably end up having
-	// to use the API eventually.
+	// Facebook的Graph API对直接链接并不真正友好。不过，我们不
+//想询问用户的阅读权限，因此只需加载公共帖子和
+//将其用于以太坊地址和配置文件URL。
+//
+// Facebook最近更改了他们的桌面网页以使用AJAX加载帖子
+//内容，因此现在切换到移动站点。可能最终会有
+//最终使用API。
 	crawl := strings.Replace(url, "www.facebook.com", "m.facebook.com", 1)
 
 	res, err := http.Get(crawl)
@@ -870,9 +871,9 @@ func authFacebook(url string) (string, string, common.Address, error) {
 	return username + "@facebook", avatar, address, nil
 }
 
-// authNoAuth tries to interpret a faucet request as a plain Ethereum address,
-// without actually performing any remote authentication. This mode is prone to
-// Byzantine attack, so only ever use for truly private networks.
+// authnoauth试图将水龙头请求解释为普通的以太坊地址，
+//无实际执行任何远程身份验证。这种模式容易
+//拜占庭式攻击，因此仅用于真正的私人网络。
 func authNoAuth(url string) (string, string, common.Address, error) {
 	address := common.HexToAddress(regexp.MustCompile("0x[0-9a-fA-F]{40}").FindString(url))
 	if address == (common.Address{}) {
@@ -882,7 +883,7 @@ func authNoAuth(url string) (string, string, common.Address, error) {
 	return address.Hex() + "@noauth", "", address, nil
 }
 
-// getGenesis returns a genesis based on input args
+// GETENESIS返回基于输入ARGS的创世纪
 func getGenesis(genesisFlag string, goerliFlag bool, rinkebyFlag bool, sepoliaFlag bool) (*core.Genesis, error) {
 	switch {
 	case genesisFlag != "":

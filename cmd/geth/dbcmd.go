@@ -1,18 +1,18 @@
-// Copyright 2021 The go-ethereum Authors
-// This file is part of go-ethereum.
+//版权2021 The Go-Ethereum作者
+//此文件是Go-Ethereum的一部分。
 //
-// go-ethereum is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum是免费软件：您可以重新分配它和/或修改
+//根据GNU通用公共许可证的条款发布
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// go-ethereum is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// go-ethereum的分发是希望它有用的
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU通用公共许可证的副本
+//与Go-Ethereum一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package main
 
@@ -208,17 +208,21 @@ WARNING: please back-up the receipt files in your ancients before running this c
 	}
 )
 
+// 移除db数据库
 func removeDB(ctx *cli.Context) error {
+	// 获取节点的配置信息
 	stack, config := makeConfigNode(ctx)
 
-	// Remove the full node state database
+	// 删除完整的节点状态数据库
 	path := stack.ResolvePath("chaindata")
+	// 根据数据库路径做判断
 	if common.FileExist(path) {
+		// 确定并且删除节点状态数据库
 		confirmAndRemoveDB(path, "full node state database")
 	} else {
 		log.Info("Full node state database missing", "path", path)
 	}
-	// Remove the full node ancient database
+	// 删除完整的节点古代数据库
 	path = config.Eth.DatabaseFreezer
 	switch {
 	case path == "":
@@ -231,7 +235,7 @@ func removeDB(ctx *cli.Context) error {
 	} else {
 		log.Info("Full node ancient database missing", "path", path)
 	}
-	// Remove the light node database
+	// 删除光节点数据库
 	path = stack.ResolvePath("lightchaindata")
 	if common.FileExist(path) {
 		confirmAndRemoveDB(path, "light node database")
@@ -241,8 +245,8 @@ func removeDB(ctx *cli.Context) error {
 	return nil
 }
 
-// confirmAndRemoveDB prompts the user for a last confirmation and removes the
-// folder if accepted.
+// confirmAndRemovedB提示用户进行最后确认并删除
+//文件夹如果接受。
 func confirmAndRemoveDB(database string, kind string) {
 	confirm, err := prompt.Stdin.PromptConfirm(fmt.Sprintf("Remove %s (%s)?", kind, database))
 	switch {
@@ -253,11 +257,11 @@ func confirmAndRemoveDB(database string, kind string) {
 	default:
 		start := time.Now()
 		filepath.Walk(database, func(path string, info os.FileInfo, err error) error {
-			// If we're at the top level folder, recurse into
+			// 如果我们在顶级文件夹中，请重复进入
 			if path == database {
 				return nil
 			}
-			// Delete all the files, but not subfolders
+			// 删除所有文件，但没有删除子文件夹
 			if !info.IsDir() {
 				os.Remove(path)
 				return nil
@@ -268,6 +272,7 @@ func confirmAndRemoveDB(database string, kind string) {
 	}
 }
 
+//检查
 func inspect(ctx *cli.Context) error {
 	var (
 		prefix []byte
@@ -366,6 +371,7 @@ func showLeveldbStats(db ethdb.KeyValueStater) {
 	}
 }
 
+// 获取数据库的状态
 func dbStats(ctx *cli.Context) error {
 	stack, _ := makeConfigNode(ctx)
 	defer stack.Close()
@@ -397,7 +403,7 @@ func dbCompact(ctx *cli.Context) error {
 	return nil
 }
 
-// dbGet shows the value of a given database key
+// DBGET显示给定数据库密钥的值
 func dbGet(ctx *cli.Context) error {
 	if ctx.NArg() != 1 {
 		return fmt.Errorf("required arguments: %v", ctx.Command.ArgsUsage)
@@ -423,7 +429,7 @@ func dbGet(ctx *cli.Context) error {
 	return nil
 }
 
-// dbDelete deletes a key from the database
+// DBDELETE从数据库中删除键
 func dbDelete(ctx *cli.Context) error {
 	if ctx.NArg() != 1 {
 		return fmt.Errorf("required arguments: %v", ctx.Command.ArgsUsage)
@@ -450,7 +456,7 @@ func dbDelete(ctx *cli.Context) error {
 	return nil
 }
 
-// dbPut overwrite a value in the database
+// dbput覆盖数据库中的值
 func dbPut(ctx *cli.Context) error {
 	if ctx.NArg() != 2 {
 		return fmt.Errorf("required arguments: %v", ctx.Command.ArgsUsage)
@@ -484,7 +490,7 @@ func dbPut(ctx *cli.Context) error {
 	return db.Put(key, value)
 }
 
-// dbDumpTrie shows the key-value slots of a given storage trie
+// dbdumptrie显示给定存储trie的键值插槽
 func dbDumpTrie(ctx *cli.Context) error {
 	if ctx.NArg() < 1 {
 		return fmt.Errorf("required arguments: %v", ctx.Command.ArgsUsage)
@@ -574,6 +580,7 @@ func freezerInspect(ctx *cli.Context) error {
 	return nil
 }
 
+// 插入数据库数据
 func importLDBdata(ctx *cli.Context) error {
 	start := 0
 	switch ctx.NArg() {
@@ -657,7 +664,7 @@ func (iter *snapshotIterator) Release() {
 	iter.storage.Release()
 }
 
-// chainExporters defines the export scheme for all exportable chain data.
+// Chainexporter定义了所有可导出链数据的导出方案。
 var chainExporters = map[string]func(db ethdb.Database) utils.ChainDataIterator{
 	"preimage": func(db ethdb.Database) utils.ChainDataIterator {
 		iter := db.NewIterator(rawdb.PreimagePrefix, nil)
@@ -674,7 +681,7 @@ func exportChaindata(ctx *cli.Context) error {
 	if ctx.NArg() < 2 {
 		return fmt.Errorf("required arguments: %v", ctx.Command.ArgsUsage)
 	}
-	// Parse the required chain data type, make sure it's supported.
+	// 解析所需的链数据类型，请确保受支持。
 	kind := ctx.Args().Get(0)
 	kind = strings.ToLower(strings.Trim(kind, " "))
 	exporter, ok := chainExporters[kind]
@@ -793,11 +800,11 @@ func freezerMigrate(ctx *cli.Context) error {
 	return nil
 }
 
-// dbHasLegacyReceipts checks freezer entries for legacy receipts. It stops at the first
-// non-empty receipt and checks its format. The index of this first non-empty element is
-// the second return parameter.
+// DBHASLEGACYRECEIPTS检查冰柜条目是否有旧收据。它停在第一个
+//非空收据并检查其格式。第一个非空元素的索引是
+//第二个返回参数。
 func dbHasLegacyReceipts(db ethdb.Database, firstIdx uint64) (bool, uint64, error) {
-	// Check first block for legacy receipt format
+	// 检查第一个块以获取遗产收据格式
 	numAncients, err := db.Ancients()
 	if err != nil {
 		return false, 0, err
@@ -813,8 +820,8 @@ func dbHasLegacyReceipts(db ethdb.Database, firstIdx uint64) (bool, uint64, erro
 		blob         []byte
 		emptyRLPList = []byte{192}
 	)
-	// Find first block with non-empty receipt, only if
-	// the index is not already provided.
+	// 只有在
+	//尚未提供索引。
 	if firstIdx == 0 {
 		for i := uint64(0); i < numAncients; i++ {
 			blob, err = db.Ancient("receipts", i)

@@ -1,20 +1,20 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package ethstats implements the network stats reporting service.
+//包装ETHSTATS实现网络统计报告服务。
 package ethstats
 
 import (
@@ -48,18 +48,18 @@ import (
 )
 
 const (
-	// historyUpdateRange is the number of blocks a node should report upon login or
-	// history request.
+	// 历史记录是节点应在登录时报告或
+//历史请求。
 	historyUpdateRange = 50
 
-	// txChanSize is the size of channel listening to NewTxsEvent.
-	// The number is referenced from the size of tx pool.
+	// TxChansize是聆听newtxsevent的频道的大小。
+//该数字是从TX池的大小中引用的。
 	txChanSize = 4096
-	// chainHeadChanSize is the size of channel listening to ChainHeadEvent.
+	// ChainheadChansize是聆听Chainheadevent的频道的大小。
 	chainHeadChanSize = 10
 )
 
-// backend encompasses the bare-minimum functionality needed for ethstats reporting
+// 后端涵盖了EthStats报告所需的裸露功能
 type backend interface {
 	SubscribeChainHeadEvent(ch chan<- core.ChainHeadEvent) event.Subscription
 	SubscribeNewTxsEvent(ch chan<- core.NewTxsEvent) event.Subscription
@@ -70,8 +70,8 @@ type backend interface {
 	SyncProgress() ethereum.SyncProgress
 }
 
-// fullNodeBackend encompasses the functionality necessary for a full node
-// reporting to ethstats
+// 全面否决涵盖了完整节点所需的功能
+//向Ethstats报告
 type fullNodeBackend interface {
 	backend
 	Miner() *miner.Miner
@@ -80,8 +80,8 @@ type fullNodeBackend interface {
 	SuggestGasTipCap(ctx context.Context) (*big.Int, error)
 }
 
-// Service implements an Ethereum netstats reporting daemon that pushes local
-// chain statistics up to a monitoring server.
+// 服务实现了以太坊的网状网络报告守护程序，该守护程序推动了本地
+//链条统计信息直至监视服务器。
 type Service struct {
 	server  *p2p.Server // Peer-to-peer server to retrieve networking infos
 	backend backend
@@ -99,16 +99,16 @@ type Service struct {
 }
 
 // connWrapper is a wrapper to prevent concurrent-write or concurrent-read on the
-// websocket.
+// Websocket。
 //
-// From Gorilla websocket docs:
-//   Connections support one concurrent reader and one concurrent writer.
-//   Applications are responsible for ensuring that no more than one goroutine calls the write methods
-//     - NextWriter, SetWriteDeadline, WriteMessage, WriteJSON, EnableWriteCompression, SetCompressionLevel
-//   concurrently and that no more than one goroutine calls the read methods
-//     - NextReader, SetReadDeadline, ReadMessage, ReadJSON, SetPongHandler, SetPingHandler
-//   concurrently.
-//   The Close and WriteControl methods can be called concurrently with all other methods.
+//来自Gorilla Websocket文档：
+//连接支持一个并发读者和一位并发作者。
+//应用程序负责确保不超过一个Goroutine调用写作方法
+//- NEXTWRITER，SETWRITEDEADLINE，WRITEMESSAGE，WERLEJSON，ENABLEWRITECOMPRESSRYS，SETCOMPRESSIONLEVEL
+//同时，不超过一个goroutine调用读取方法
+//- nextreader，setReadDeadline，readMessage，readjson，setponghandler，setpinghandler
+//同时。
+//可以与所有其他方法同时调用关闭和writecontrol方法。
 type connWrapper struct {
 	conn *websocket.Conn
 

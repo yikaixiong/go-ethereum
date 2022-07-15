@@ -1983,11 +1983,13 @@ func SetDNSDiscoveryDefaults(cfg *ethconfig.Config, genesis common.Hash) {
 	}
 }
 
-// RegisterEthService adds an Ethereum client to the stack.
-// The second return value is the full node instance, which may be nil if the
-// node is running as a light client.
+//注册服务员将以太坊客户端添加到堆栈中。
+//第二个返回值是完整的节点实例，如果
+//节点作为轻客户端运行。
 func RegisterEthService(stack *node.Node, cfg *ethconfig.Config) (ethapi.Backend, *eth.Ethereum) {
+	// 这个函数里会判断同步的方式 ，如果是LightSync则会使用les.New()创建轻节点，否则就使用eth.New()创建全节点，这里我们还是建立全节点，即调用eth.New()方法
 	if cfg.SyncMode == downloader.LightSync {
+		// TODO: 创建轻节点
 		backend, err := les.New(stack, cfg)
 		if err != nil {
 			Fatalf("Failed to register the Ethereum service: %v", err)
@@ -2000,6 +2002,7 @@ func RegisterEthService(stack *node.Node, cfg *ethconfig.Config) (ethapi.Backend
 		}
 		return backend.ApiBackend, nil
 	}
+	// TODO: 创建全节点
 	backend, err := eth.New(stack, cfg)
 	if err != nil {
 		Fatalf("Failed to register the Ethereum service: %v", err)

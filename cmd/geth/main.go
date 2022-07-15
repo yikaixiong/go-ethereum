@@ -1,20 +1,20 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of go-ethereum.
+//版权所有2014年作者
+//此文件是Go-Ethereum的一部分。
 //
-// go-ethereum is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum是免费软件：您可以重新分配它和/或修改
+//根据GNU通用公共许可证的条款发布
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// go-ethereum is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// go-ethereum的分发是希望它有用的
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU通用公共许可证的副本
+//与Go-Ethereum一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// geth is the official command-line client for Ethereum.
+// Geth是以太坊的官方指挥行客户。
 package main
 
 import (
@@ -40,7 +40,7 @@ import (
 	"github.com/ethereum/go-ethereum/metrics"
 	"github.com/ethereum/go-ethereum/node"
 
-	// Force-load the tracer engines to trigger registration
+	// 强制负载示踪剂发动机触发注册
 	_ "github.com/ethereum/go-ethereum/eth/tracers/js"
 	_ "github.com/ethereum/go-ethereum/eth/tracers/native"
 
@@ -48,16 +48,17 @@ import (
 )
 
 const (
-	clientIdentifier = "geth" // Client identifier to advertise over the network
+	clientIdentifier = "geth" // 客户标识符通过网络做广告
 )
 
+// 定义变量
 var (
-	// Git SHA1 commit hash of the release (set via linker flags)
+	// git sha1提交版本的哈希（通过链接标志设置）
 	gitCommit = ""
 	gitDate   = ""
-	// The app that holds all commands and flags.
+	// 包含所有命令和标志的应用程序。
 	app = flags.NewApp(gitCommit, gitDate, "the go-ethereum command line interface")
-	// flags that configure the node
+	// 配置节点的标志
 	nodeFlags = utils.GroupFlags([]cli.Flag{
 		utils.IdentityFlag,
 		utils.UnlockedAccountFlag,
@@ -204,10 +205,11 @@ var (
 	}
 )
 
+// TODO: 初始化，把传入的参数实例化
 func init() {
-	// Initialize the CLI app and start Geth
+	// 初始化CLI应用程序并启动Geth
 	app.Action = geth
-	app.HideVersion = true // we have a command to print the version
+	app.HideVersion = true // 我们有打印版本的命令
 	app.Copyright = "Copyright 2013-2022 The go-ethereum Authors"
 	app.Commands = []*cli.Command{
 		// See chaincmd.go:
@@ -262,6 +264,7 @@ func init() {
 	}
 }
 
+// 启动
 func main() {
 	if err := app.Run(os.Args); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -269,10 +272,10 @@ func main() {
 	}
 }
 
-// prepare manipulates memory cache allowance and setups metric system.
-// This function should be called before launching devp2p stack.
+//准备操纵内存缓存津贴和设置度量系统。
+//在启动DEVP2P堆栈之前，应调用此功能。
 func prepare(ctx *cli.Context) {
-	// If we're running a known preset, log it for convenience.
+	// 如果我们运行已知的预设，请为方便起见。
 	switch {
 	case ctx.IsSet(utils.RopstenFlag.Name):
 		log.Info("Starting Geth on Ropsten testnet...")
@@ -293,24 +296,24 @@ func prepare(ctx *cli.Context) {
 		log.Info("Starting Geth in ephemeral dev mode...")
 		log.Warn(`You are running Geth in --dev mode. Please note the following:
 
-  1. This mode is only intended for fast, iterative development without assumptions on
-     security or persistence.
-  2. The database is created in memory unless specified otherwise. Therefore, shutting down
-     your computer or losing power will wipe your entire block data and chain state for
-     your dev environment.
-  3. A random, pre-allocated developer account will be available and unlocked as
-     eth.coinbase, which can be used for testing. The random dev account is temporary,
-     stored on a ramdisk, and will be lost if your machine is restarted.
-  4. Mining is enabled by default. However, the client will only seal blocks if transactions
-     are pending in the mempool. The miner's minimum accepted gas price is 1.
-  5. Networking is disabled; there is no listen-address, the maximum number of peers is set
-     to 0, and discovery is disabled.
+  1.此模式仅用于快速的迭代发展，而无需假设
+     安全性或持久性。
+  2.除非另有说明，否则数据库是在内存中创建的。因此，关闭
+     您的计算机或损失电源将擦除您的整个块数据和链状态
+     您的开发环境。
+  3.将提供一个随机的，预先分配的开发人员帐户，并解锁为
+     eth.coinbase，可用于测试。随机开发帐户是暂时的
+     存储在ramdisk上，如果您的机器重新启动，将会丢失。
+  4.默认情况下启用挖掘。但是，客户仅在交易时才密封块
+     在孟买待定。矿工最低接受的天然气价格为1。
+  5.网络被禁用；没有听力，设置了最大同行数量
+     到0，发现被禁用。
 `)
 
 	case !ctx.IsSet(utils.NetworkIdFlag.Name):
 		log.Info("Starting Geth on Ethereum mainnet...")
 	}
-	// If we're a full node on mainnet without --cache specified, bump default cache allowance
+	// 如果我们是Mainnet上的完整节点，则没有指定的-SCACHE，bump默认缓存津贴
 	if ctx.String(utils.SyncModeFlag.Name) != "light" && !ctx.IsSet(utils.CacheFlag.Name) && !ctx.IsSet(utils.NetworkIdFlag.Name) {
 		// Make sure we're not on any supported preconfigured testnet either
 		if !ctx.IsSet(utils.RopstenFlag.Name) &&
@@ -319,58 +322,63 @@ func prepare(ctx *cli.Context) {
 			!ctx.IsSet(utils.GoerliFlag.Name) &&
 			!ctx.IsSet(utils.KilnFlag.Name) &&
 			!ctx.IsSet(utils.DeveloperFlag.Name) {
-			// Nope, we're really on mainnet. Bump that cache up!
+			// 不，我们真的在主网上。撞到缓存！
 			log.Info("Bumping default cache on mainnet", "provided", ctx.Int(utils.CacheFlag.Name), "updated", 4096)
 			ctx.Set(utils.CacheFlag.Name, strconv.Itoa(4096))
 		}
 	}
-	// If we're running a light client on any network, drop the cache to some meaningfully low amount
+	// 如果我们在任何网络上运行一个轻端客户端，请将缓存放到一些有意义的低量
 	if ctx.String(utils.SyncModeFlag.Name) == "light" && !ctx.IsSet(utils.CacheFlag.Name) {
 		log.Info("Dropping default light client cache", "provided", ctx.Int(utils.CacheFlag.Name), "updated", 128)
 		ctx.Set(utils.CacheFlag.Name, strconv.Itoa(128))
 	}
 
-	// Start metrics export if enabled
+	// 启动指标导出如果启用
 	utils.SetupMetrics(ctx)
 
-	// Start system runtime metrics collection
+	// 启动系统运行时指标集合
 	go metrics.CollectProcessMetrics(3 * time.Second)
 }
 
-// geth is the main entry point into the system if no special subcommand is ran.
-// It creates a default node based on the command line arguments and runs it in
-// blocking mode, waiting for it to be shut down.
+// Geth是系统中的主要入口点，如果没有特殊的子命令。
+//它基于命令行参数创建默认节点，并将其运行
+//阻止模式，等待关闭它。
 func geth(ctx *cli.Context) error {
 	if args := ctx.Args().Slice(); len(args) > 0 {
 		return fmt.Errorf("invalid command: %q", args[0])
 	}
 
 	prepare(ctx)
+	// TODO：定义全节点对象
 	stack, backend := makeFullNode(ctx)
 	defer stack.Close()
-
+	// TODO：启动全节点
 	startNode(ctx, stack, backend, false)
 	stack.Wait()
 	return nil
 }
 
-// startNode boots up the system node and all registered protocols, after which
-// it unlocks any requested accounts, and starts the RPC/IPC interfaces and the
-// miner.
+// startnode启动系统节点和所有注册协议，之后
+//它解锁任何请求的帐户，并启动RPC/IPC接口和
+//矿工。
+
+// 1、启动node；
+// 2、解锁账户；
+// 3、开启钱包事件监听；
 func startNode(ctx *cli.Context, stack *node.Node, backend ethapi.Backend, isConsole bool) {
 	debug.Memsize.Add("node", stack)
 
-	// Start up the node itself
+	// 启动节点本身
 	utils.StartNode(ctx, stack, isConsole)
 
-	// Unlock any account specifically requested
+	// 解锁任何专门要求的帐户
 	unlockAccounts(ctx, stack)
 
-	// Register wallet event handlers to open and auto-derive wallets
+	// 注册钱包活动处理程序打开和自动衍生钱包
 	events := make(chan accounts.WalletEvent, 16)
 	stack.AccountManager().Subscribe(events)
 
-	// Create a client to interact with local geth node.
+	// 创建一个客户以与本地Geth节点进行交互。
 	rpcClient, err := stack.Attach()
 	if err != nil {
 		utils.Fatalf("Failed to attach to self: %v", err)
@@ -410,8 +418,8 @@ func startNode(ctx *cli.Context, stack *node.Node, backend ethapi.Backend, isCon
 		}
 	}()
 
-	// Spawn a standalone goroutine for status synchronization monitoring,
-	// close the node when synchronization is complete if user required.
+	// 产生一个独立的goroutine，以进行状态同步监控，
+	//如果需要，请在同步完成时关闭节点。
 	if ctx.Bool(utils.ExitWhenSyncedFlag.Name) {
 		go func() {
 			sub := stack.EventMux().Subscribe(downloader.DoneEvent{})
@@ -434,9 +442,9 @@ func startNode(ctx *cli.Context, stack *node.Node, backend ethapi.Backend, isCon
 		}()
 	}
 
-	// Start auxiliary services if enabled
+	// 启动辅助服务如果启用
 	if ctx.Bool(utils.MiningEnabledFlag.Name) || ctx.Bool(utils.DeveloperFlag.Name) {
-		// Mining only makes sense if a full Ethereum node is running
+		// 只有在运行完整的以太坊节点时，采矿才有意义
 		if ctx.String(utils.SyncModeFlag.Name) == "light" {
 			utils.Fatalf("Light clients do not support mining")
 		}
@@ -444,10 +452,10 @@ func startNode(ctx *cli.Context, stack *node.Node, backend ethapi.Backend, isCon
 		if !ok {
 			utils.Fatalf("Ethereum service not running")
 		}
-		// Set the gas price to the limits from the CLI and start mining
+		//将汽油价格设置为CLI的极限并开始开采
 		gasprice := flags.GlobalBig(ctx, utils.MinerGasPriceFlag.Name)
 		ethBackend.TxPool().SetGasPrice(gasprice)
-		// start mining
+		// 开始采矿
 		threads := ctx.Int(utils.MinerThreadsFlag.Name)
 		if err := ethBackend.StartMining(threads); err != nil {
 			utils.Fatalf("Failed to start mining: %v", err)
@@ -455,7 +463,7 @@ func startNode(ctx *cli.Context, stack *node.Node, backend ethapi.Backend, isCon
 	}
 }
 
-// unlockAccounts unlocks any account specifically requested.
+// 解锁解锁解锁任何特定要求的帐户。
 func unlockAccounts(ctx *cli.Context, stack *node.Node) {
 	var unlocks []string
 	inputs := strings.Split(ctx.String(utils.UnlockedAccountFlag.Name), ",")
@@ -464,12 +472,12 @@ func unlockAccounts(ctx *cli.Context, stack *node.Node) {
 			unlocks = append(unlocks, trimmed)
 		}
 	}
-	// Short circuit if there is no account to unlock.
+	// 短路如果没有帐户要解锁。
 	if len(unlocks) == 0 {
 		return
 	}
-	// If insecure account unlocking is not allowed if node's APIs are exposed to external.
-	// Print warning log to user and skip unlocking.
+	// 如果如果节点的API暴露于外部，则不允许解锁不安全的帐户。
+	//打印警告日志给用户并跳过解锁。
 	if !stack.Config().InsecureUnlockAllowed && stack.Config().ExtRPCEnabled() {
 		utils.Fatalf("Account unlock with HTTP access is forbidden!")
 	}

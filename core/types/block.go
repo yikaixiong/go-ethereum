@@ -1,20 +1,20 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package types contains data types related to Ethereum consensus.
+//软件包类型包含与以太坊共识有关的数据类型。
 package types
 
 import (
@@ -36,12 +36,12 @@ var (
 	EmptyUncleHash = rlpHash([]*Header(nil))
 )
 
-// A BlockNonce is a 64-bit hash which proves (combined with the
-// mix-hash) that a sufficient amount of computation has been carried
-// out on a block.
+//一个blocknonce是一个64位哈希（证明）
+//混合hash）已经携带了足够数量的计算
+//在一个街区上。
 type BlockNonce [8]byte
 
-// EncodeNonce converts the given integer to a block nonce.
+// encodenonce将给定的整数转换为块nonce。
 func EncodeNonce(i uint64) BlockNonce {
 	var n BlockNonce
 	binary.BigEndian.PutUint64(n[:], i)
@@ -67,6 +67,21 @@ func (n *BlockNonce) UnmarshalText(input []byte) error {
 //go:generate go run ../../rlp/rlpgen -type Header -out gen_header_rlp.go
 
 // Header represents a block header in the Ethereum blockchain.
+// 1）ParentHash：前一个区块的hash
+// 2）UncleHash：叔区块hash，如果有多个叔区块就加到一起
+// 3）Coinbase：矿工账户
+// 4）Root：StateDB中的“state Trie”的根节点的RLP哈希值。
+// 5）TxHash：“tx Trie”的根节点的RLP哈希值。
+// 6）ReceiptHash： "Receipt Trie”的根节点的RLP哈希值。
+// 7）Bloom：Bloom过滤器(Filter)，用来快速判断一个参数Log对象是否存在于一组已知的Log集合中。
+// 8）Difficulty：难度值
+// 9）Number：区块号
+// 10）GasLimit：区块内所有Gas消耗的理论上限。该数值在区块创建时设置，与父区块的GasUsed有关。
+// 11）GasUsed：区块内所有Transaction执行时所实际消耗的Gas总和。
+// 12）Time：时间戳
+// 13）Extra：额外信息
+// 14）Nonce：pow产生的数值，也可以用于验证矿工的工作
+
 type Header struct {
 	ParentHash  common.Hash    `json:"parentHash"       gencodec:"required"`
 	UncleHash   common.Hash    `json:"sha3Uncles"       gencodec:"required"`

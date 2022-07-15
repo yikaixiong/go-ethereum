@@ -1,19 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
-
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 package gasprice
 
 import (
@@ -33,7 +32,7 @@ import (
 )
 
 const sampleNumber = 3 // Number of transactions sampled in a block
-
+在一个块中采样的交易数量
 var (
 	DefaultMaxPrice    = big.NewInt(500 * params.GWei)
 	DefaultIgnorePrice = big.NewInt(2 * params.Wei)
@@ -49,7 +48,7 @@ type Config struct {
 	IgnorePrice      *big.Int `toml:",omitempty"`
 }
 
-// OracleBackend includes all necessary background APIs for oracle.
+// OracleBackend包含Oracle的所有必要背景API。
 type OracleBackend interface {
 	HeaderByNumber(ctx context.Context, number rpc.BlockNumber) (*types.Header, error)
 	BlockByNumber(ctx context.Context, number rpc.BlockNumber) (*types.Block, error)
@@ -59,8 +58,8 @@ type OracleBackend interface {
 	SubscribeChainHeadEvent(ch chan<- core.ChainHeadEvent) event.Subscription
 }
 
-// Oracle recommends gas prices based on the content of recent
-// blocks. Suitable for both light and full clients.
+// Oracle根据最近的内容建议汽油价格
+//块。适用于光线和正式客户。
 type Oracle struct {
 	backend     OracleBackend
 	lastHead    common.Hash
@@ -75,8 +74,8 @@ type Oracle struct {
 	historyCache                      *lru.Cache
 }
 
-// NewOracle returns a new gasprice oracle which can recommend suitable
-// gasprice for newly created transaction.
+//Neworacle返回新的Gasprice Oracle，可以建议合适
+//新创建的交易的GASPRICE。
 func NewOracle(backend OracleBackend, params Config) *Oracle {
 	blocks := params.Blocks
 	if blocks < 1 {
@@ -140,17 +139,17 @@ func NewOracle(backend OracleBackend, params Config) *Oracle {
 	}
 }
 
-// SuggestTipCap returns a tip cap so that newly created transaction can have a
-// very high chance to be included in the following blocks.
+//建议tipcap返回一个小费盖，以便新创建的交易可以有一个
+//很有可能将其包括在以下块中。
 //
-// Note, for legacy transactions and the legacy eth_gasPrice RPC call, it will be
-// necessary to add the basefee to the returned number to fall back to the legacy
-// behavior.
+//注意，对于传统交易和传统eth_gasprice rpc调用，它将是
+//将基础场添加到返回的号码中以返回遗产所需的必要
+// 行为。
 func (oracle *Oracle) SuggestTipCap(ctx context.Context) (*big.Int, error) {
 	head, _ := oracle.backend.HeaderByNumber(ctx, rpc.LatestBlockNumber)
 	headHash := head.Hash()
 
-	// If the latest gasprice is still available, return it.
+	// 如果仍然有最新的Gasprice，请退还。
 	oracle.cacheLock.RLock()
 	lastHead, lastPrice := oracle.lastHead, oracle.lastPrice
 	oracle.cacheLock.RUnlock()
@@ -160,7 +159,7 @@ func (oracle *Oracle) SuggestTipCap(ctx context.Context) (*big.Int, error) {
 	oracle.fetchLock.Lock()
 	defer oracle.fetchLock.Unlock()
 
-	// Try checking the cache again, maybe the last fetch fetched what we need
+	// 尝试再次检查缓存，也许最后提取了我们需要的东西
 	oracle.cacheLock.RLock()
 	lastHead, lastPrice = oracle.lastHead, oracle.lastPrice
 	oracle.cacheLock.RUnlock()
@@ -187,16 +186,16 @@ func (oracle *Oracle) SuggestTipCap(ctx context.Context) (*big.Int, error) {
 			return new(big.Int).Set(lastPrice), res.err
 		}
 		exp--
-		// Nothing returned. There are two special cases here:
-		// - The block is empty
-		// - All the transactions included are sent by the miner itself.
-		// In these cases, use the latest calculated price for sampling.
+		// 什么都没有返回。这里有两种特殊情况：
+//-块是空的
+//-包括的所有交易均由矿工本身发送。
+//在这些情况下，请使用最新计算的价格进行抽样。
 		if len(res.values) == 0 {
 			res.values = []*big.Int{lastPrice}
 		}
-		// Besides, in order to collect enough data for sampling, if nothing
-		// meaningful returned, try to query more blocks. But the maximum
-		// is 2*checkBlocks.
+		// 此外，为了收集足够的数据进行抽样，如果什么都没有
+//有意义的返回，尝试查询更多块。但是最大
+//是2*CheckBlocks。
 		if len(res.values) == 1 && len(results)+1+exp < oracle.checkBlocks*2 && number > 0 {
 			go oracle.getBlockValues(ctx, types.MakeSigner(oracle.backend.ChainConfig(), big.NewInt(int64(number))), number, sampleNumber, oracle.ignorePrice, result, quit)
 			sent++
@@ -243,8 +242,8 @@ func (s *txSorter) Swap(i, j int) {
 	s.txs[i], s.txs[j] = s.txs[j], s.txs[i]
 }
 func (s *txSorter) Less(i, j int) bool {
-	// It's okay to discard the error because a tx would never be
-	// accepted into a block with an invalid effective tip.
+	// 可以丢弃错误，因为TX永远不会
+//被无效的有效尖端接受到一个块中。
 	tip1, _ := s.txs[i].EffectiveGasTip(s.baseFee)
 	tip2, _ := s.txs[j].EffectiveGasTip(s.baseFee)
 	return tip1.Cmp(tip2) < 0

@@ -67,8 +67,9 @@ func Fatalf(format string, args ...interface{}) {
 	fmt.Fprintf(w, "Fatal: "+format+"\n", args...)
 	os.Exit(1)
 }
-
+// 开启节点
 func StartNode(ctx *cli.Context, stack *node.Node, isConsole bool) {
+	// 启动节点
 	if err := stack.Start(); err != nil {
 		Fatalf("Error starting protocol stack: %v", err)
 	}

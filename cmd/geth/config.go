@@ -60,7 +60,7 @@ var (
 	}
 )
 
-// These settings ensure that TOML keys use the same names as Go struct fields.
+// 这些设置确保TOML键使用与GO结构字段相同的名称。
 var tomlSettings = toml.Config{
 	NormFieldName: func(rt reflect.Type, key string) string {
 		return key
@@ -118,29 +118,29 @@ func defaultNodeConfig() node.Config {
 	return cfg
 }
 
-// makeConfigNode loads geth configuration and creates a blank node instance.
+// MakeConfignode加载Geth配置并创建一个空白的节点实例。
 func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
-	// Load defaults.
+	// 加载默认。
 	cfg := gethConfig{
 		Eth:     ethconfig.Defaults,
 		Node:    defaultNodeConfig(),
 		Metrics: metrics.DefaultConfig,
 	}
 
-	// Load config file.
+	// 加载配置文件。
 	if file := ctx.String(configFileFlag.Name); file != "" {
 		if err := loadConfig(file, &cfg); err != nil {
 			utils.Fatalf("%v", err)
 		}
 	}
 
-	// Apply flags.
+	// 应用标志。
 	utils.SetNodeConfig(ctx, &cfg.Node)
 	stack, err := node.New(&cfg.Node)
 	if err != nil {
 		utils.Fatalf("Failed to create the protocol stack: %v", err)
 	}
-	// Node doesn't by default populate account manager backends
+	// 默认情况下，节点不会填充客户经理后端
 	if err := setAccountManagerBackends(stack); err != nil {
 		utils.Fatalf("Failed to set account manager backends: %v", err)
 	}
@@ -154,8 +154,10 @@ func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
 	return stack, cfg
 }
 
-// makeFullNode loads geth configuration and creates the Ethereum backend.
+// MakefulLnode负载Geth配置并创建以太坊后端。
+// 定义全节点，初始化，返回配置参数
 func makeFullNode(ctx *cli.Context) (*node.Node, ethapi.Backend) {
+	// 进行节点配置
 	stack, cfg := makeConfigNode(ctx)
 	if ctx.IsSet(utils.OverrideGrayGlacierFlag.Name) {
 		cfg.Eth.OverrideGrayGlacier = new(big.Int).SetUint64(ctx.Uint64(utils.OverrideGrayGlacierFlag.Name))
@@ -163,12 +165,14 @@ func makeFullNode(ctx *cli.Context) (*node.Node, ethapi.Backend) {
 	if ctx.IsSet(utils.OverrideTerminalTotalDifficulty.Name) {
 		cfg.Eth.OverrideTerminalTotalDifficulty = flags.GlobalBig(ctx, utils.OverrideTerminalTotalDifficulty.Name)
 	}
+
+	// TODO: 注册eth服务
 	backend, eth := utils.RegisterEthService(stack, &cfg.Eth)
-	// Warn users to migrate if they have a legacy freezer format.
+	// 警告用户，如果他们具有旧式冰柜格式，请迁移。
 	if eth != nil && !ctx.IsSet(utils.IgnoreLegacyReceiptsFlag.Name) {
 		firstIdx := uint64(0)
-		// Hack to speed up check for mainnet because we know
-		// the first non-empty block.
+		// hack加速检查主网，因为我们知道
+//第一个非空块。
 		ghash := rawdb.ReadCanonicalHash(eth.ChainDb(), 0)
 		if cfg.Eth.NetworkId == 1 && ghash == params.MainnetGenesisHash {
 			firstIdx = 46147
@@ -182,18 +186,18 @@ func makeFullNode(ctx *cli.Context) (*node.Node, ethapi.Backend) {
 		}
 	}
 
-	// Configure GraphQL if requested
+	// 如果要求，配置GraphQl
 	if ctx.IsSet(utils.GraphQLEnabledFlag.Name) {
 		utils.RegisterGraphQLService(stack, backend, cfg.Node)
 	}
-	// Add the Ethereum Stats daemon if requested.
+	// 如果要求，添加以太坊统计守护程序。
 	if cfg.Ethstats.URL != "" {
 		utils.RegisterEthStatsService(stack, backend, cfg.Ethstats.URL)
 	}
 	return stack, backend
 }
 
-// dumpConfig is the dumpconfig command.
+// dumpconfig是dumpconfig命令。
 func dumpConfig(ctx *cli.Context) error {
 	_, cfg := makeConfigNode(ctx)
 	comment := ""

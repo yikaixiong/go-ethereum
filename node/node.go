@@ -73,10 +73,10 @@ const (
 	closedState
 )
 
-// New creates a new P2P node, ready for protocol registration.
+// New创建了一个新的P2P节点，可以进行协议注册。
 func New(conf *Config) (*Node, error) {
-	// Copy config and resolve the datadir so future changes to the current
-	// working directory don't affect the node.
+	// 复制配置并解析datadir，以便将来更改为当前
+	//工作目录不影响节点。
 	confCopy := *conf
 	conf = &confCopy
 	if conf.DataDir != "" {
@@ -90,8 +90,8 @@ func New(conf *Config) (*Node, error) {
 		conf.Logger = log.New()
 	}
 
-	// Ensure that the instance name doesn't cause weird conflicts with
-	// other files in the data directory.
+	// 确保实例名称不会引起与奇怪的冲突
+	//数据目录中的其他文件。
 	if strings.ContainsAny(conf.Name, `/\`) {
 		return nil, errors.New(`Config.Name must not contain '/' or '\'`)
 	}
@@ -161,8 +161,9 @@ func New(conf *Config) (*Node, error) {
 	return node, nil
 }
 
-// Start starts all registered lifecycles, RPC services and p2p networking.
-// Node can only be started once.
+//开始所有注册的生命周期，RPC服务和P2P网络。
+//节点只能启动一次。
+// TODO: 启动节点
 func (n *Node) Start() error {
 	n.startStopLock.Lock()
 	defer n.startStopLock.Unlock()
@@ -177,18 +178,18 @@ func (n *Node) Start() error {
 		return ErrNodeStopped
 	}
 	n.state = runningState
-	// open networking and RPC endpoints
+	// 打开网络和RPC终点
 	err := n.openEndpoints()
 	lifecycles := make([]Lifecycle, len(n.lifecycles))
 	copy(lifecycles, n.lifecycles)
 	n.lock.Unlock()
 
-	// Check if endpoint startup failed.
+	// 检查端点启动是否失败。
 	if err != nil {
 		n.doClose(nil)
 		return err
 	}
-	// Start all registered lifecycles.
+	// 启动所有注册的生命周期。
 	var started []Lifecycle
 	for _, lifecycle := range lifecycles {
 		if err = lifecycle.Start(); err != nil {
@@ -196,7 +197,7 @@ func (n *Node) Start() error {
 		}
 		started = append(started, lifecycle)
 	}
-	// Check if any lifecycle failed to start.
+	// 检查任何生命周期是否无法启动。
 	if err != nil {
 		n.stopServices(started)
 		n.doClose(nil)
@@ -204,8 +205,8 @@ func (n *Node) Start() error {
 	return err
 }
 
-// Close stops the Node and releases resources acquired in
-// Node constructor New.
+//关闭停止节点并释放获得的资源
+//节点构造函数新。
 func (n *Node) Close() error {
 	n.startStopLock.Lock()
 	defer n.startStopLock.Unlock()
@@ -534,7 +535,7 @@ func (n *Node) Wait() {
 	<-n.stop
 }
 
-// RegisterLifecycle registers the given Lifecycle on the node.
+// registerLifeCycle在节点上注册给定的生命周期。
 func (n *Node) RegisterLifecycle(lifecycle Lifecycle) {
 	n.lock.Lock()
 	defer n.lock.Unlock()
@@ -548,7 +549,7 @@ func (n *Node) RegisterLifecycle(lifecycle Lifecycle) {
 	n.lifecycles = append(n.lifecycles, lifecycle)
 }
 
-// RegisterProtocols adds backend's protocols to the node's p2p server.
+// registerProtocols将Backend的协议添加到节点的P2P服务器中。
 func (n *Node) RegisterProtocols(protocols []p2p.Protocol) {
 	n.lock.Lock()
 	defer n.lock.Unlock()
@@ -559,7 +560,7 @@ func (n *Node) RegisterProtocols(protocols []p2p.Protocol) {
 	n.server.Protocols = append(n.server.Protocols, protocols...)
 }
 
-// RegisterAPIs registers the APIs a service provides on the node.
+// 寄存器登录节点上提供的API。
 func (n *Node) RegisterAPIs(apis []rpc.API) {
 	n.lock.Lock()
 	defer n.lock.Unlock()
@@ -697,12 +698,12 @@ func (n *Node) OpenDatabase(name string, cache, handles int, namespace string, r
 	}
 	return db, err
 }
-
-// OpenDatabaseWithFreezer opens an existing database with the given name (or
-// creates one if no previous can be found) from within the node's data directory,
-// also attaching a chain freezer to it that moves ancient chain data from the
-// database to immutable append-only files. If the node is an ephemeral one, a
-// memory database is returned.
+// opendatabasewithfreezer打开具有给定名称的现有数据库（或
+//如果在节点的数据目录中找不到以前的发现，则创建一个
+//还将链式冰柜附加到它，从而将古代链数据从
+//数据库到不可变的附加文件。如果节点是短暂的，则
+//返回内存数据库。
+// TODO: 打开数据库，返回数据库对象
 func (n *Node) OpenDatabaseWithFreezer(name string, cache, handles int, freezer, namespace string, readonly bool) (ethdb.Database, error) {
 	n.lock.Lock()
 	defer n.lock.Unlock()

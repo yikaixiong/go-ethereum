@@ -83,7 +83,8 @@ type LightEthereum struct {
 	shutdownTracker *shutdowncheck.ShutdownTracker // Tracks if and when the node has shutdown ungracefully
 }
 
-// New creates an instance of the light client.
+// New创建了Light客户端的实例。
+// 创建轻节点
 func New(stack *node.Node, config *ethconfig.Config) (*LightEthereum, error) {
 	chainDb, err := stack.OpenDatabase("lightchaindata", config.DatabaseCache, config.DatabaseHandles, "eth/db/chaindata/", false)
 	if err != nil {

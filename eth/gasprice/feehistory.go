@@ -1,18 +1,18 @@
-// Copyright 2021 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权2021 The Go-Ethereum作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package gasprice
 
@@ -56,7 +56,7 @@ type blockFees struct {
 	err     error
 }
 
-// processedFees contains the results of a processed block and is also used for caching
+// processedfees包含一个加工块的结果，也用于缓存
 type processedFees struct {
 	reward               []*big.Int
 	baseFee, nextBaseFee *big.Int
@@ -80,9 +80,9 @@ func (s sortGasAndReward) Less(i, j int) bool {
 	return s[i].reward.Cmp(s[j].reward) < 0
 }
 
-// processBlock takes a blockFees structure with the blockNumber, the header and optionally
-// the block field filled in, retrieves the block from the backend if not present yet and
-// fills in the rest of the fields.
+// ProcessBlock使用Blocknumber，标头和可选
+//填充的块字段，如果不存在，则从后端检索块，并且
+//填写其余的字段。
 func (oracle *Oracle) processBlock(bf *blockFees, percentiles []float64) {
 	chainconfig := oracle.backend.ChainConfig()
 	if bf.results.baseFee = bf.header.BaseFee; bf.results.baseFee == nil {
