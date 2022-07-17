@@ -1,20 +1,20 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package compiler wraps the ABI compilation outputs.
+//包装编译器包装ABI编译输出。
 package compiler
 
 import (
@@ -22,7 +22,7 @@ import (
 	"fmt"
 )
 
-// --combined-output format
+//  - 合并输出格式
 type solcOutput struct {
 	Contracts map[string]struct {
 		BinRuntime                                  string `json:"bin-runtime"`
@@ -33,7 +33,7 @@ type solcOutput struct {
 	Version string
 }
 
-// solidity v.0.8 changes the way ABI, Devdoc and Userdoc are serialized
+// 坚固v.0.8改变了ABI，DEVDOC和USERDOC的方式
 type solcOutputV8 struct {
 	Contracts map[string]struct {
 		BinRuntime            string `json:"bin-runtime"`
@@ -47,15 +47,15 @@ type solcOutputV8 struct {
 	Version string
 }
 
-// ParseCombinedJSON takes the direct output of a solc --combined-output run and
-// parses it into a map of string contract name to Contract structs. The
-// provided source, language and compiler version, and compiler options are all
-// passed through into the Contract structs.
+// parsecombinedjson进行SOLC的直接输出 - 合并输出运行和
+//将其解析为字符串合同名称的地图，以将其分配给合同结构。这
+//提供的来源，语言和编译器版本以及编译器选项都是
+//通过合同结构。
 //
-// The solc output is expected to contain ABI, source mapping, user docs, and dev docs.
+//预计SOLC输出将包含ABI，源映射，用户文档和开发文档。
 //
-// Returns an error if the JSON is malformed or missing data, or if the JSON
-// embedded within the JSON is malformed.
+//如果JSON畸形或缺少数据，或者JSON返回错误
+//嵌入JSON中的嵌入。
 func ParseCombinedJSON(combinedJSON []byte, source string, languageVersion string, compilerVersion string, compilerOptions string) (map[string]*Contract, error) {
 	var output solcOutput
 	if err := json.Unmarshal(combinedJSON, &output); err != nil {
@@ -96,8 +96,8 @@ func ParseCombinedJSON(combinedJSON []byte, source string, languageVersion strin
 	return contracts, nil
 }
 
-// parseCombinedJSONV8 parses the direct output of solc --combined-output
-// and parses it using the rules from solidity v.0.8.0 and later.
+// parsecombinedjsonv8解析Solc的直接输出 - 合并输出
+//并使用Solidity v.0.8.0及以后的规则对其进行解析。
 func parseCombinedJSONV8(combinedJSON []byte, source string, languageVersion string, compilerVersion string, compilerOptions string) (map[string]*Contract, error) {
 	var output solcOutputV8
 	if err := json.Unmarshal(combinedJSON, &output); err != nil {

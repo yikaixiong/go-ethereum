@@ -1,18 +1,18 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package rlp
 
@@ -27,33 +27,33 @@ import (
 )
 
 var (
-	// Common encoded values.
-	// These are useful when implementing EncodeRLP.
+	// 常见的编码值。
+    //在实现Encoderlp时，这些很有用。
 	EmptyString = []byte{0x80}
 	EmptyList   = []byte{0xC0}
 )
 
 var ErrNegativeBigInt = errors.New("rlp: cannot encode negative big.Int")
 
-// Encoder is implemented by types that require custom
-// encoding rules or want to encode private fields.
+// 编码器由需要自定义的类型实现
+//编码规则或要编码私有字段。
 type Encoder interface {
-	// EncodeRLP should write the RLP encoding of its receiver to w.
-	// If the implementation is a pointer method, it may also be
-	// called for nil pointers.
+	//encoderlp应将其接收器的RLP编码写入w。
+	//如果实现是指针方法，也可能是
+	//要求零指针。
 	//
-	// Implementations should generate valid RLP. The data written is
-	// not verified at the moment, but a future version might. It is
-	// recommended to write only a single value but writing multiple
-	// values or no value at all is also permitted.
+	//实现应生成有效的RLP。编写的数据是
+	//目前尚未验证，但未来版本可能会。这是
+	//建议仅编写一个值，但要写多个值
+	//还允许值或无值。
 	EncodeRLP(io.Writer) error
 }
 
-// Encode writes the RLP encoding of val to w. Note that Encode may
-// perform many small writes in some cases. Consider making w
-// buffered.
+// 编码将val的RLP编码写入w。请注意，编码可能
+//在某些情况下执行许多小写作。考虑制作w
+// 缓冲的。
 //
-// Please see package-level documentation of encoding rules.
+//请参阅编码规则的软件包 - 级文档。
 func Encode(w io.Writer, val interface{}) error {
 	// Optimization: reuse *encBuffer when called by EncodeRLP.
 	if buf := encBufferFromWriter(w); buf != nil {
@@ -68,8 +68,8 @@ func Encode(w io.Writer, val interface{}) error {
 	return buf.writeTo(w)
 }
 
-// EncodeToBytes returns the RLP encoding of val.
-// Please see package-level documentation for the encoding rules.
+// 编码器返回Val的RLP编码。
+//请参阅“编码规则”的软件包 - 级文档。
 func EncodeToBytes(val interface{}) ([]byte, error) {
 	buf := getEncBuffer()
 	defer encBufferPool.Put(buf)
@@ -80,11 +80,11 @@ func EncodeToBytes(val interface{}) ([]byte, error) {
 	return buf.makeBytes(), nil
 }
 
-// EncodeToReader returns a reader from which the RLP encoding of val
-// can be read. The returned size is the total size of the encoded
-// data.
+// 编码器返回读取器，从该读者编码Val
+//可以阅读。返回的大小是编码的总尺寸
+// 数据。
 //
-// Please see the documentation of Encode for the encoding rules.
+//请参阅编码规则的编码文档。
 func EncodeToReader(val interface{}) (size int, r io.Reader, err error) {
 	buf := getEncBuffer()
 	if err := buf.encode(val); err != nil {
@@ -102,14 +102,14 @@ type listhead struct {
 	size   int // total size of encoded data (including list headers)
 }
 
-// encode writes head to the given buffer, which must be at least
-// 9 bytes long. It returns the encoded bytes.
+// 编码写入给定的缓冲区，至少必须是
+// 9个字节长。它返回编码的字节。
 func (head *listhead) encode(buf []byte) []byte {
 	return buf[:puthead(buf, 0xC0, 0xF7, uint64(head.size))]
 }
 
-// headsize returns the size of a list or string header
-// for a value of the given size.
+// 头号返回列表或字符串标头的大小
+//对于给定尺寸的值。
 func headsize(size uint64) int {
 	if size < 56 {
 		return 1
@@ -117,8 +117,8 @@ func headsize(size uint64) int {
 	return 1 + intsize(size)
 }
 
-// puthead writes a list or string header to buf.
-// buf must be at least 9 bytes long.
+// Puthead将列表或字符串标题写入BUF。
+// BUF必须至少9个字节长。
 func puthead(buf []byte, smalltag, largetag byte, size uint64) int {
 	if size < 56 {
 		buf[0] = smalltag + byte(size)
@@ -131,7 +131,7 @@ func puthead(buf []byte, smalltag, largetag byte, size uint64) int {
 
 var encoderInterface = reflect.TypeOf(new(Encoder)).Elem()
 
-// makeWriter creates a writer function for the given type.
+// MakeWriter为给定类型创建一个作者函数。
 func makeWriter(typ reflect.Type, ts rlpstruct.Tags) (writer, error) {
 	kind := typ.Kind()
 	switch {

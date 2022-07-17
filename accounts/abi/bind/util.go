@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package bind
 
@@ -27,8 +27,8 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 )
 
-// WaitMined waits for tx to be mined on the blockchain.
-// It stops waiting when the context is canceled.
+// 等待TX在区块链上开采。
+// 当上下文取消时，它停止等待。
 func WaitMined(ctx context.Context, b DeployBackend, tx *types.Transaction) (*types.Receipt, error) {
 	queryTicker := time.NewTicker(time.Second)
 	defer queryTicker.Stop()
@@ -55,8 +55,8 @@ func WaitMined(ctx context.Context, b DeployBackend, tx *types.Transaction) (*ty
 	}
 }
 
-// WaitDeployed waits for a contract deployment transaction and returns the on-chain
-// contract address when it is mined. It stops waiting when ctx is canceled.
+//WaitDeployed等待合同部署交易并返回链上
+//合同地址在开采时。当CTX取消时，它停止等待。
 func WaitDeployed(ctx context.Context, b DeployBackend, tx *types.Transaction) (common.Address, error) {
 	if tx.To() != nil {
 		return common.Address{}, errors.New("tx is not contract creation")
@@ -68,9 +68,9 @@ func WaitDeployed(ctx context.Context, b DeployBackend, tx *types.Transaction) (
 	if receipt.ContractAddress == (common.Address{}) {
 		return common.Address{}, errors.New("zero address")
 	}
-	// Check that code has indeed been deployed at the address.
-	// This matters on pre-Homestead chains: OOG in the constructor
-	// could leave an empty account behind.
+	// 检查该代码确实已在地址部署。
+	// 这在前链链上很重要：构造函数中的OOG
+	// 可以抛弃一个空帐户。
 	code, err := b.CodeAt(ctx, receipt.ContractAddress, nil)
 	if err == nil && len(code) == 0 {
 		err = ErrNoCodeAfterDeploy

@@ -1,20 +1,20 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2017年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package consensus implements different Ethereum consensus engines.
+//包装共识实现不同的以太坊共识引擎。
 package consensus
 
 import (
@@ -27,61 +27,61 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 )
 
-// ChainHeaderReader defines a small collection of methods needed to access the local
-// blockchain during header verification.
+// ChainheaderReader定义了访问本地所需的少量方法
+// 标题验证期间区块链。
 type ChainHeaderReader interface {
-	// Config retrieves the blockchain's chain configuration.
+	// 配置检索区块链的链配置。
 	Config() *params.ChainConfig
 
-	// CurrentHeader retrieves the current header from the local chain.
+	// CurrentHeader从本地链中检索当前的标头。
 	CurrentHeader() *types.Header
 
-	// GetHeader retrieves a block header from the database by hash and number.
+	// Getheader通过哈希和数字从数据库中检索一个块标头。
 	GetHeader(hash common.Hash, number uint64) *types.Header
 
-	// GetHeaderByNumber retrieves a block header from the database by number.
+	// GetheaderbyNumber按数字从数据库中检索一个块标头。
 	GetHeaderByNumber(number uint64) *types.Header
 
-	// GetHeaderByHash retrieves a block header from the database by its hash.
+	// Getheaderbyhash通过其哈希从数据库中检索一个块标头。
 	GetHeaderByHash(hash common.Hash) *types.Header
 
-	// GetTd retrieves the total difficulty from the database by hash and number.
+	// GETTD通过哈希和数字从数据库中检索总难度。
 	GetTd(hash common.Hash, number uint64) *big.Int
 }
 
-// ChainReader defines a small collection of methods needed to access the local
-// blockchain during header and/or uncle verification.
+// Chainreader定义了访问本地所需的一小部分方法
+//标题和/或叔叔验证期间的区块链。
 type ChainReader interface {
 	ChainHeaderReader
 
-	// GetBlock retrieves a block from the database by hash and number.
+	// getBlock通过哈希和数字从数据库中检索一个块。
 	GetBlock(hash common.Hash, number uint64) *types.Block
 }
 
-// Engine is an algorithm agnostic consensus engine.
+// 发动机是算法不可知的共识引擎。
 type Engine interface {
-	// Author retrieves the Ethereum address of the account that minted the given
-	// block, which may be different from the header's coinbase if a consensus
-	// engine is based on signatures.
+	// 作者检索了铸造给定的帐户的以太坊地址
+//块，如果达成共识，这可能与标题的共同基础不同
+//引擎基于签名。
 	Author(header *types.Header) (common.Address, error)
 
-	// VerifyHeader checks whether a header conforms to the consensus rules of a
-	// given engine. Verifying the seal may be done optionally here, or explicitly
-	// via the VerifySeal method.
+	// verifyheader检查标头是否符合
+	//给定引擎。可以选择地验证密封件，也可以明确完成
+	//通过验证方法。
 	VerifyHeader(chain ChainHeaderReader, header *types.Header, seal bool) error
 
-	// VerifyHeaders is similar to VerifyHeader, but verifies a batch of headers
-	// concurrently. The method returns a quit channel to abort the operations and
-	// a results channel to retrieve the async verifications (the order is that of
-	// the input slice).
+	// verifyheaders类似于verifyheader，但验证了一批标题
+	//同时。该方法返回退出渠道以中止操作，
+	//一个结果渠道检索异步验证（该顺序是
+	//输入切片）。
 	VerifyHeaders(chain ChainHeaderReader, headers []*types.Header, seals []bool) (chan<- struct{}, <-chan error)
 
-	// VerifyUncles verifies that the given block's uncles conform to the consensus
-	// rules of a given engine.
+	//验证肯定验证给定块的叔叔是否符合共识
+	//给定引擎的规则。
 	VerifyUncles(chain ChainReader, block *types.Block) error
 
-	// Prepare initializes the consensus fields of a block header according to the
-	// rules of a particular engine. The changes are executed inline.
+	// 根据块标头的共识字段的初始化。
+	//特定引擎的规则。更改是内联执行的。
 	Prepare(chain ChainHeaderReader, header *types.Header) error
 
 	// Finalize runs any post-transaction state modifications (e.g. block rewards)
@@ -121,10 +121,10 @@ type Engine interface {
 	Close() error
 }
 
-// PoW is a consensus engine based on proof-of-work.
+//POW是基于工作证明的共识引擎。
 type PoW interface {
 	Engine
 
-	// Hashrate returns the current mining hashrate of a PoW consensus engine.
+	//Hashrate返回POW共识发动机的当前采矿哈希拉特。
 	Hashrate() float64
 }

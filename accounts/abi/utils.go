@@ -1,35 +1,35 @@
-// Copyright 2022 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权2022 The Go-Ethereum作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package abi
 
 import "fmt"
 
-// ResolveNameConflict returns the next available name for a given thing.
-// This helper can be used for lots of purposes:
+// ResolvenameConflict返回给定物品的下一个可用名称。
+//该助手可用于许多目的：
 //
-// - In solidity function overloading is supported, this function can fix
-//   the name conflicts of overloaded functions.
-// - In golang binding generation, the parameter(in function, event, error,
-//	 and struct definition) name will be converted to camelcase style which
-//	 may eventually lead to name conflicts.
+//-支持坚固的功能超载，此功能可以修复
+//超载功能的名称冲突。
+//-在Golang绑定生成中，参数（在功能，事件，错误中，
+//和struct定义）名称将转换为骆驼样式
+//最终可能导致姓名冲突。
 //
-// Name conflicts are mostly resolved by adding number suffix.
-// 	 e.g. if the abi contains Methods send, send1
-//   ResolveNameConflict would return send2 for input send.
+//名称冲突主要是通过添加数字后缀来解决的。
+//例如如果ABI包含发送方法，请发送1
+// resolvenameconflict将返回send2以进行输入发送。
 func ResolveNameConflict(rawName string, used func(string) bool) string {
 	name := rawName
 	ok := used(name)

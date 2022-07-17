@@ -1,18 +1,18 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2017年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package abi
 
@@ -26,13 +26,13 @@ import (
 )
 
 var (
-	// MaxUint256 is the maximum value that can be represented by a uint256.
+	// maxuint256是可以由UINT256表示的最大值。
 	MaxUint256 = new(big.Int).Sub(new(big.Int).Lsh(common.Big1, 256), common.Big1)
-	// MaxInt256 is the maximum value that can be represented by a int256.
+	// MaxInt256是INT256可以表示的最大值。
 	MaxInt256 = new(big.Int).Sub(new(big.Int).Lsh(common.Big1, 255), common.Big1)
 )
 
-// ReadInteger reads the integer based on its kind and returns the appropriate value.
+// ReadInteger根据其类型读取整数，并返回适当的值。
 func ReadInteger(typ Type, b []byte) interface{} {
 	if typ.T == UintTy {
 		switch typ.Size {
@@ -90,9 +90,9 @@ func readBool(word []byte) (bool, error) {
 	}
 }
 
-// A function type is simply the address with the function selection signature at the end.
+//函数类型只是末尾具有功能选择签名的地址。
 //
-// readFunctionType enforces that standard by always presenting it as a 24-array (address + sig = 24 bytes)
+// readFunctionType通过始终将其显示为24个阵列（地址 + sig = 24个字节）来强制执行该标准
 func readFunctionType(t Type, word []byte) (funcTy [24]byte, err error) {
 	if t.T != FunctionTy {
 		return [24]byte{}, fmt.Errorf("abi: invalid type in call to make function type byte array")
@@ -105,7 +105,7 @@ func readFunctionType(t Type, word []byte) (funcTy [24]byte, err error) {
 	return
 }
 
-// ReadFixedBytes uses reflection to create a fixed array to be read from.
+// ReadFixedBytes使用反射来创建要读取的固定数组。
 func ReadFixedBytes(t Type, word []byte) (interface{}, error) {
 	if t.T != FixedBytesTy {
 		return nil, fmt.Errorf("abi: invalid type in call to make fixed byte array")
@@ -118,7 +118,7 @@ func ReadFixedBytes(t Type, word []byte) (interface{}, error) {
 
 }
 
-// forEachUnpack iteratively unpack elements.
+// foreachunpack迭代拆开元素。
 func forEachUnpack(t Type, output []byte, start, size int) (interface{}, error) {
 	if size < 0 {
 		return nil, fmt.Errorf("cannot marshal input to array, size is negative (%d)", size)
@@ -188,8 +188,8 @@ func forTupleUnpack(t Type, output []byte) (interface{}, error) {
 	return retval.Interface(), nil
 }
 
-// toGoType parses the output bytes and recursively assigns the value of these bytes
-// into a go type with accordance with the ABI spec.
+// todype解析输出字节并递归分配这些字节的值
+//与ABI规格相符的GO类型。
 func toGoType(index int, t Type, output []byte) (interface{}, error) {
 	if index+32 > len(output) {
 		return nil, fmt.Errorf("abi: cannot marshal in to go type: length insufficient %d require %d", len(output), index+32)
@@ -253,7 +253,7 @@ func toGoType(index int, t Type, output []byte) (interface{}, error) {
 	}
 }
 
-// lengthPrefixPointsTo interprets a 32 byte slice as an offset and then determines which indices to look to decode the type.
+// LengthPrefixPointSto将32个字节切片解释为偏移，然后确定要解码类型的索引。
 func lengthPrefixPointsTo(index int, output []byte) (start int, length int, err error) {
 	bigOffsetEnd := new(big.Int).SetBytes(output[index : index+32])
 	bigOffsetEnd.Add(bigOffsetEnd, common.Big32)
@@ -283,7 +283,7 @@ func lengthPrefixPointsTo(index int, output []byte) (start int, length int, err 
 	return
 }
 
-// tuplePointsTo resolves the location reference for dynamic tuple.
+// TuplePointSto解决动态元组的位置参考。
 func tuplePointsTo(index int, output []byte) (start int, err error) {
 	offset := new(big.Int).SetBytes(output[index : index+32])
 	outputLen := big.NewInt(int64(len(output)))

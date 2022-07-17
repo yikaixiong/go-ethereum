@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package abi
 
@@ -29,7 +29,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-// Type enumerator
+// 类型枚举器
+// 整数，布尔，字符串，切片，数组，元组，地址，固定字节，字节，hash，固定点，函数类型
 const (
 	IntTy byte = iota
 	UintTy
@@ -46,19 +47,19 @@ const (
 	FunctionTy
 )
 
-// Type is the reflection of the supported argument type.
+// 类型是支持参数类型的反映。
 type Type struct {
 	Elem *Type
 	Size int
-	T    byte // Our own type checking
+	T    byte //我们自己的类型检查
 
-	stringKind string // holds the unparsed string for deriving signatures
+	stringKind string // 持有无需启发签名的弦
 
-	// Tuple relative fields
-	TupleRawName  string       // Raw struct name defined in source code, may be empty.
-	TupleElems    []*Type      // Type information of all tuple fields
-	TupleRawNames []string     // Raw field name of all tuple fields
-	TupleType     reflect.Type // Underlying struct of the tuple
+	// 元组相对场
+	TupleRawName  string       // 源代码中定义的原始结构名称可能为空。
+	TupleElems    []*Type      // 输入所有元组领域的信息
+	TupleRawNames []string     // 所有元组字段的原始字段名称
+	TupleType     reflect.Type // 元组的基础结构
 }
 
 var (
@@ -66,31 +67,31 @@ var (
 	typeRegex = regexp.MustCompile("([a-zA-Z]+)(([0-9]+)(x([0-9]+))?)?")
 )
 
-// NewType creates a new reflection type of abi type given in t.
+// NewType创建了t中给出的新反射类型的·ABI类型。·
 func NewType(t string, internalType string, components []ArgumentMarshaling) (typ Type, err error) {
-	// check that array brackets are equal if they exist
+	// 检查数组支架是否存在相等
 	if strings.Count(t, "[") != strings.Count(t, "]") {
 		return Type{}, fmt.Errorf("invalid arg type in abi")
 	}
 	typ.stringKind = t
 
-	// if there are brackets, get ready to go into slice/array mode and
-	// recursively create the type
+	// 如果有括号，请准备进入切片/数组模式，并且
+	//递归创建类型
 	if strings.Count(t, "[") != 0 {
-		// Note internalType can be empty here.
+		//注意内部类型可以在这里为空。
 		subInternal := internalType
 		if i := strings.LastIndex(internalType, "["); i != -1 {
 			subInternal = subInternal[:i]
 		}
-		// recursively embed the type
+		//递归嵌入类型
 		i := strings.LastIndex(t, "[")
 		embeddedType, err := NewType(t[:i], subInternal, components)
 		if err != nil {
 			return Type{}, err
 		}
-		// grab the last cell and create a type from there
+		// 抓住最后一个单元格并从那里创建类型
 		sliced := t[i:]
-		// grab the slice size with regexp
+		// 用RegexP抓住切片尺寸
 		re := regexp.MustCompile("[0-9]+")
 		intz := re.FindAllString(sliced, -1)
 
@@ -113,14 +114,14 @@ func NewType(t string, internalType string, components []ArgumentMarshaling) (ty
 		}
 		return typ, err
 	}
-	// parse the type and size of the abi-type.
+	// 解析ABI型的类型和大小。
 	matches := typeRegex.FindAllStringSubmatch(t, -1)
 	if len(matches) == 0 {
 		return Type{}, fmt.Errorf("invalid type '%v'", t)
 	}
 	parsedType := matches[0]
 
-	// varSize is the size of the variable
+	// varsize是变量的大小
 	var varSize int
 	if len(parsedType[3]) > 0 {
 		var err error
@@ -130,12 +131,12 @@ func NewType(t string, internalType string, components []ArgumentMarshaling) (ty
 		}
 	} else {
 		if parsedType[0] == "uint" || parsedType[0] == "int" {
-			// this should fail because it means that there's something wrong with
-			// the abi type (the compiler should always format it to the size...always)
+			// 这应该失败，因为这意味着有问题
+			// ABI类型（编译器应始终将其格式化为大小...始终）
 			return Type{}, fmt.Errorf("unsupported arg type: %s", t)
 		}
 	}
-	// varType is the parsed abi type
+	// Vartype是解析的ABI类型
 	switch varType := parsedType[1]; varType {
 	case "int":
 		typ.Size = varSize
@@ -223,7 +224,7 @@ func NewType(t string, internalType string, components []ArgumentMarshaling) (ty
 	return
 }
 
-// GetType returns the reflection type of the ABI type.
+// GetType返回ABI类型的反射类型。
 func (t Type) GetType() reflect.Type {
 	switch t.T {
 	case IntTy:
@@ -259,13 +260,13 @@ func (t Type) GetType() reflect.Type {
 	}
 }
 
-// String implements Stringer.
+// 字符串实施纵梁。
 func (t Type) String() (out string) {
 	return t.stringKind
 }
 
 func (t Type) pack(v reflect.Value) ([]byte, error) {
-	// dereference pointer first if it's a pointer
+	// 如果是指针，请首先取消指针
 	v = indirect(v)
 	if err := typeCheck(t, v); err != nil {
 		return nil, err
@@ -345,19 +346,19 @@ func (t Type) pack(v reflect.Value) ([]byte, error) {
 	}
 }
 
-// requireLengthPrefix returns whether the type requires any sort of length
-// prefixing.
+//需求ElengthPrefix返回该类型是否需要任何长度
+//前缀。
 func (t Type) requiresLengthPrefix() bool {
 	return t.T == StringTy || t.T == BytesTy || t.T == SliceTy
 }
 
-// isDynamicType returns true if the type is dynamic.
-// The following types are called “dynamic”:
-// * bytes
-// * string
-// * T[] for any T
-// * T[k] for any dynamic T and any k >= 0
-// * (T1,...,Tk) if Ti is dynamic for some 1 <= i <= k
+// 如果类型是动态的，则ISDYNAGITY型将返回true。
+//以下类型称为“动态”：
+// *字节
+// * 细绳
+// * t []对于任何t
+// * t [k]对于任何动态t和任何k> = 0
+// *（t1，...，tk）如果Ti对于某些1 <= i <= k的动态
 func isDynamicType(t Type) bool {
 	if t.T == TupleTy {
 		for _, elem := range t.TupleElems {
@@ -370,14 +371,14 @@ func isDynamicType(t Type) bool {
 	return t.T == StringTy || t.T == BytesTy || t.T == SliceTy || (t.T == ArrayTy && isDynamicType(*t.Elem))
 }
 
-// getTypeSize returns the size that this type needs to occupy.
-// We distinguish static and dynamic types. Static types are encoded in-place
-// and dynamic types are encoded at a separately allocated location after the
-// current block.
-// So for a static variable, the size returned represents the size that the
-// variable actually occupies.
-// For a dynamic variable, the returned size is fixed 32 bytes, which is used
-// to store the location reference for actual value storage.
+// GetTypesize返回此类型需要占据的大小。
+//我们区分静态和动态类型。静态类型是在现场编码的
+//和动态类型在分别分配的位置进行编码
+//当前块。
+//因此，对于静态变量，返回的大小表示大小
+//变量实际占据。
+//对于动态变量，返回的大小为固定32个字节，用于使用
+//存储实际值存储的位置参考。
 func getTypeSize(t Type) int {
 	if t.T == ArrayTy && !isDynamicType(*t.Elem) {
 		// Recursively calculate type size if it is a nested array
@@ -395,19 +396,19 @@ func getTypeSize(t Type) int {
 	return 32
 }
 
-// isLetter reports whether a given 'rune' is classified as a Letter.
-// This method is copied from reflect/type.go
+// Isletter报告给定的“符文”是否被归类为字母。
+//此方法从Reffle/type.go复制
 func isLetter(ch rune) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch >= utf8.RuneSelf && unicode.IsLetter(ch)
 }
 
-// isValidFieldName checks if a string is a valid (struct) field name or not.
+//ISVALIDFIELDNAME检查字符串是否为有效（struct）字段名称。
 //
-// According to the language spec, a field name should be an identifier.
+//根据语言规范，字段名称应为标识符。
 //
-// identifier = letter { letter | unicode_digit } .
-// letter = unicode_letter | "_" .
-// This method is copied from reflect/type.go
+//标识符=字母{字母|unicode_digit}。
+// letter = unicode_letter |“ _”。
+//此方法从Reffle/type.go复制
 func isValidFieldName(fieldName string) bool {
 	for i, c := range fieldName {
 		if i == 0 && !isLetter(c) {

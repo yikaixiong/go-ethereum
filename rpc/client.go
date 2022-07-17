@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package rpc
 
@@ -40,38 +40,38 @@ var (
 
 const (
 	// Timeouts
-	defaultDialTimeout = 10 * time.Second // used if context has no deadline
-	subscribeTimeout   = 5 * time.Second  // overall timeout eth_subscribe, rpc_modules calls
+	defaultDialTimeout = 10 * time.Second // 如果上下文没有截止日期，则使用
+	subscribeTimeout   = 5 * time.Second  // 总体超时eth_subscribe，rpc_modules调用
 )
 
 const (
-	// Subscriptions are removed when the subscriber cannot keep up.
+	//当订户无法跟上时，删除订阅。
 	//
-	// This can be worked around by supplying a channel with sufficiently sized buffer,
-	// but this can be inconvenient and hard to explain in the docs. Another issue with
-	// buffered channels is that the buffer is static even though it might not be needed
-	// most of the time.
+	//这可以通过提供足够尺寸的缓冲区的频道来解决这个问题，
+	//但是，这在文档中可能会带来不便且难以解释。另一个问题
+	//缓冲通道是缓冲区是静态的，即使可能不需要
+	// 大多数时候。
 	//
-	// The approach taken here is to maintain a per-subscription linked list buffer
-	// shrinks on demand. If the buffer reaches the size below, the subscription is
-	// dropped.
+	//这里采用的方法是维护每订阅的链接列表缓冲区
+	//按需收缩。如果缓冲区达到以下大小，则订阅为
+	//掉落。
 	maxClientSubscriptionBuffer = 20000
 )
 
-// BatchElem is an element in a batch request.
+// Batchelem是批处理请求中的一个元素。
 type BatchElem struct {
 	Method string
 	Args   []interface{}
-	// The result is unmarshaled into this field. Result must be set to a
-	// non-nil pointer value of the desired type, otherwise the response will be
-	// discarded.
+	// 结果未列入该领域。结果必须设置为
+	//所需类型的非nil指针值，否则响应将为
+	//丢弃。
 	Result interface{}
-	// Error is set if the server returns an error for this request, or if
-	// unmarshaling into Result fails. It is not set for I/O errors.
+	// 如果服务器返回此请求的错误，则设置错误
+	//将结果删除失败。它不是为I/O错误设置的。
 	Error error
 }
 
-// Client represents a connection to an RPC server.
+//客户端代表与RPC服务器的连接。
 type Client struct {
 	idgen    func() ID // for subscriptions
 	isHTTP   bool      // connection type: http, ws or ipc
@@ -79,12 +79,12 @@ type Client struct {
 
 	idCounter uint32
 
-	// This function, if non-nil, is called when the connection is lost.
+	// 当连接丢失时，该功能（如果非nil）被调用。
 	reconnectFunc reconnectFunc
 
-	// writeConn is used for writing to the connection on the caller's goroutine. It should
-	// only be accessed outside of dispatch, with the write lock held. The write lock is
-	// taken by sending on reqInit and released by sending on reqSent.
+	// WriteConn用于写入呼叫者Goroutine上的连接。它应该
+	//只有在派遣锁定的情况下才能在派遣外访问。写锁是
+	//通过发送重新数字来拍摄并通过发送reqsent释放。
 	writeConn jsonWriter
 
 	// for dispatch
@@ -149,24 +149,24 @@ func (op *requestOp) wait(ctx context.Context, c *Client) (*jsonrpcMessage, erro
 	}
 }
 
-// Dial creates a new client for the given URL.
+//拨号为给定URL创建一个新客户端。
 //
-// The currently supported URL schemes are "http", "https", "ws" and "wss". If rawurl is a
-// file name with no URL scheme, a local socket connection is established using UNIX
-// domain sockets on supported platforms and named pipes on Windows. If you want to
-// configure transport options, use DialHTTP, DialWebsocket or DialIPC instead.
+//当前支持的URL方案是“ HTTP”，“ HTTPS”，“ WS”和“ WSS”。如果Rawurl是一个
+//没有URL方案的文件名，使用UNIX建立本地插座连接
+//在受支持平台上的域插座，并在Windows上命名为管道。如果你想
+//配置传输选项，改用DialHTTP，DialWebsocket或Dialipc。
 //
-// For websocket connections, the origin is set to the local host name.
+//对于WebSocket连接，原点设置为本地主机名。
 //
-// The client reconnects automatically if the connection is lost.
+//如果连接丢失，客户端会自动重新连接。
 func Dial(rawurl string) (*Client, error) {
 	return DialContext(context.Background(), rawurl)
 }
 
-// DialContext creates a new RPC client, just like Dial.
+// DialContext与Dial一样创建一个新的RPC客户端。
 //
-// The context is used to cancel or time out the initial connection establishment. It does
-// not affect subsequent interactions with the client.
+//上下文用于取消或超时初始连接建立。确实如此
+//不影响与客户的后续交互。
 func DialContext(ctx context.Context, rawurl string) (*Client, error) {
 	u, err := url.Parse(rawurl)
 	if err != nil {
@@ -186,8 +186,8 @@ func DialContext(ctx context.Context, rawurl string) (*Client, error) {
 	}
 }
 
-// ClientFromContext retrieves the client from the context, if any. This can be used to perform
-// 'reverse calls' in a handler method.
+// 客户端FromContext从上下文（如果有）从上下文中检索客户端。这可以用来执行
+//处理程序方法中的“反向调用”。
 func ClientFromContext(ctx context.Context) (*Client, bool) {
 	client, ok := ctx.Value(clientContextKey{}).(*Client)
 	return client, ok
@@ -226,10 +226,10 @@ func initClient(conn ServerCodec, idgen func() ID, services *serviceRegistry) *C
 	return c
 }
 
-// RegisterName creates a service for the given receiver type under the given name. When no
-// methods on the given receiver match the criteria to be either a RPC method or a
-// subscription an error is returned. Otherwise a new service is created and added to the
-// service collection this client provides to the server.
+// registername根据给定名称为给定接收器类型创建服务。当没有
+//给定接收器上的方法匹配标准为RPC方法或
+//订阅返回错误。否则将创建新服务并添加到
+//该客户端向服务器提供的服务集合。
 func (c *Client) RegisterName(name string, receiver interface{}) error {
 	return c.services.registerName(name, receiver)
 }
@@ -239,8 +239,8 @@ func (c *Client) nextID() json.RawMessage {
 	return strconv.AppendUint(nil, uint64(id), 10)
 }
 
-// SupportedModules calls the rpc_modules method, retrieving the list of
-// APIs that are available on the server.
+// 支持modules调用rpc_modules方法，检索列表
+//服务器上可用的API。
 func (c *Client) SupportedModules() (map[string]string, error) {
 	var result map[string]string
 	ctx, cancel := context.WithTimeout(context.Background(), subscribeTimeout)
@@ -249,7 +249,7 @@ func (c *Client) SupportedModules() (map[string]string, error) {
 	return result, err
 }
 
-// Close closes the client, aborting any in-flight requests.
+// 关闭关闭客户端，中止任何机上请求。
 func (c *Client) Close() {
 	if c.isHTTP {
 		return
@@ -261,9 +261,9 @@ func (c *Client) Close() {
 	}
 }
 
-// SetHeader adds a custom HTTP header to the client's requests.
-// This method only works for clients using HTTP, it doesn't have
-// any effect for clients using another transport.
+// Setheader将自定义的HTTP标头添加到客户端的请求中。
+//此方法仅适用于使用HTTP的客户端，它没有
+//对客户使用另一台运输的任何效果。
 func (c *Client) SetHeader(key, value string) {
 	if !c.isHTTP {
 		return
@@ -274,21 +274,21 @@ func (c *Client) SetHeader(key, value string) {
 	conn.mu.Unlock()
 }
 
-// Call performs a JSON-RPC call with the given arguments and unmarshals into
-// result if no error occurred.
+// 呼叫执行带有给定参数的JSON-RPC呼叫，并将其删除
+//如果未发生错误，结果。
 //
-// The result must be a pointer so that package json can unmarshal into it. You
-// can also pass nil, in which case the result is ignored.
+//结果必须是一个指针，以便软件包JSON可以将其删除。你
+//也可以通过零，在这种情况下，结果将被忽略。
 func (c *Client) Call(result interface{}, method string, args ...interface{}) error {
 	ctx := context.Background()
 	return c.CallContext(ctx, result, method, args...)
 }
 
-// CallContext performs a JSON-RPC call with the given arguments. If the context is
-// canceled before the call has successfully returned, CallContext returns immediately.
+// CallContext用给定参数执行JSON-RPC调用。如果上下文是
+//在通话成功返回之前已取消，CallContext立即返回。
 //
-// The result must be a pointer so that package json can unmarshal into it. You
-// can also pass nil, in which case the result is ignored.
+//结果必须是一个指针，以便软件包JSON可以将其删除。你
+//也可以通过零，在这种情况下，结果将被忽略。
 func (c *Client) CallContext(ctx context.Context, result interface{}, method string, args ...interface{}) error {
 	if result != nil && reflect.TypeOf(result).Kind() != reflect.Ptr {
 		return fmt.Errorf("call result parameter must be pointer or nil interface: %v", result)
@@ -321,27 +321,27 @@ func (c *Client) CallContext(ctx context.Context, result interface{}, method str
 	}
 }
 
-// BatchCall sends all given requests as a single batch and waits for the server
-// to return a response for all of them.
+// batchCall将所有给定的请求发送为单批次，并等待服务器
+//返回所有响应。
 //
-// In contrast to Call, BatchCall only returns I/O errors. Any error specific to
-// a request is reported through the Error field of the corresponding BatchElem.
+//与呼叫相反，batchCall仅返回I/O错误。任何特定于
+//通过相应batchelem的错误字段报告请求。
 //
-// Note that batch calls may not be executed atomically on the server side.
+//请注意，批次调用可能不会在服务器端原子执行。
 func (c *Client) BatchCall(b []BatchElem) error {
 	ctx := context.Background()
 	return c.BatchCallContext(ctx, b)
 }
 
-// BatchCallContext sends all given requests as a single batch and waits for the server
-// to return a response for all of them. The wait duration is bounded by the
-// context's deadline.
+// batchcallcontext将所有给定的请求发送为单个批次，并等待服务器
+//返回所有响应。等待时间由
+//上下文的截止日期。
 //
-// In contrast to CallContext, BatchCallContext only returns errors that have occurred
-// while sending the request. Any error specific to a request is reported through the
-// Error field of the corresponding BatchElem.
+//与CallContext相反，BatchCallContext仅返回发生的错误
+//发送请求时。任何特定于请求的错误均通过
+//相应batchelem的错误字段。
 //
-// Note that batch calls may not be executed atomically on the server side.
+//请注意，批次调用可能不会在服务器端原子执行。
 func (c *Client) BatchCallContext(ctx context.Context, b []BatchElem) error {
 	var (
 		msgs = make([]*jsonrpcMessage, len(b))
@@ -392,7 +392,7 @@ func (c *Client) BatchCallContext(ctx context.Context, b []BatchElem) error {
 	return err
 }
 
-// Notify sends a notification, i.e. a method call that doesn't expect a response.
+// 通知发送通知，即不会期望响应的方法调用。
 func (c *Client) Notify(ctx context.Context, method string, args ...interface{}) error {
 	op := new(requestOp)
 	msg, err := c.newMessage(method, args...)
@@ -407,29 +407,29 @@ func (c *Client) Notify(ctx context.Context, method string, args ...interface{})
 	return c.send(ctx, op, msg)
 }
 
-// EthSubscribe registers a subscription under the "eth" namespace.
+// EthSubscriber在“ ETH”名称空间下注册订阅。
 func (c *Client) EthSubscribe(ctx context.Context, channel interface{}, args ...interface{}) (*ClientSubscription, error) {
 	return c.Subscribe(ctx, "eth", channel, args...)
 }
 
-// ShhSubscribe registers a subscription under the "shh" namespace.
-// Deprecated: use Subscribe(ctx, "shh", ...).
+// Shhsubscribe在“ SHH”名称空间下注册了订阅。
+//弃用：使用订阅（ctx，“ shh”，...）。
 func (c *Client) ShhSubscribe(ctx context.Context, channel interface{}, args ...interface{}) (*ClientSubscription, error) {
 	return c.Subscribe(ctx, "shh", channel, args...)
 }
 
-// Subscribe calls the "<namespace>_subscribe" method with the given arguments,
-// registering a subscription. Server notifications for the subscription are
-// sent to the given channel. The element type of the channel must match the
-// expected type of content returned by the subscription.
+// 订阅给定参数的“ <名称空间> _subscribe”方法，
+//注册订阅。订阅的服务器通知是
+//发送到给定的频道。通道的元素类型必须与
+//订阅返回的内容的预期类型。
 //
-// The context argument cancels the RPC request that sets up the subscription but has no
-// effect on the subscription after Subscribe has returned.
+//上下文参数取消设置订阅但没有的RPC请求
+//订阅返回后对订阅的影响。
 //
-// Slow subscribers will be dropped eventually. Client buffers up to 20000 notifications
-// before considering the subscriber dead. The subscription Err channel will receive
-// ErrSubscriptionQueueOverflow. Use a sufficiently large buffer on the channel or ensure
-// that the channel usually has at least one reader to prevent this issue.
+//慢速订阅者最终将被删除。客户缓冲至20000年通知
+//在考虑订户死亡之前。订阅错误通道将接收
+// errsubscriptionqueueoverflow。在通道上使用足够大的缓冲区或确保
+//该频道通常至少有一个读者来防止此问题。
 func (c *Client) Subscribe(ctx context.Context, namespace string, channel interface{}, args ...interface{}) (*ClientSubscription, error) {
 	// Check type of channel first.
 	chanVal := reflect.ValueOf(channel)
@@ -475,8 +475,8 @@ func (c *Client) newMessage(method string, paramsIn ...interface{}) (*jsonrpcMes
 	return msg, nil
 }
 
-// send registers op with the dispatch loop, then sends msg on the connection.
-// if sending fails, op is deregistered.
+// 将寄存器OP带有调度循环，然后在连接上发送味精。
+//如果发送失败，则将OP进行检查。
 func (c *Client) send(ctx context.Context, op *requestOp, msg interface{}) error {
 	select {
 	case c.reqInit <- op:
@@ -534,9 +534,9 @@ func (c *Client) reconnect(ctx context.Context) error {
 	}
 }
 
-// dispatch is the main loop of the client.
-// It sends read messages to waiting calls to Call and BatchCall
-// and subscription notifications to registered subscriptions.
+// 调度是客户端的主要循环。
+//它将读取消息发送到等待通话和batchcall
+//以及注册订阅的订阅通知。
 func (c *Client) dispatch(codec ServerCodec) {
 	var (
 		lastOp      *requestOp  // tracks last send operation
@@ -616,7 +616,7 @@ func (c *Client) dispatch(codec ServerCodec) {
 	}
 }
 
-// drainRead drops read messages until an error occurs.
+// 排水滴滴读取消息，直到发生错误。
 func (c *Client) drainRead() {
 	for {
 		select {

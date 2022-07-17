@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package rpc
 
@@ -46,8 +46,8 @@ type subscriptionResult struct {
 	Result json.RawMessage `json:"result,omitempty"`
 }
 
-// A value of this type can a JSON-RPC request, notification, successful response or
-// error response. Which one it is depends on the fields.
+// 这种类型的值可以是JSON-RPC请求，通知，成功响应或
+//错误响应。哪一个取决于字段。
 type jsonrpcMessage struct {
 	Version string          `json:"jsonrpc,omitempty"`
 	ID      json.RawMessage `json:"id,omitempty"`
@@ -154,15 +154,15 @@ type deadlineCloser interface {
 	SetWriteDeadline(time.Time) error
 }
 
-// ConnRemoteAddr wraps the RemoteAddr operation, which returns a description
-// of the peer address of a connection. If a Conn also implements ConnRemoteAddr, this
-// description is used in log messages.
+// connremoteaddr包裹了remoteaddr操作，该操作返回描述
+//连接的同伴地址。如果一个conn也实现了connremoteaddr，则
+//描述在日志消息中使用。
 type ConnRemoteAddr interface {
 	RemoteAddr() string
 }
 
-// jsonCodec reads and writes JSON-RPC messages to the underlying connection. It also has
-// support for parsing arguments and serializing (result) objects.
+// JSONCODEC读取并将JSON-RPC消息写入基础连接。它也有
+//支持解析参数和序列化（结果）对象。
 type jsonCodec struct {
 	remote  string
 	closer  sync.Once                 // close closed channel once
@@ -173,9 +173,9 @@ type jsonCodec struct {
 	conn    deadlineCloser
 }
 
-// NewFuncCodec creates a codec which uses the given functions to read and write. If conn
-// implements ConnRemoteAddr, log messages will use it to include the remote address of
-// the connection.
+// newfunccodec创建一个编解码器，该编解码器使用给定的函数读写。如果conn
+//实现Connremoteaddr，日志消息将使用它来包括
+// 连接。
 func NewFuncCodec(conn deadlineCloser, encode, decode func(v interface{}) error) ServerCodec {
 	codec := &jsonCodec{
 		closeCh: make(chan interface{}),

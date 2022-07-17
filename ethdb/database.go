@@ -1,34 +1,34 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package ethdb defines the interfaces for an Ethereum data store.
+//软件包ETHDB定义以太坊数据存储的接口。
 package ethdb
 
 import "io"
 
-// KeyValueReader wraps the Has and Get method of a backing data store.
+// KeyValueReader包装了备用数据存储的HAS和获取方法。
 type KeyValueReader interface {
-	// Has retrieves if a key is present in the key-value data store.
+	// 如果键值数据存储中存在键，则可以进行检索。
 	Has(key []byte) (bool, error)
 
-	// Get retrieves the given key if it's present in the key-value data store.
+	// 如果给定的键在键值数据存储中，请获取检索。
 	Get(key []byte) ([]byte, error)
 }
 
-// KeyValueWriter wraps the Put method of a backing data store.
+// KeyValueWriter包装了备用数据存储的PUT方法。
 type KeyValueWriter interface {
 	// Put inserts the given value into the key-value data store.
 	Put(key []byte, value []byte) error
@@ -43,15 +43,15 @@ type KeyValueStater interface {
 	Stat(property string) (string, error)
 }
 
-// Compacter wraps the Compact method of a backing data store.
+// Compacter包装了备用数据存储的紧凑方法。
 type Compacter interface {
-	// Compact flattens the underlying data store for the given key range. In essence,
-	// deleted and overwritten versions are discarded, and the data is rearranged to
-	// reduce the cost of operations needed to access them.
-	//
-	// A nil start is treated as a key before all keys in the data store; a nil limit
-	// is treated as a key after all keys in the data store. If both is nil then it
-	// will compact entire data store.
+	//紧凑型给定关键范围的基础数据存储。在本质上，
+//删除和覆盖版本被丢弃，数据重新排列为
+//降低访问它们所需的运营成本。
+//
+//零启动被视为数据存储中所有键之前的钥匙；零限制
+//被视为数据存储中所有键后的钥匙。如果两者都是零，那
+//将紧凑整个数据存储。
 	Compact(start []byte, limit []byte) error
 }
 
@@ -146,29 +146,30 @@ type AncientStater interface {
 	AncientDatadir() (string, error)
 }
 
-// Reader contains the methods required to read data from both key-value as well as
-// immutable ancient data.
+//读者包含读取键值数据所需的方法以及
+//不变的古代数据。
 type Reader interface {
 	KeyValueReader
 	AncientReader
 }
 
-// Writer contains the methods required to write data to both key-value as well as
-// immutable ancient data.
+// Writer包含将数据写入键值所需的方法以及
+//不变的古代数据。
 type Writer interface {
 	KeyValueWriter
 	AncientWriter
 }
 
-// Stater contains the methods required to retrieve states from both key-value as well as
-// immutable ancient data.
+
+// Stater包含从键值和
+//不变的古代数据。
 type Stater interface {
 	KeyValueStater
 	AncientStater
 }
 
-// AncientStore contains all the methods required to allow handling different
-// ancient data stores backing immutable chain data store.
+//古店包含允许处理不同所需的所有方法
+//古代数据存储备份不变的链数据存储。
 type AncientStore interface {
 	AncientReader
 	AncientWriter
@@ -176,8 +177,8 @@ type AncientStore interface {
 	io.Closer
 }
 
-// Database contains all the methods required by the high level database to not
-// only access the key-value data store but also the chain freezer.
+//数据库包含高级数据库所需的所有方法
+//仅访问键值数据存储，还可以访问链条冰柜。
 type Database interface {
 	Reader
 	Writer

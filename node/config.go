@@ -1,18 +1,18 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package node
 
@@ -42,27 +42,27 @@ const (
 	datadirNodeDatabase    = "nodes"              // Path within the datadir to store the node infos
 )
 
-// Config represents a small collection of configuration values to fine tune the
-// P2P network layer of a protocol stack. These values can be further extended by
-// all registered services.
+//配置代表一小部分配置值，以微调
+//协议堆栈的P2P网络层。这些值可以进一步扩展
+//所有注册服务。
 type Config struct {
-	// Name sets the instance name of the node. It must not contain the / character and is
-	// used in the devp2p node identifier. The instance name of geth is "geth". If no
-	// value is specified, the basename of the current executable is used.
+	// 名称设置节点的实例名称。它不得包含 /角色，并且
+	//在DEVP2P节点标识符中使用。Geth的实例名称是“ Geth”。如果不
+	//指定值，使用当前可执行文件的BASENAME。
 	Name string `toml:"-"`
 
-	// UserIdent, if set, is used as an additional component in the devp2p node identifier.
+	// 用户植物（如果设置）用作DEVP2P节点标识符中的附加组件。
 	UserIdent string `toml:",omitempty"`
 
-	// Version should be set to the version number of the program. It is used
-	// in the devp2p node identifier.
+	// 版本应设置为程序的版本号。它被使用
+//在DevP2P节点标识符中。
 	Version string `toml:"-"`
 
-	// DataDir is the file system folder the node should use for any data storage
-	// requirements. The configured data directory will not be directly shared with
-	// registered services, instead those can use utility methods to create/access
-	// databases or flat files. This enables ephemeral nodes which can fully reside
-	// in memory.
+	// datadir是节点应用于任何数据存储的文件系统文件夹
+// 要求。配置的数据目录将不会直接与
+//注册服务，相反，这些服务可以使用实用方法来创建/访问
+//数据库或平面文件。这使得可以完全驻留的短暂节点
+// 在记忆中。
 	DataDir string
 
 	// Configuration of peer-to-peer networking.
@@ -205,9 +205,9 @@ type Config struct {
 	JWTSecret string `toml:",omitempty"`
 }
 
-// IPCEndpoint resolves an IPC endpoint based on a configured value, taking into
-// account the set data folders as well as the designated platform we're currently
-// running on.
+// ipcendpoint基于配置的值解决IPC端点，
+//帐户“设置数据文件夹”以及我们当前的指定平台
+//奔跑。
 func (c *Config) IPCEndpoint() string {
 	// Short circuit if IPC has not been enabled
 	if c.IPCPath == "" {
@@ -230,7 +230,7 @@ func (c *Config) IPCEndpoint() string {
 	return c.IPCPath
 }
 
-// NodeDB returns the path to the discovery node database.
+// NODEDB返回到发现节点数据库的路径。
 func (c *Config) NodeDB() string {
 	if c.DataDir == "" {
 		return "" // ephemeral
@@ -238,7 +238,7 @@ func (c *Config) NodeDB() string {
 	return c.ResolvePath(datadirNodeDatabase)
 }
 
-// DefaultIPCEndpoint returns the IPC path used by default.
+// DefaultIpcendPoint返回默认使用的IPC路径。
 func DefaultIPCEndpoint(clientIdentifier string) string {
 	if clientIdentifier == "" {
 		clientIdentifier = strings.TrimSuffix(filepath.Base(os.Args[0]), ".exe")
@@ -250,8 +250,8 @@ func DefaultIPCEndpoint(clientIdentifier string) string {
 	return config.IPCEndpoint()
 }
 
-// HTTPEndpoint resolves an HTTP endpoint based on the configured host interface
-// and port parameters.
+// httpendpoint基于配置的主机接口解决HTTP端点
+//和端口参数。
 func (c *Config) HTTPEndpoint() string {
 	if c.HTTPHost == "" {
 		return ""
@@ -259,14 +259,14 @@ func (c *Config) HTTPEndpoint() string {
 	return fmt.Sprintf("%s:%d", c.HTTPHost, c.HTTPPort)
 }
 
-// DefaultHTTPEndpoint returns the HTTP endpoint used by default.
+// defaulthttpendpoint返回默认使用的HTTP端点。
 func DefaultHTTPEndpoint() string {
 	config := &Config{HTTPHost: DefaultHTTPHost, HTTPPort: DefaultHTTPPort, AuthPort: DefaultAuthPort}
 	return config.HTTPEndpoint()
 }
 
-// WSEndpoint resolves a websocket endpoint based on the configured host interface
-// and port parameters.
+// wsendpoint基于配置的主机接口解决Websocket端点
+//和端口参数。
 func (c *Config) WSEndpoint() string {
 	if c.WSHost == "" {
 		return ""
@@ -274,19 +274,19 @@ func (c *Config) WSEndpoint() string {
 	return fmt.Sprintf("%s:%d", c.WSHost, c.WSPort)
 }
 
-// DefaultWSEndpoint returns the websocket endpoint used by default.
+//DefaultWsendPoint返回默认使用的WebSocket端点。
 func DefaultWSEndpoint() string {
 	config := &Config{WSHost: DefaultWSHost, WSPort: DefaultWSPort}
 	return config.WSEndpoint()
 }
 
-// ExtRPCEnabled returns the indicator whether node enables the external
-// RPC(http, ws or graphql).
+// 解释器返回指示灯是否启用外部
+// RPC（HTTP，WS或GraphQL）。
 func (c *Config) ExtRPCEnabled() bool {
 	return c.HTTPHost != "" || c.WSHost != ""
 }
 
-// NodeName returns the devp2p node identifier.
+// Nodename返回DEVP2P节点标识符。
 func (c *Config) NodeName() string {
 	name := c.name()
 	// Backwards compatibility: previous versions used title-cased "Geth", keep that.
@@ -356,9 +356,9 @@ func (c *Config) instanceDir() string {
 	return filepath.Join(c.DataDir, c.name())
 }
 
-// NodeKey retrieves the currently configured private key of the node, checking
-// first any manually set key, falling back to the one found in the configured
-// data folder. If no key can be found, a new one is generated.
+// Nodekey检索节点的当前配置的私钥，检查
+//首先，任何手动设置的键，掉回了配置的键
+//数据文件夹。如果找不到钥匙，则会生成一个新的键。
 func (c *Config) NodeKey() *ecdsa.PrivateKey {
 	// Use any specifically configured key.
 	if c.P2P.PrivateKey != nil {
@@ -394,18 +394,18 @@ func (c *Config) NodeKey() *ecdsa.PrivateKey {
 	return key
 }
 
-// StaticNodes returns a list of node enode URLs configured as static nodes.
+// staticnodes返回配置为静态节点的节点eNODE URL的列表。
 func (c *Config) StaticNodes() []*enode.Node {
 	return c.parsePersistentNodes(&c.staticNodesWarning, c.ResolvePath(datadirStaticNodes))
 }
 
-// TrustedNodes returns a list of node enode URLs configured as trusted nodes.
+// TrustedNodes返回一个配置为受信任节点的节点eNODE URL的列表。
 func (c *Config) TrustedNodes() []*enode.Node {
 	return c.parsePersistentNodes(&c.trustedNodesWarning, c.ResolvePath(datadirTrustedNodes))
 }
 
-// parsePersistentNodes parses a list of discovery node URLs loaded from a .json
-// file from within the data directory.
+// 解析列表解析从.json加载的发现节点URL的列表
+//来自数据目录中的文件。
 func (c *Config) parsePersistentNodes(w *bool, path string) []*enode.Node {
 	// Short circuit if no node config is present
 	if c.DataDir == "" {
@@ -438,7 +438,7 @@ func (c *Config) parsePersistentNodes(w *bool, path string) []*enode.Node {
 	return nodes
 }
 
-// KeyDirConfig determines the settings for keydirectory
+// keydirconfig确定keyDirectory的设置
 func (c *Config) KeyDirConfig() (string, error) {
 	var (
 		keydir string

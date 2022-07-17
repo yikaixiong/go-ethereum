@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package abi
 
@@ -41,14 +41,14 @@ const (
 	Function
 )
 
-// Method represents a callable given a `Name` and whether the method is a constant.
-// If the method is `Const` no transaction needs to be created for this
-// particular Method call. It can easily be simulated using a local VM.
-// For example a `Balance()` method only needs to retrieve something
-// from the storage and therefore requires no Tx to be sent to the
-// network. A method such as `Transact` does require a Tx and thus will
-// be flagged `false`.
-// Input specifies the required input parameters for this gives method.
+//方法代表给定的“名称”以及该方法是否常数。
+//如果该方法为`const`无需创建交易
+//特定的方法调用。可以使用本地VM轻松模拟它。
+//例如``balance（）`方法只需要检索某些东西
+//从存储中，因此不需要将TX发送到
+// 网络。诸如“ Transact”之类的方法确实需要TX，因此将
+//被标记为“ false”。
+//输入指定提供方法所需的输入参数。
 type Method struct {
 	// Name is the method name used for internal representation. It's derived from
 	// the raw name and a suffix will be added in the case of a function overload.
@@ -87,10 +87,10 @@ type Method struct {
 	ID []byte
 }
 
-// NewMethod creates a new Method.
-// A method should always be created using NewMethod.
-// It also precomputes the sig representation and the string representation
-// of the method.
+// 新方法创建了一种新方法。
+//应始终使用新方法创建一种方法。
+//还预先计算SIG表示和字符串表示
+//该方法。
 func NewMethod(name string, rawName string, funType FunctionType, mutability string, isConst, isPayable bool, inputs Arguments, outputs Arguments) Method {
 	var (
 		types       = make([]string, len(inputs))
@@ -155,13 +155,13 @@ func (method Method) String() string {
 	return method.str
 }
 
-// IsConstant returns the indicator whether the method is read-only.
+// ISCONSTANT返回指标该方法是否仅读取。
 func (method Method) IsConstant() bool {
 	return method.StateMutability == "view" || method.StateMutability == "pure" || method.Constant
 }
 
-// IsPayable returns the indicator whether the method can process
-// plain ether transfers.
+// 可以偿还该方法是否可以处理的指标
+//普通的以太转移。
 func (method Method) IsPayable() bool {
 	return method.StateMutability == "payable" || method.Payable
 }

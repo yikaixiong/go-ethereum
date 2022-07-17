@@ -1,22 +1,21 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Contains all the wrappers from the node package to support client side node
-// management on mobile platforms.
-
+//包含来自节点软件包中的所有包装器，以支持客户端节点
+//移动平台上的管理。
 package geth
 
 import (
@@ -37,10 +36,10 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 )
 
-// NodeConfig represents the collection of configuration values to fine tune the Geth
-// node embedded into a mobile process. The available values are a subset of the
-// entire API provided by go-ethereum to reduce the maintenance surface and dev
-// complexity.
+// nodeconfig表示配置值的收集以微调客气
+//嵌入到移动过程中的节点。可用值是
+// Go-Ethereum提供的整个API以减少维护表面和开发
+//复杂性。
 type NodeConfig struct {
 	// Bootstrap nodes used to establish connectivity with the rest of the network.
 	BootstrapNodes *Enodes
@@ -111,7 +110,7 @@ type Node struct {
 	node *node.Node
 }
 
-// NewNode creates and configures a new Geth node.
+// NewNode创建并配置了新的Geth节点。
 func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 	// If no or partial configurations were specified, use defaults
 	if config == nil {
@@ -208,13 +207,13 @@ func NewNode(datadir string, config *NodeConfig) (stack *Node, _ error) {
 	return &Node{rawStack}, nil
 }
 
-// Close terminates a running node along with all it's services, tearing internal state
-// down. It is not possible to restart a closed node.
+// 关闭终止一个运行节点以及所有它的服务，撕裂了内部状态
+// 下。不可能重新启动封闭节点。
 func (n *Node) Close() error {
 	return n.node.Close()
 }
 
-// Start creates a live P2P node and starts running it.
+// 开始创建一个实时P2P节点并开始运行它。
 func (n *Node) Start() error {
 	// TODO: recreate the node so it can be started multiple times
 	return n.node.Start()

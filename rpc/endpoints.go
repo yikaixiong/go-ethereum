@@ -23,7 +23,7 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 )
 
-// StartIPCEndpoint starts an IPC endpoint.
+// StartipCendPoint启动IPC端点。
 func StartIPCEndpoint(ipcEndpoint string, apis []API) (net.Listener, *Server, error) {
 	// Register all the APIs exposed by the services.
 	var (

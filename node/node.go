@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package node
 
@@ -232,10 +232,10 @@ func (n *Node) Close() error {
 	}
 }
 
-// doClose releases resources acquired by New(), collecting errors.
+// Doclose释放了新（）获得的资源，收集错误。
 func (n *Node) doClose(errs []error) error {
-	// Close databases. This needs the lock because it needs to
-	// synchronize with OpenDatabase*.
+	// 关闭数据库。这需要锁，因为它需要
+//与opendatabase*同步。
 	n.lock.Lock()
 	n.state = closedState
 	errs = append(errs, n.closeDatabases()...)
@@ -267,7 +267,7 @@ func (n *Node) doClose(errs []error) error {
 	}
 }
 
-// openEndpoints starts all network and RPC endpoints.
+// OpenEndPoints启动所有网络和RPC端点。
 func (n *Node) openEndpoints() error {
 	// start networking endpoints
 	n.log.Info("Starting peer-to-peer node", "instance", n.server.Name)
@@ -283,7 +283,7 @@ func (n *Node) openEndpoints() error {
 	return err
 }
 
-// containsLifecycle checks if 'lfs' contains 'l'.
+// containsLifeCycle检查“ LFS”是否包含“ L”。
 func containsLifecycle(lfs []Lifecycle, l Lifecycle) bool {
 	for _, obj := range lfs {
 		if obj == l {
@@ -293,8 +293,8 @@ func containsLifecycle(lfs []Lifecycle, l Lifecycle) bool {
 	return false
 }
 
-// stopServices terminates running services, RPC and p2p networking.
-// It is the inverse of Start.
+// StopServices终止运行服务，RPC和P2P网络。
+//这是起点的倒数。
 func (n *Node) stopServices(running []Lifecycle) error {
 	n.stopRPC()
 
@@ -344,9 +344,9 @@ func (n *Node) closeDataDir() {
 	}
 }
 
-// obtainJWTSecret loads the jwt-secret, either from the provided config,
-// or from the default location. If neither of those are present, it generates
-// a new secret and stores to the default location.
+//获取JWTSecret加载JWT-secret，要么从提供的配置，
+//或默认位置。如果两个都不存在，它会生成
+//一个新的秘密，并存储默认位置。
 func (n *Node) obtainJWTSecret(cliParam string) ([]byte, error) {
 	fileName := cliParam
 	if len(fileName) == 0 {
@@ -378,9 +378,9 @@ func (n *Node) obtainJWTSecret(cliParam string) ([]byte, error) {
 	return jwtSecret, nil
 }
 
-// startRPC is a helper method to configure all the various RPC endpoints during node
-// startup. It's not meant to be called at any time afterwards as it makes certain
-// assumptions about the state of the node.
+// startrpc是一种辅助方法，用于在节点期间配置所有各种RPC端点
+// 启动。这并不是要在此后的任何时候被调用，因为它可以确定
+//关于节点状态的假设。
 func (n *Node) startRPC() error {
 	if err := n.startInProc(); err != nil {
 		return err
@@ -515,7 +515,7 @@ func (n *Node) stopRPC() {
 	n.stopInProc()
 }
 
-// startInProc registers all RPC APIs on the inproc server.
+// StartInProc在InProc服务器上注册所有RPC API。
 func (n *Node) startInProc() error {
 	for _, api := range n.rpcAPIs {
 		if err := n.inprocHandler.RegisterName(api.Namespace, api.Service); err != nil {
@@ -525,7 +525,7 @@ func (n *Node) startInProc() error {
 	return nil
 }
 
-// stopInProc terminates the in-process RPC endpoint.
+// StopInProc终止了过程中的RPC端点。
 func (n *Node) stopInProc() {
 	n.inprocHandler.Stop()
 }
@@ -571,8 +571,8 @@ func (n *Node) RegisterAPIs(apis []rpc.API) {
 	n.rpcAPIs = append(n.rpcAPIs, apis...)
 }
 
-// GetAPIs return two sets of APIs, both the ones that do not require
-// authentication, and the complete set
+// Getapis返回两组API，这两个API都不需要
+//身份验证和完整集
 func (n *Node) GetAPIs() (unauthenticated, all []rpc.API) {
 	for _, api := range n.rpcAPIs {
 		if !api.Authenticated {
@@ -582,10 +582,10 @@ func (n *Node) GetAPIs() (unauthenticated, all []rpc.API) {
 	return unauthenticated, n.rpcAPIs
 }
 
-// RegisterHandler mounts a handler on the given path on the canonical HTTP server.
+// registerHandler将处理程序安装在规范HTTP服务器上的给定路径上。
 //
-// The name of the handler is shown in a log message when the HTTP server starts
-// and should be a descriptive term for the service provided by the handler.
+// HTTP服务器启动时，处理程序的名称显示在日志消息中
+//，应该是处理程序提供的服务的描述性术语。
 func (n *Node) RegisterHandler(name, path string, handler http.Handler) {
 	n.lock.Lock()
 	defer n.lock.Unlock()
@@ -598,7 +598,7 @@ func (n *Node) RegisterHandler(name, path string, handler http.Handler) {
 	n.http.handlerNames[path] = name
 }
 
-// Attach creates an RPC client attached to an in-process API handler.
+// 附件创建附加在程序内API处理程序上的RPC客户端。
 func (n *Node) Attach() (*rpc.Client, error) {
 	return rpc.DialInProc(n.inprocHandler), nil
 }
@@ -619,9 +619,9 @@ func (n *Node) Config() *Config {
 	return n.config
 }
 
-// Server retrieves the currently running P2P network layer. This method is meant
-// only to inspect fields of the currently running server. Callers should not
-// start or stop the returned server.
+//服务器检索当前运行的P2P网络层。这种方法是指
+//仅检查当前运行服务器的字段。呼叫者不应该
+//启动或停止返回的服务器。
 func (n *Node) Server() *p2p.Server {
 	n.lock.Lock()
 	defer n.lock.Unlock()
@@ -655,8 +655,8 @@ func (n *Node) IPCEndpoint() string {
 	return n.ipc.endpoint
 }
 
-// HTTPEndpoint returns the URL of the HTTP server. Note that this URL does not
-// contain the JSON-RPC path prefix set by HTTPPathPrefix.
+// httpendpoint返回HTTP服务器的URL。请注意，此URL没有
+//包含HTTPPATHPREFIX设置的JSON-RPC路径前缀。
 func (n *Node) HTTPEndpoint() string {
 	return "http://" + n.http.listenAddr()
 }
@@ -675,9 +675,9 @@ func (n *Node) EventMux() *event.TypeMux {
 	return n.eventmux
 }
 
-// OpenDatabase opens an existing database with the given name (or creates one if no
-// previous can be found) from within the node's instance directory. If the node is
-// ephemeral, a memory database is returned.
+// opendatabase打开具有给定名称的现有数据库（或者如果没有，则创建一个数据库
+//可以从节点的实例目录中找到上一个。如果节点为
+//短暂的，返回存储器数据库。
 func (n *Node) OpenDatabase(name string, cache, handles int, namespace string, readonly bool) (ethdb.Database, error) {
 	n.lock.Lock()
 	defer n.lock.Unlock()

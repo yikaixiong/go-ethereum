@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package console
 
@@ -46,14 +46,14 @@ var (
 	exit           = regexp.MustCompile(`^\s*exit\s*;*\s*$`)
 )
 
-// HistoryFile is the file within the data directory to store input scrollback.
+// HistoryFile是数据目录中的文件，用于存储输入卷轴。
 const HistoryFile = "history"
 
-// DefaultPrompt is the default prompt line prefix to use for user input querying.
+// DefaultPrompt是用于用户输入查询的默认提示线前缀。
 const DefaultPrompt = "> "
 
-// Config is the collection of configurations to fine tune the behavior of the
-// JavaScript console.
+// 配置是配置的集合来微调
+// JavaScript控制台。
 type Config struct {
 	DataDir  string              // Data directory to store the console history at
 	DocRoot  string              // Filesystem path from where to load JavaScript files from
@@ -64,9 +64,9 @@ type Config struct {
 	Preload  []string            // Absolute paths to JavaScript files to preload
 }
 
-// Console is a JavaScript interpreted runtime environment. It is a fully fledged
-// JavaScript console attached to a running node via an external or in-process RPC
-// client.
+// 控制台是JavaScript解释的运行时环境。这是一个完全逃跑的
+//通过外部或程序中的RPC附加到运行节点上的JavaScript控制台
+// 客户。
 type Console struct {
 	client   *rpc.Client         // RPC client to execute Ethereum requests through
 	jsre     *jsre.JSRE          // JavaScript runtime environment running the interpreter
@@ -84,10 +84,10 @@ type Console struct {
 	stopOnce           sync.Once
 }
 
-// New initializes a JavaScript interpreted runtime environment and sets defaults
-// with the config struct.
+// 新初始化JavaScript解释的运行时环境并设置默认值
+//与配置结构。
 func New(config Config) (*Console, error) {
-	// Handle unset config values gracefully
+	// 优雅地处理未设置的配置值
 	if config.Prompter == nil {
 		config.Prompter = prompt.Stdin
 	}
@@ -124,12 +124,12 @@ func New(config Config) (*Console, error) {
 	return console, nil
 }
 
-// init retrieves the available APIs from the remote RPC provider and initializes
-// the console's JavaScript namespaces based on the exposed modules.
+// init从远程RPC提供商中检索可用的API并初始化
+//基于暴露模块的控制台的JavaScript名称空间。
 func (c *Console) init(preload []string) error {
 	c.initConsoleObject()
 
-	// Initialize the JavaScript <-> Go RPC bridge.
+	// 初始化JavaScript <-> GO RPC桥。
 	bridge := newBridge(c.client, c.prompter, c.printer)
 	if err := c.initWeb3(bridge); err != nil {
 		return err
@@ -138,13 +138,13 @@ func (c *Console) init(preload []string) error {
 		return err
 	}
 
-	// Add bridge overrides for web3.js functionality.
+	// 为Web3.js功能添加桥梁覆盖。
 	c.jsre.Do(func(vm *goja.Runtime) {
 		c.initAdmin(vm, bridge)
 		c.initPersonal(vm, bridge)
 	})
 
-	// Preload JavaScript files.
+	// 预加载JavaScript文件。
 	for _, path := range preload {
 		if err := c.jsre.Exec(path); err != nil {
 			failure := err.Error()
@@ -155,7 +155,7 @@ func (c *Console) init(preload []string) error {
 		}
 	}
 
-	// Configure the input prompter for history and tab completion.
+	// 为历史记录和选项卡的完成配置输入提示器。
 	if c.prompter != nil {
 		if content, err := os.ReadFile(c.histPath); err != nil {
 			c.prompter.SetHistory(nil)
@@ -168,6 +168,7 @@ func (c *Console) init(preload []string) error {
 	return nil
 }
 
+// 初始化console
 func (c *Console) initConsoleObject() {
 	c.jsre.Do(func(vm *goja.Runtime) {
 		console := vm.NewObject()
@@ -177,6 +178,7 @@ func (c *Console) initConsoleObject() {
 	})
 }
 
+// 初始化web3对象
 func (c *Console) initWeb3(bridge *bridge) error {
 	if err := c.jsre.Compile("bignumber.js", deps.BigNumberJS); err != nil {
 		return fmt.Errorf("bignumber.js: %v", err)
@@ -198,7 +200,7 @@ func (c *Console) initWeb3(bridge *bridge) error {
 	return err
 }
 
-// initExtensions loads and registers web3.js extensions.
+// initextensions加载和注册Web3.js扩展。
 func (c *Console) initExtensions() error {
 	// Compute aliases from server-provided modules.
 	apis, err := c.client.SupportedModules()
@@ -230,7 +232,7 @@ func (c *Console) initExtensions() error {
 	return nil
 }
 
-// initAdmin creates additional admin APIs implemented by the bridge.
+// Initadmin创建了桥梁实现的其他管理API。
 func (c *Console) initAdmin(vm *goja.Runtime, bridge *bridge) {
 	if admin := getObject(vm, "admin"); admin != nil {
 		admin.Set("sleepBlocks", jsre.MakeCallback(vm, bridge.SleepBlocks))
@@ -239,12 +241,12 @@ func (c *Console) initAdmin(vm *goja.Runtime, bridge *bridge) {
 	}
 }
 
-// initPersonal redirects account-related API methods through the bridge.
+//通过桥梁的Initpersonal重定向与帐户相关的API方法。
 //
-// If the console is in interactive mode and the 'personal' API is available, override
-// the openWallet, unlockAccount, newAccount and sign methods since these require user
-// interaction. The original web3 callbacks are stored in 'jeth'. These will be called
-// by the bridge after the prompt and send the original web3 request to the backend.
+//如果控制台处于交互式模式并且“个人” API可用，则覆盖
+// openwallet，unlockaccount，newAccount和符号方法，因为这些需要用户
+// 相互作用。原始的Web3回调存储在“ Jeth”中。这些将被称为
+//提示后通过桥梁，并将原始Web3请求发送到后端。
 func (c *Console) initPersonal(vm *goja.Runtime, bridge *bridge) {
 	personal := getObject(vm, "personal")
 	if personal == nil || c.prompter == nil {
@@ -262,6 +264,7 @@ func (c *Console) initPersonal(vm *goja.Runtime, bridge *bridge) {
 	personal.Set("sign", jsre.MakeCallback(vm, bridge.Sign))
 }
 
+// 清楚历史
 func (c *Console) clearHistory() {
 	c.history = nil
 	c.prompter.ClearHistory()
@@ -273,7 +276,7 @@ func (c *Console) clearHistory() {
 }
 
 // consoleOutput is an override for the console.log and console.error methods to
-// stream the output into the configured output stream instead of stdout.
+// 将输出传输到配置的输出流而不是Stdout中。
 func (c *Console) consoleOutput(call goja.FunctionCall) goja.Value {
 	var output []string
 	for _, argument := range call.Arguments {
@@ -283,8 +286,8 @@ func (c *Console) consoleOutput(call goja.FunctionCall) goja.Value {
 	return goja.Null()
 }
 
-// AutoCompleteInput is a pre-assembled word completer to be used by the user
-// input prompter to provide hints to the user about the methods available.
+//AutoCompleteInput是用户使用的预组装单词完成器
+//输入提示器向用户提供有关可用方法的提示。
 func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, string) {
 	// No completions can be provided for empty inputs
 	if len(line) == 0 || pos == 0 {
@@ -310,8 +313,8 @@ func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, str
 	return line[:start], c.jsre.CompleteKeywords(line[start:pos]), line[pos:]
 }
 
-// Welcome show summary of current Geth instance and some metadata about the
-// console's available modules.
+// 欢迎节目当前的Geth实例摘要和一些有关
+//控制台的可用模块。
 func (c *Console) Welcome() {
 	message := "Welcome to the Geth JavaScript console!\n\n"
 
@@ -342,8 +345,8 @@ func (c *Console) Welcome() {
 	fmt.Fprintln(c.printer, message)
 }
 
-// Evaluate executes code and pretty prints the result to the specified output
-// stream.
+// 评估执行代码并将结果打印到指定的输出
+// 溪流。
 func (c *Console) Evaluate(statement string) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -356,8 +359,8 @@ func (c *Console) Evaluate(statement string) {
 	c.clearSignalReceived()
 }
 
-// interruptHandler runs in its own goroutine and waits for signals.
-// When a signal is received, it interrupts the JS interpreter.
+// Interupthandler在自己的goroutine中运行并等待信号。
+//当收到信号时，它会中断JS解释器。
 func (c *Console) interruptHandler() {
 	defer c.wg.Done()
 
@@ -407,8 +410,8 @@ func (c *Console) StopInteractive() {
 	}
 }
 
-// Interactive starts an interactive user session, where in.put is propted from
-// the configured user prompter.
+//交互式启动交互式用户会话，其中in。
+//配置的用户提示器。
 func (c *Console) Interactive() {
 	var (
 		prompt      = c.prompt             // the current prompt line (used for multi-line inputs)
@@ -485,7 +488,7 @@ func (c *Console) Interactive() {
 	}
 }
 
-// readLines runs in its own goroutine, prompting for input.
+// 读取线以自己的goroutine运行，提示输入。
 func (c *Console) readLines(input chan<- string, errc chan<- error, prompt <-chan string) {
 	for p := range prompt {
 		line, err := c.prompter.PromptInput(p)
@@ -497,8 +500,8 @@ func (c *Console) readLines(input chan<- string, errc chan<- error, prompt <-cha
 	}
 }
 
-// countIndents returns the number of identations for the given input.
-// In case of invalid input such as var a = } the result can be negative.
+//Countents返回给定输入的标识数量。
+//如果输入无效，例如var a =}结果可能为负。
 func countIndents(input string) int {
 	var (
 		indents     = 0
@@ -540,7 +543,7 @@ func countIndents(input string) int {
 	return indents
 }
 
-// Stop cleans up the console and terminates the runtime environment.
+// 停止清理控制台并终止运行时环境。
 func (c *Console) Stop(graceful bool) error {
 	c.stopOnce.Do(func() {
 		// Stop the interrupt handler.

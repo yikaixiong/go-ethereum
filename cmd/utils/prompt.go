@@ -1,20 +1,20 @@
-// Copyright 2020 The go-ethereum Authors
-// This file is part of go-ethereum.
+//版权2020年作者
+//此文件是Go-Ethereum的一部分。
 //
-// go-ethereum is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum是免费软件：您可以重新分配它和/或修改
+//根据GNU通用公共许可证的条款发布
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// go-ethereum is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// go-ethereum的分发是希望它有用的
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU通用公共许可证的副本
+//与Go-Ethereum一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package utils contains internal helper functions for go-ethereum commands.
+//软件包utils包含用于Go-Ethereum命令的内部辅助功能。
 package utils
 
 import (
@@ -23,9 +23,9 @@ import (
 	"github.com/ethereum/go-ethereum/console/prompt"
 )
 
-// GetPassPhrase displays the given text(prompt) to the user and requests some textual
-// data to be entered, but one which must not be echoed out into the terminal.
-// The method returns the input provided by the user.
+// getPassphrase向用户显示给定文本（提示）并请求一些文本
+//要输入的数据，但不能将其回音到终端中。
+//该方法返回用户提供的输入。
 func GetPassPhrase(text string, confirmation bool) string {
 	if text != "" {
 		fmt.Println(text)
@@ -46,8 +46,8 @@ func GetPassPhrase(text string, confirmation bool) string {
 	return password
 }
 
-// GetPassPhraseWithList retrieves the password associated with an account, either fetched
-// from a list of preloaded passphrases, or requested interactively from the user.
+// getPassphraseWithList检索与帐户关联的密码，要么获取
+//从预加载的密码套件列表中，或从用户交互要求。
 func GetPassPhraseWithList(text string, confirmation bool, index int, passwords []string) string {
 	// If a list of passwords was supplied, retrieve from them
 	if len(passwords) > 0 {

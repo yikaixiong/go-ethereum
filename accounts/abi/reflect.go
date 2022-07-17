@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+// 版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package abi
 
@@ -24,17 +24,17 @@ import (
 	"strings"
 )
 
-// ConvertType converts an interface of a runtime type into a interface of the
-// given type
-// e.g. turn
-// var fields []reflect.StructField
-// fields = append(fields, reflect.StructField{
-// 		Name: "X",
-//		Type: reflect.TypeOf(new(big.Int)),
-//		Tag:  reflect.StructTag("json:\"" + "x" + "\""),
-// }
-// into
-// type TupleT struct { X *big.Int }
+// 转换类型将运行时类型的接口转换为接口
+//给定类型
+//例如转动
+// var fields []反射。
+// fields = append（fields，reflect.StructField {
+//名称：“ x”，
+//类型：反射式（new（big.int）），
+// tag：reflect.StructTag（“ JSON：\”“ +” X“ +” \“ \”），，
+//}
+// 进入
+//键入Tuplet struct {x *big.int}
 func ConvertType(in interface{}, proto interface{}) interface{} {
 	protoType := reflect.TypeOf(proto)
 	if reflect.TypeOf(in).ConvertibleTo(protoType) {
@@ -47,8 +47,8 @@ func ConvertType(in interface{}, proto interface{}) interface{} {
 	return proto
 }
 
-// indirect recursively dereferences the value until it either gets the value
-// or finds a big.Int
+// 间接递归地将值递增，直到获得值
+//或发现一个大。
 func indirect(v reflect.Value) reflect.Value {
 	if v.Kind() == reflect.Ptr && v.Elem().Type() != reflect.TypeOf(big.Int{}) {
 		return indirect(v.Elem())
@@ -56,8 +56,8 @@ func indirect(v reflect.Value) reflect.Value {
 	return v
 }
 
-// reflectIntType returns the reflect using the given size and
-// unsignedness.
+// ReflectIntType使用给定的大小和
+//未签名。
 func reflectIntType(unsigned bool, size int) reflect.Type {
 	if unsigned {
 		switch size {

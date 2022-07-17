@@ -1,10 +1,14 @@
-// Copyright 2013 The Go Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+//版权所有2013 The Go作者。版权所有。
+//此源代码的使用由BSD式管理
+//可以在许可证文件中找到的许可证。
 
-// Adapted from: https://golang.org/src/crypto/cipher/xor.go
+//改编自：https：//golang.org/src/crypto/cipher/xor.go
 
-// Package bitutil implements fast bitwise operations.
+//包Bitutil实施快速的位操作。
+
+
+//TODO:  bit字节操作语法
+
 package bitutil
 
 import (

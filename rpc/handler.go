@@ -1,18 +1,18 @@
-// Copyright 2019 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2019年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package rpc
 
@@ -28,26 +28,26 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 )
 
-// handler handles JSON-RPC messages. There is one handler per connection. Note that
-// handler is not safe for concurrent use. Message handling never blocks indefinitely
-// because RPCs are processed on background goroutines launched by handler.
+//处理程序处理JSON-RPC消息。每个连接都有一个处理程序。注意
+//处理程序并非安全使用。消息处理永远不会无限期阻止
+//因为RPC是在Handler启动的背景Goroutines上处理的。
 //
-// The entry points for incoming messages are:
+//传入消息的输入点是：
 //
-//    h.handleMsg(message)
-//    h.handleBatch(message)
+// H.Handlemsg（消息）
+// H.HandleBatch（消息）
 //
-// Outgoing calls use the requestOp struct. Register the request before sending it
-// on the connection:
+//传出电话使用requestOp struct。在发送请求之前注册该请求
+//在连接上：
 //
-//    op := &requestOp{ids: ...}
-//    h.addRequestOp(op)
+// op：=＆requestOp {ids：...}
+// H.Addrequestop（OP）
 //
-// Now send the request, then wait for the reply to be delivered through handleMsg:
+//现在发送请求，然后等待通过handlemsg提供答复：
 //
-//    if err := op.wait(...); err != nil {
-//        h.removeRequestOp(op) // timeout, etc.
-//    }
+//如果err：= op.wait（...）;err！= nil {
+// H.Removerequesop（op）//超时，等等。
+//}
 //
 type handler struct {
 	reg            *serviceRegistry
@@ -92,7 +92,7 @@ func newHandler(connCtx context.Context, conn jsonWriter, idgen func() ID, reg *
 	return h
 }
 
-// handleBatch executes all messages in a batch and returns the responses.
+// 车把在批处理中执行所有消息并返回响应。
 func (h *handler) handleBatch(msgs []*jsonrpcMessage) {
 	// Emit error response for empty batches:
 	if len(msgs) == 0 {
@@ -147,8 +147,8 @@ func (h *handler) handleMsg(msg *jsonrpcMessage) {
 	})
 }
 
-// close cancels all requests except for inflightReq and waits for
-// call goroutines to shut down.
+// 关闭取消除undightreq以外的所有请求，并等待
+//致电Goroutines关闭。
 func (h *handler) close(err error, inflightReq *requestOp) {
 	h.cancelAllRequests(err, inflightReq)
 	h.callWG.Wait()
@@ -156,7 +156,7 @@ func (h *handler) close(err error, inflightReq *requestOp) {
 	h.cancelServerSubscriptions(err)
 }
 
-// addRequestOp registers a request operation.
+// AddRequestop注册一个请求操作。
 func (h *handler) addRequestOp(op *requestOp) {
 	for _, id := range op.ids {
 		h.respWait[string(id)] = op

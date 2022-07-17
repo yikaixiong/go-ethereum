@@ -1,18 +1,18 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2017年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package accounts
 
@@ -25,58 +25,58 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
-// managerSubBufferSize determines how many incoming wallet events
-// the manager will buffer in its channel.
+// 管理套件确定了多少个即将到来的钱包事件
+// 经理将在其频道中缓冲。
 const managerSubBufferSize = 50
 
-// Config contains the settings of the global account manager.
+// 配置包含全局客户管理器的设置。
 //
-// TODO(rjl493456442, karalabe, holiman): Get rid of this when account management
-// is removed in favor of Clef.
+// TODO（RJL493456442，Karalabe，Holiman）：在帐户管理
+// 被删除以支持Clef。
 type Config struct {
-	InsecureUnlockAllowed bool // Whether account unlocking in insecure environment is allowed
+	InsecureUnlockAllowed bool // 是否允许在不安全的环境中解锁帐户
 }
 
-// newBackendEvent lets the manager know it should
-// track the given backend for wallet updates.
+// newbackendevent让经理知道应该
+//跟踪给定的后端以进行钱包更新。
 type newBackendEvent struct {
 	backend   Backend
-	processed chan struct{} // Informs event emitter that backend has been integrated
+	processed chan struct{} // 告知事件发射器，后端已被整合
 }
 
-// Manager is an overarching account manager that can communicate with various
-// backends for signing transactions.
+// 经理是一位总体客户经理，可以与各种交流
+//签署交易的后端。
 type Manager struct {
-	config      *Config                    // Global account manager configurations
-	backends    map[reflect.Type][]Backend // Index of backends currently registered
-	updaters    []event.Subscription       // Wallet update subscriptions for all backends
-	updates     chan WalletEvent           // Subscription sink for backend wallet changes
-	newBackends chan newBackendEvent       // Incoming backends to be tracked by the manager
-	wallets     []Wallet                   // Cache of all wallets from all registered backends
+	config      *Config                    // 全局客户经理配置
+	backends    map[reflect.Type][]Backend // 当前注册的后端索引
+	updaters    []event.Subscription       // 所有后端的钱包更新订阅
+	updates     chan WalletEvent           // 后端钱包更改的订阅水槽
+	newBackends chan newBackendEvent       // 传入的后端将由经理跟踪
+	wallets     []Wallet                   // 所有注册后端的所有钱包的缓存
 
-	feed event.Feed // Wallet feed notifying of arrivals/departures
+	feed event.Feed // 钱包饲料通知到达/出发
 
 	quit chan chan error
-	term chan struct{} // Channel is closed upon termination of the update loop
+	term chan struct{} // 终止更新循环后，频道关闭
 	lock sync.RWMutex
 }
 
-// NewManager creates a generic account manager to sign transaction via various
-// supported backends.
+// NewManager创建了一个通用客户经理，可以通过各种
+//支持的后端。
 func NewManager(config *Config, backends ...Backend) *Manager {
-	// Retrieve the initial list of wallets from the backends and sort by URL
+	// 从后端检索钱包的初始清单，然后按URL排序
 	var wallets []Wallet
 	for _, backend := range backends {
 		wallets = merge(wallets, backend.Wallets()...)
 	}
-	// Subscribe to wallet notifications from all backends
+	// 订阅所有后端的钱包通知
 	updates := make(chan WalletEvent, managerSubBufferSize)
 
 	subs := make([]event.Subscription, len(backends))
 	for i, backend := range backends {
 		subs[i] = backend.Subscribe(updates)
 	}
-	// Assemble the account manager and return
+	// 组装客户经理并退货
 	am := &Manager{
 		config:      config,
 		backends:    make(map[reflect.Type][]Backend),
@@ -96,30 +96,30 @@ func NewManager(config *Config, backends ...Backend) *Manager {
 	return am
 }
 
-// Close terminates the account manager's internal notification processes.
+// 关闭终止客户经理的内部通知流程。
 func (am *Manager) Close() error {
 	errc := make(chan error)
 	am.quit <- errc
 	return <-errc
 }
 
-// Config returns the configuration of account manager.
+// 配置返回帐户管理器的配置。
 func (am *Manager) Config() *Config {
 	return am.config
 }
 
-// AddBackend starts the tracking of an additional backend for wallet updates.
-// cmd/geth assumes once this func returns the backends have been already integrated.
+// 倒带开始跟踪钱包更新的其他后端。
+// cmd/geth假设一旦此功能返回后端已经集成了。
 func (am *Manager) AddBackend(backend Backend) {
 	done := make(chan struct{})
 	am.newBackends <- newBackendEvent{backend, done}
 	<-done
 }
 
-// update is the wallet event loop listening for notifications from the backends
-// and updating the cache of wallets.
+// 更新是Wallet事件循环收听后端的通知
+//并更新钱包的缓存。
 func (am *Manager) update() {
-	// Close all subscriptions when the manager terminates
+	// 当经理终止时关闭所有订阅
 	defer func() {
 		am.lock.Lock()
 		for _, sub := range am.updaters {
@@ -129,11 +129,11 @@ func (am *Manager) update() {
 		am.lock.Unlock()
 	}()
 
-	// Loop until termination
+	// 循环直到终止
 	for {
 		select {
 		case event := <-am.updates:
-			// Wallet event arrived, update local cache
+			// 钱包事件到了，更新本地缓存
 			am.lock.Lock()
 			switch event.Kind {
 			case WalletArrived:
@@ -143,11 +143,11 @@ func (am *Manager) update() {
 			}
 			am.lock.Unlock()
 
-			// Notify any listeners of the event
+			// 通知任何听众
 			am.feed.Send(event)
 		case event := <-am.newBackends:
 			am.lock.Lock()
-			// Update caches
+			// 更新缓存
 			backend := event.backend
 			am.wallets = merge(am.wallets, backend.Wallets()...)
 			am.updaters = append(am.updaters, backend.Subscribe(am.updates))
@@ -156,17 +156,17 @@ func (am *Manager) update() {
 			am.lock.Unlock()
 			close(event.processed)
 		case errc := <-am.quit:
-			// Manager terminating, return
+			// 经理终止，返回
 			errc <- nil
-			// Signals event emitters the loop is not receiving values
-			// to prevent them from getting stuck.
+			// 信号事件发射器循环未接收值
+//防止他们卡住。
 			close(am.term)
 			return
 		}
 	}
 }
 
-// Backends retrieves the backend(s) with the given type from the account manager.
+// 后端从客户经理中带有给定类型的后端检索后端。
 func (am *Manager) Backends(kind reflect.Type) []Backend {
 	am.lock.RLock()
 	defer am.lock.RUnlock()
@@ -174,7 +174,7 @@ func (am *Manager) Backends(kind reflect.Type) []Backend {
 	return am.backends[kind]
 }
 
-// Wallets returns all signer accounts registered under this account manager.
+//钱包返回该客户经理下注册的所有签名帐户。
 func (am *Manager) Wallets() []Wallet {
 	am.lock.RLock()
 	defer am.lock.RUnlock()
@@ -182,14 +182,14 @@ func (am *Manager) Wallets() []Wallet {
 	return am.walletsNoLock()
 }
 
-// walletsNoLock returns all registered wallets. Callers must hold am.lock.
+// Walletsnolock返回所有注册的钱包。呼叫者必须举行am.lock。
 func (am *Manager) walletsNoLock() []Wallet {
 	cpy := make([]Wallet, len(am.wallets))
 	copy(cpy, am.wallets)
 	return cpy
 }
 
-// Wallet retrieves the wallet associated with a particular URL.
+// 钱包检索与特定URL相关的钱包。
 func (am *Manager) Wallet(url string) (Wallet, error) {
 	am.lock.RLock()
 	defer am.lock.RUnlock()
@@ -206,7 +206,7 @@ func (am *Manager) Wallet(url string) (Wallet, error) {
 	return nil, ErrUnknownWallet
 }
 
-// Accounts returns all account addresses of all wallets within the account manager
+// 帐户返回帐户经理中所有钱包的所有帐户地址
 func (am *Manager) Accounts() []common.Address {
 	am.lock.RLock()
 	defer am.lock.RUnlock()
@@ -220,9 +220,9 @@ func (am *Manager) Accounts() []common.Address {
 	return addresses
 }
 
-// Find attempts to locate the wallet corresponding to a specific account. Since
-// accounts can be dynamically added to and removed from wallets, this method has
-// a linear runtime in the number of wallets.
+// 查找试图找到与特定帐户相对应的钱包。自从
+//可以将帐户动态添加到钱包中并从钱包中删除，此方法具有
+//钱包数中的线性运行时。
 func (am *Manager) Find(account Account) (Wallet, error) {
 	am.lock.RLock()
 	defer am.lock.RUnlock()
@@ -235,16 +235,16 @@ func (am *Manager) Find(account Account) (Wallet, error) {
 	return nil, ErrUnknownAccount
 }
 
-// Subscribe creates an async subscription to receive notifications when the
-// manager detects the arrival or departure of a wallet from any of its backends.
+// 订阅创建异步订阅，以接收通知
+//经理发现钱包从其任何后端的到达或出发。
 func (am *Manager) Subscribe(sink chan<- WalletEvent) event.Subscription {
 	return am.feed.Subscribe(sink)
 }
 
-// merge is a sorted analogue of append for wallets, where the ordering of the
-// origin list is preserved by inserting new wallets at the correct position.
+//合并是对钱包附加的分类类似物，其中的顺序
+//通过在正确位置插入新钱包来保存原点列表。
 //
-// The original slice is assumed to be already sorted by URL.
+//原始切片假定已被URL排序。
 func merge(slice []Wallet, wallets ...Wallet) []Wallet {
 	for _, wallet := range wallets {
 		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(wallet.URL()) >= 0 })
@@ -257,13 +257,13 @@ func merge(slice []Wallet, wallets ...Wallet) []Wallet {
 	return slice
 }
 
-// drop is the couterpart of merge, which looks up wallets from within the sorted
-// cache and removes the ones specified.
+// 下降是合并的对应物，它从分类中抬起钱包
+//缓存并删除指定的。
 func drop(slice []Wallet, wallets ...Wallet) []Wallet {
 	for _, wallet := range wallets {
 		n := sort.Search(len(slice), func(i int) bool { return slice[i].URL().Cmp(wallet.URL()) >= 0 })
 		if n == len(slice) {
-			// Wallet not found, may happen during startup
+			// 找不到钱包，可能在启动期间发生
 			continue
 		}
 		slice = append(slice[:n], slice[n+1:]...)

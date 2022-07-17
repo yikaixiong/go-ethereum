@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package rlp
 
@@ -21,20 +21,20 @@ import (
 	"reflect"
 )
 
-// RawValue represents an encoded RLP value and can be used to delay
-// RLP decoding or to precompute an encoding. Note that the decoder does
-// not verify whether the content of RawValues is valid RLP.
+// RAWVALUE代表编码的RLP值，可用于延迟
+// RLP解码或预先计算编码。请注意，解码器确实
+//不要验证RAWVALUES的内容是否有效RLP。
 type RawValue []byte
 
 var rawValueType = reflect.TypeOf(RawValue{})
 
-// ListSize returns the encoded size of an RLP list with the given
-// content size.
+// 列表size返回带有给定的RLP列表的编码大小
+//内容大小。
 func ListSize(contentSize uint64) uint64 {
 	return uint64(headsize(contentSize)) + contentSize
 }
 
-// IntSize returns the encoded size of the integer x.
+// intsize返回整数x的编码大小。
 func IntSize(x uint64) int {
 	if x < 0x80 {
 		return 1
@@ -42,8 +42,8 @@ func IntSize(x uint64) int {
 	return 1 + intsize(x)
 }
 
-// Split returns the content of first RLP value and any
-// bytes after the value as subslices of b.
+//拆分返回第一个RLP值的内容和任何
+//值之后的字节作为b的子词。
 func Split(b []byte) (k Kind, content, rest []byte, err error) {
 	k, ts, cs, err := readKind(b)
 	if err != nil {
@@ -52,8 +52,8 @@ func Split(b []byte) (k Kind, content, rest []byte, err error) {
 	return k, b[ts : ts+cs], b[ts+cs:], nil
 }
 
-// SplitString splits b into the content of an RLP string
-// and any remaining bytes after the string.
+// 将B分配到RLP字符串的内容中
+//和字符串后的任何剩余字节。
 func SplitString(b []byte) (content, rest []byte, err error) {
 	k, content, rest, err := Split(b)
 	if err != nil {
@@ -65,8 +65,8 @@ func SplitString(b []byte) (content, rest []byte, err error) {
 	return content, rest, nil
 }
 
-// SplitUint64 decodes an integer at the beginning of b.
-// It also returns the remaining data after the integer in 'rest'.
+// splituint64在b的开头解码一个整数。
+//它还返回“休息”整数之后的剩余数据。
 func SplitUint64(b []byte) (x uint64, rest []byte, err error) {
 	content, rest, err := SplitString(b)
 	if err != nil {
@@ -91,8 +91,8 @@ func SplitUint64(b []byte) (x uint64, rest []byte, err error) {
 	}
 }
 
-// SplitList splits b into the content of a list and any remaining
-// bytes after the list.
+// SplitList将B分配到列表的内容和剩余的任何内容
+//列表之后的字节。
 func SplitList(b []byte) (content, rest []byte, err error) {
 	k, content, rest, err := Split(b)
 	if err != nil {
@@ -104,7 +104,7 @@ func SplitList(b []byte) (content, rest []byte, err error) {
 	return content, rest, nil
 }
 
-// CountValues counts the number of encoded values in b.
+// 计数值计算b中编码值的数量。
 func CountValues(b []byte) (int, error) {
 	i := 0
 	for ; len(b) > 0; i++ {
@@ -189,7 +189,7 @@ func readSize(b []byte, slen byte) (uint64, error) {
 	return s, nil
 }
 
-// AppendUint64 appends the RLP encoding of i to b, and returns the resulting slice.
+//appenduint64将i的RLP编码附加到b，并返回结果切片。
 func AppendUint64(b []byte, i uint64) []byte {
 	if i == 0 {
 		return append(b, 0x80)

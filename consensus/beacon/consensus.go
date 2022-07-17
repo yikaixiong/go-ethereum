@@ -1,18 +1,21 @@
-// Copyright 2021 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权2021 The Go-Ethereum作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
+
+
+// TODO:   信标链
 
 package beacon
 
@@ -31,16 +34,16 @@ import (
 	"github.com/ethereum/go-ethereum/trie"
 )
 
-// Proof-of-stake protocol constants.
+// 验证协议常数。
 var (
 	beaconDifficulty = common.Big0          // The default block difficulty in the beacon consensus
 	beaconNonce      = types.EncodeNonce(0) // The default block nonce in the beacon consensus
 )
 
-// Various error messages to mark blocks invalid. These should be private to
-// prevent engine specific errors from being referenced in the remainder of the
-// codebase, inherently breaking if the engine is swapped out. Please put common
-// error types into the consensus package.
+// 标记块的各种错误消息无效。这些应该是私人的
+//防止发动机在其余部分中引用发动机的错误
+//代码库，如果引擎被换掉，则可以固有地打破。请公共
+//错误类型输入共识软件包。
 var (
 	errTooManyUncles    = errors.New("too many uncles")
 	errInvalidNonce     = errors.New("invalid nonce")
@@ -48,19 +51,19 @@ var (
 	errInvalidTimestamp = errors.New("invalid timestamp")
 )
 
-// Beacon is a consensus engine that combines the eth1 consensus and proof-of-stake
-// algorithm. There is a special flag inside to decide whether to use legacy consensus
-// rules or new rules. The transition rule is described in the eth1/2 merge spec.
-// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-3675.md
+//信标是结合ETH1共识和有验证证明的共识引擎
+// 算法。里面有一个特殊的标志可以决定是否使用遗产共识
+//规则或新规则。过渡规则在ETH1/2合并规范中描述。
+// https://github.com/ethereum/eips/blob/master/eips/eips/eip-3675.md
 //
-// The beacon here is a half-functional consensus engine with partial functions which
-// is only used for necessary consensus checks. The legacy consensus engine can be any
-// engine implements the consensus interface (except the beacon itself).
+//这里的灯塔是一个半功能共识引擎，具有部分功能
+//仅用于必要的共识检查。传统共识引擎可以是任何
+//引擎实现了共识接口（Beaccon本身除外）。
 type Beacon struct {
 	ethone consensus.Engine // Original consensus engine used in eth1, e.g. ethash or clique
 }
 
-// New creates a consensus engine with the given embedded eth1 engine.
+// New用给定的ETH1引擎创建了共识引擎。
 func New(ethone consensus.Engine) *Beacon {
 	if _, ok := ethone.(*Beacon); ok {
 		panic("nested consensus engine")
@@ -68,7 +71,7 @@ func New(ethone consensus.Engine) *Beacon {
 	return &Beacon{ethone: ethone}
 }
 
-// Author implements consensus.Engine, returning the verified author of the block.
+// 作者实现了共识。发动机，返回了该块的验证作者。
 func (beacon *Beacon) Author(header *types.Header) (common.Address, error) {
 	if !beacon.IsPoSHeader(header) {
 		return beacon.ethone.Author(header)
@@ -76,26 +79,26 @@ func (beacon *Beacon) Author(header *types.Header) (common.Address, error) {
 	return header.Coinbase, nil
 }
 
-// VerifyHeader checks whether a header conforms to the consensus rules of the
-// stock Ethereum consensus engine.
+// verifyheader检查标头是否符合
+//库存以太坊共识引擎。
 func (beacon *Beacon) VerifyHeader(chain consensus.ChainHeaderReader, header *types.Header, seal bool) error {
 	reached, _ := IsTTDReached(chain, header.ParentHash, header.Number.Uint64()-1)
 	if !reached {
 		return beacon.ethone.VerifyHeader(chain, header, seal)
 	}
-	// Short circuit if the parent is not known
+	// 短路如果父母未知
 	parent := chain.GetHeader(header.ParentHash, header.Number.Uint64()-1)
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
-	// Sanity checks passed, do a proper verification
+	// 通过理智检查，进行适当的验证
 	return beacon.verifyHeader(chain, header, parent)
 }
 
-// VerifyHeaders is similar to VerifyHeader, but verifies a batch of headers
-// concurrently. The method returns a quit channel to abort the operations and
-// a results channel to retrieve the async verifications.
-// VerifyHeaders expect the headers to be ordered and continuous.
+// verifyheaders类似于verifyheader，但验证了一批标题
+//同时。该方法返回退出渠道以中止操作，
+//结果通道检索异步验证。
+//验证者期望将标题订购和连续。
 func (beacon *Beacon) VerifyHeaders(chain consensus.ChainHeaderReader, headers []*types.Header, seals []bool) (chan<- struct{}, <-chan error) {
 	if !beacon.IsPoSHeader(headers[len(headers)-1]) {
 		return beacon.ethone.VerifyHeaders(chain, headers, seals)
@@ -167,13 +170,13 @@ func (beacon *Beacon) VerifyHeaders(chain consensus.ChainHeaderReader, headers [
 	return abort, results
 }
 
-// verifyTerminalPoWBlock verifies that the preHeaders confirm to the specification
-// wrt. their total difficulty.
-// It expects:
-// - preHeaders to be at least 1 element
-// - the parent of the header element to be stored in the chain correctly
-// - the preHeaders to have a set difficulty
-// - the last element to be the terminal block
+// verifyterminalpowblock验证预先确认为规格的确认
+// WRT。他们的完全困难。
+//期望：
+//-预开头至少为1个元素
+//-要正确存储在链条中的标头元素的父
+//-预先设置难度的预开头
+//-最后一个是终端块的元素
 func verifyTerminalPoWBlock(chain consensus.ChainHeaderReader, preHeaders []*types.Header) (int, error) {
 	td := chain.GetTd(preHeaders[0].ParentHash, preHeaders[0].Number.Uint64()-1)
 	if td == nil {
@@ -194,8 +197,8 @@ func verifyTerminalPoWBlock(chain consensus.ChainHeaderReader, preHeaders []*typ
 	return 0, nil
 }
 
-// VerifyUncles verifies that the given block's uncles conform to the consensus
-// rules of the Ethereum consensus engine.
+//验证叔叔验证给定块的叔叔是否符合共识
+//以太坊共识引擎的规则。
 func (beacon *Beacon) VerifyUncles(chain consensus.ChainReader, block *types.Block) error {
 	if !beacon.IsPoSHeader(block.Header()) {
 		return beacon.ethone.VerifyUncles(chain, block)

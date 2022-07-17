@@ -1,19 +1,21 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2017年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
+
+// TODO: bit字节比较函数
 package bitutil
 
 import "errors"
@@ -36,27 +38,27 @@ var (
 	errZeroContent = errors.New("zero byte in input content")
 )
 
-// The compression algorithm implemented by CompressBytes and DecompressBytes is
-// optimized for sparse input data which contains a lot of zero bytes. Decompression
-// requires knowledge of the decompressed data length.
+//由压缩型和解压缩词实现的压缩算法是
+//针对包含大量零字节的稀疏输入数据进行了优化。减压
+//需要了解解压缩的数据长度。
 //
-// Compression works as follows:
+//压缩工作如下：
 //
-//   if data only contains zeroes,
-//       CompressBytes(data) == nil
-//   otherwise if len(data) <= 1,
-//       CompressBytes(data) == data
-//   otherwise:
-//       CompressBytes(data) == append(CompressBytes(nonZeroBitset(data)), nonZeroBytes(data)...)
-//       where
-//         nonZeroBitset(data) is a bit vector with len(data) bits (MSB first):
-//             nonZeroBitset(data)[i/8] && (1 << (7-i%8)) != 0  if data[i] != 0
-//             len(nonZeroBitset(data)) == (len(data)+7)/8
-//         nonZeroBytes(data) contains the non-zero bytes of data in the same order
+//如果数据仅包含零，则
+// compressbytes（data）== nil
+//否则如果Len（data）<= 1，
+// compressbytes（data）==数据
+//   否则：
+// compressbytes（data）== append（compressbytes（nonzerobitset（data）），nonzerobytes（data）...）
+//       在哪里
+// nonzerobitset（数据）是Len（数据）位（MSB）的位矢量：
+// nonzerobitset（data）[i/8] &&（1 <<（7-i％8））！= 0如果数据[i]！= 0
+// len（nonzerobitset（data））==（len（data）+7）/8
+// nonzerobytes（数据）以相同顺序包含数据的非零字节
 
-// CompressBytes compresses the input byte slice according to the sparse bitset
-// representation algorithm. If the result is bigger than the original input, no
-// compression is done.
+//压缩BYSTES根据稀疏位置压缩输入字节切片
+//表示算法。如果结果大于原始输入，则不
+//压缩完成。
 func CompressBytes(data []byte) []byte {
 	if out := bitsetEncodeBytes(data); len(out) < len(data) {
 		return out
@@ -66,8 +68,8 @@ func CompressBytes(data []byte) []byte {
 	return cpy
 }
 
-// bitsetEncodeBytes compresses the input byte slice according to the sparse
-// bitset representation algorithm.
+// BitsetEncodeBytes根据稀疏压缩输入字节切片
+// BITSET表示算法。
 func bitsetEncodeBytes(data []byte) []byte {
 	// Empty slices get compressed to nil
 	if len(data) == 0 {
@@ -96,9 +98,9 @@ func bitsetEncodeBytes(data []byte) []byte {
 	return append(bitsetEncodeBytes(nonZeroBitset), nonZeroBytes...)
 }
 
-// DecompressBytes decompresses data with a known target size. If the input data
-// matches the size of the target, it means no compression was done in the first
-// place.
+// 解压缩BYTES用已知的目标大小解压缩数据。如果输入数据
+//匹配目标的大小，这意味着在第一个中没有进行压缩
+// 地方。
 func DecompressBytes(data []byte, target int) ([]byte, error) {
 	if len(data) > target {
 		return nil, errExceededTarget
@@ -111,7 +113,7 @@ func DecompressBytes(data []byte, target int) ([]byte, error) {
 	return bitsetDecodeBytes(data, target)
 }
 
-// bitsetDecodeBytes decompresses data with a known target size.
+// BITSETDECODEBYTES用已知的目标大小解压缩数据。
 func bitsetDecodeBytes(data []byte, target int) ([]byte, error) {
 	out, size, err := bitsetDecodePartialBytes(data, target)
 	if err != nil {

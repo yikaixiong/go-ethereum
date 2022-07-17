@@ -1,25 +1,28 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
+
+
+// TODO: 启动节点
 
 package params
 
 import "github.com/ethereum/go-ethereum/common"
 
-// MainnetBootnodes are the enode URLs of the P2P bootstrap nodes running on
-// the main Ethereum network.
+// mainnetbootnodes是P2P Bootstrap节点的eNODE URL
+//主要以太坊网络。
 var MainnetBootnodes = []string{
 	// Ethereum Foundation Go Bootnodes
 	"enode://d860a01f9722d78051619d1e2351aba3f43f943f6f00718d1b9baa4101932a1f5011f16bb2b1bb35db20d6fe28fa0bf09636d26a87d31de9ec6203eeedb1f666@18.138.108.67:30303",   // bootnode-aws-ap-southeast-1-001
@@ -32,8 +35,8 @@ var MainnetBootnodes = []string{
 	"enode://4aeb4ab6c14b23e2c4cfdce879c04b0748a20d8e9b59e25ded2a08143e265c6c25936e74cbc8e641e3312ca288673d91f2f93f8e277de3cfa444ecdaaf982052@157.90.35.166:30303",   // bootnode-hetzner-fsn
 }
 
-// RopstenBootnodes are the enode URLs of the P2P bootstrap nodes running on the
-// Ropsten test network.
+// ropstenbootnodes是P2P Bootstrap节点的eNODE URL
+// Ropsten测试网络。
 var RopstenBootnodes = []string{
 	"enode://30b7ab30a01c124a6cceca36863ece12c4f5fa68e3ba9b0b51407ccc002eeed3b3102d20a88f1c1d3c3154e2449317b8ef95090e77b312d5cc39354f86d5d606@52.176.7.10:30303",    // US-Azure geth
 	"enode://865a63255b3bb68023b6bffd5095118fcc13e79dcf014fe4e47e065c350c7cc72af2e53eff895f11ba1bbb6a2b33271c1116ee870f266618eadfc2e78aa7349c@52.176.100.77:30303",  // US-Azure parity
@@ -41,8 +44,8 @@ var RopstenBootnodes = []string{
 	"enode://94c15d1b9e2fe7ce56e458b9a3b672ef11894ddedd0c6f247e0f1d3487f52b66208fb4aeb8179fce6e3a749ea93ed147c37976d67af557508d199d9594c35f09@192.81.208.223:30303", // @gpip
 }
 
-// SepoliaBootnodes are the enode URLs of the P2P bootstrap nodes running on the
-// Sepolia test network.
+// sepoliabootnodes是P2P Bootstrap节点的eNODE URL
+// Sepolia测试网络。
 var SepoliaBootnodes = []string{
 	// geth
 	"enode://9246d00bc8fd1742e5ad2428b80fc4dc45d786283e05ef6edbd9002cbc335d40998444732fbe921cb88e1d2c73d1b1de53bae6a2237996e9bfe14f871baf7066@18.168.182.86:30303",
@@ -50,16 +53,16 @@ var SepoliaBootnodes = []string{
 	"enode://ec66ddcf1a974950bd4c782789a7e04f8aa7110a72569b6e65fcd51e937e74eed303b1ea734e4d19cfaec9fbff9b6ee65bf31dcb50ba79acce9dd63a6aca61c7@52.14.151.177:30303",
 }
 
-// RinkebyBootnodes are the enode URLs of the P2P bootstrap nodes running on the
-// Rinkeby test network.
+// RinkebyBootNodes是在该上运行的P2P Bootstrap节点的eNODE URL
+// Rinkeby测试网络。
 var RinkebyBootnodes = []string{
 	"enode://a24ac7c5484ef4ed0c5eb2d36620ba4e4aa13b8c84684e1b4aab0cebea2ae45cb4d375b77eab56516d34bfbd3c1a833fc51296ff084b770b94fb9028c4d25ccf@52.169.42.101:30303", // IE
 	"enode://343149e4feefa15d882d9fe4ac7d88f885bd05ebb735e547f12e12080a9fa07c8014ca6fd7f373123488102fe5e34111f8509cf0b7de3f5b44339c9f25e87cb8@52.3.158.184:30303",  // INFURA
 	"enode://b6b28890b006743680c52e64e0d16db57f28124885595fa03a562be1d2bf0f3a1da297d56b13da25fb992888fd556d4c1a27b1f39d531bde7de1921c90061cc6@159.89.28.211:30303", // AKASHA
 }
 
-// GoerliBootnodes are the enode URLs of the P2P bootstrap nodes running on the
-// Görli test network.
+// goerlibootnodes是P2P Bootstrap节点的eNODE URL
+//Görli测试网络。
 var GoerliBootnodes = []string{
 	// Upstream bootnodes
 	"enode://011f758e6552d105183b1761c5e2dea0111bc20fd5f6422bc7f91e0fabbec9a6595caf6239b37feb773dddd3f87240d99d859431891e4a642cf2a0a9e6cbb98a@51.141.78.53:30303",
@@ -102,9 +105,9 @@ var V5Bootnodes = []string{
 
 const dnsPrefix = "enrtree://AKA3AM6LPBYEUDMVNU3BSVQJ5AD45Y7YPOHJLEF6W26QOE4VTUDPE@"
 
-// KnownDNSNetwork returns the address of a public DNS-based node list for the given
-// genesis hash and protocol. See https://github.com/ethereum/discv4-dns-lists for more
-// information.
+// nownsnetwork返回给定的基于公共DNS的节点列表的地址
+//创世纪哈希和协议。请参阅https://github.com/ethereum/discv4-dns-lists更多信息
+// 信息。
 func KnownDNSNetwork(genesis common.Hash, protocol string) string {
 	var net string
 	switch genesis {

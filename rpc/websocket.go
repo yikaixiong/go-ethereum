@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package rpc
 
@@ -43,10 +43,10 @@ const (
 
 var wsBufferPool = new(sync.Pool)
 
-// WebsocketHandler returns a handler that serves JSON-RPC to WebSocket connections.
+// WebSockethandler返回一个将JSON-RPC服务的处理程序返回Websocket连接。
 //
-// allowedOrigins should be a comma-separated list of allowed origin URLs.
-// To allow connections with any origin, pass "*".
+//允许的人应为允许原点URL的逗号分隔列表。
+//要允许与任何原点的连接，请通过“*”。
 func (s *Server) WebsocketHandler(allowedOrigins []string) http.Handler {
 	var upgrader = websocket.Upgrader{
 		ReadBufferSize:  wsReadBuffer,
@@ -65,9 +65,9 @@ func (s *Server) WebsocketHandler(allowedOrigins []string) http.Handler {
 	})
 }
 
-// wsHandshakeValidator returns a handler that verifies the origin during the
-// websocket upgrade process. When a '*' is specified as an allowed origins all
-// connections are accepted.
+// wshandshakevalidator返回一个处理程序，该处理程序验证了在
+// WebSocket升级过程。当一个'*'指定为允许的起源时
+//连接被接受。
 func wsHandshakeValidator(allowedOrigins []string) func(*http.Request) bool {
 	origins := mapset.NewSet()
 	allowAllOrigins := false
@@ -90,10 +90,10 @@ func wsHandshakeValidator(allowedOrigins []string) func(*http.Request) bool {
 	log.Debug(fmt.Sprintf("Allowed origin(s) for WS RPC interface %v", origins.ToSlice()))
 
 	f := func(req *http.Request) bool {
-		// Skip origin verification if no Origin header is present. The origin check
-		// is supposed to protect against browser based attacks. Browsers always set
-		// Origin. Non-browser software can put anything in origin and checking it doesn't
-		// provide additional security.
+		//跳过原点验证，如果没有原点标头。原点检查
+//应该预防基于浏览器的攻击。浏览器始终设置
+// 起源。非浏览器软件可以将任何内容都放在原始
+//提供其他安全性。
 		if _, ok := req.Header["Origin"]; !ok {
 			return true
 		}
@@ -181,8 +181,8 @@ func parseOriginURL(origin string) (string, string, string, error) {
 	return scheme, hostname, port, nil
 }
 
-// DialWebsocketWithDialer creates a new RPC client that communicates with a JSON-RPC server
-// that is listening on the given endpoint using the provided dialer.
+// DialWebsocketWithDialer创建了一个新的RPC客户端，该客户端与JSON RPC服务器通信
+//使用提供的拨号器在给定端点上侦听。
 func DialWebsocketWithDialer(ctx context.Context, endpoint, origin string, dialer websocket.Dialer) (*Client, error) {
 	endpoint, header, err := wsClientHeaders(endpoint, origin)
 	if err != nil {
@@ -201,11 +201,11 @@ func DialWebsocketWithDialer(ctx context.Context, endpoint, origin string, diale
 	})
 }
 
-// DialWebsocket creates a new RPC client that communicates with a JSON-RPC server
-// that is listening on the given endpoint.
+// DialWebsocket创建一个新的RPC客户端，该客户端与JSON RPC服务器通信
+//在给定端点上侦听。
 //
-// The context is used for the initial connection establishment. It does not
-// affect subsequent interactions with the client.
+//上下文用于初始连接建立。它不是
+//影响与客户的后续交互。
 func DialWebsocket(ctx context.Context, endpoint, origin string) (*Client, error) {
 	dialer := websocket.Dialer{
 		ReadBufferSize:  wsReadBuffer,

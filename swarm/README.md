@@ -1,7 +1,6 @@
 # Swarm
-
 https://swarm.ethereum.org
 
-Swarm is a distributed storage platform and content distribution service, a native base layer service of the ethereum web3 stack. The primary objective of Swarm is to provide a decentralized and redundant store for dapp code and data as well as block chain and state data. Swarm is also set out to provide various base layer services for web3, including node-to-node messaging, media streaming, decentralised database services and scalable state-channel infrastructure for decentralised service economies.
+Swarm是一个分布式存储平台和内容分发服务，这是以太坊Web3堆栈的本机基层服务。群的主要目的是为DAPP代码和数据以及块链和状态数据提供分散和冗余的商店。SWARM还旨在为Web3提供各种基础层服务，包括节点到节点消息，媒体流，分散数据库服务和分散服务经济体的可扩展状态通道基础架构。
 
-**Note**: The codebase has been moved to [ethersphere/swarm](https://github.com/ethersphere/swarm)
+**注意**：代码库已移至[ethersphere/swarm]（https://github.com/ethersphere/swarm）

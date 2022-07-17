@@ -1,40 +1,40 @@
-// Copyright 2022 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权2022 The Go-Ethereum作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package trie
 
-// tracer tracks the changes of trie nodes. During the trie operations,
-// some nodes can be deleted from the trie, while these deleted nodes
-// won't be captured by trie.Hasher or trie.Committer. Thus, these deleted
-// nodes won't be removed from the disk at all. Tracer is an auxiliary tool
-// used to track all insert and delete operations of trie and capture all
-// deleted nodes eventually.
+// Tracer跟踪Trie节点的更改。在Trie行动期间，
+//可以从Trie中删除某些节点，而这些删除的节点
+//不会被Trie.hasher或Trie.Committer捕获。因此，这些删除了
+//根本不会从磁盘中删除节点。示踪剂是一种辅助工具
+//用于跟踪Trie的所有插入和删除操作并捕获所有操作
+//最终删除节点。
 //
-// The changed nodes can be mainly divided into two categories: the leaf
-// node and intermediate node. The former is inserted/deleted by callers
-// while the latter is inserted/deleted in order to follow the rule of trie.
-// This tool can track all of them no matter the node is embedded in its
-// parent or not, but valueNode is never tracked.
+//更改的节点可以主要分为两类：叶子
+//节点和中间节点。前者被呼叫者插入/删除
+//插入/删除后者以遵循Trie规则。
+//无论节点嵌入什么，该工具都可以跟踪所有这些工具
+//父母与否，但永远不会跟踪ValueNode。
 //
-// Besides, it's also used for recording the original value of the nodes
-// when they are resolved from the disk. The pre-value of the nodes will
-// be used to construct reverse-diffs in the future.
+//此外，它还用于记录节点的原始值
+//当它们从磁盘解析时。节点的预价将
+//将来被用来构建反向爆破。
 //
-// Note tracer is not thread-safe, callers should be responsible for handling
-// the concurrency issues by themselves.
+//注意示踪剂不是线程安全，呼叫者应负责处理
+//并发问题。
 type tracer struct {
 	insert map[string]struct{}
 	delete map[string]struct{}
@@ -51,19 +51,19 @@ func newTracer() *tracer {
 }
 
 /*
-// onRead tracks the newly loaded trie node and caches the rlp-encoded blob internally.
-// Don't change the value outside of function since it's not deep-copied.
-func (t *tracer) onRead(key []byte, val []byte) {
-	// Tracer isn't used right now, remove this check later.
-	if t == nil {
-		return
-	}
-	t.origin[string(key)] = val
+// OnRead跟踪新加载的Trie节点并在内部缓存RLP编码的斑点。
+//不要更改功能之外的值，因为它没有深入填充。
+func（t *tracer）onRead（key [] byte，val [] byte）{
+//示踪剂现在不使用，请稍后删除此检查。
+如果t == nil {
+返回
+}
+t.origin [string（key）] = val
 }
 */
 
-// onInsert tracks the newly inserted trie node. If it's already in the deletion set
-// (resurrected node), then just wipe it from the deletion set as the "untouched".
+// Oninsert跟踪新插入的Trie节点。如果已经在删除集中
+//（复活的节点），然后将其从删除集中擦除为“未接触”。
 func (t *tracer) onInsert(key []byte) {
 	// Tracer isn't used right now, remove this check later.
 	if t == nil {
@@ -76,9 +76,9 @@ func (t *tracer) onInsert(key []byte) {
 	t.insert[string(key)] = struct{}{}
 }
 
-// onDelete tracks the newly deleted trie node. If it's already
-// in the addition set, then just wipe it from the addition set
-// as it's untouched.
+// OnDelete跟踪新删除的Trie节点。如果已经
+//在添加组中，然后将其从添加组中擦除
+//因为它没有被触动。
 func (t *tracer) onDelete(key []byte) {
 	// Tracer isn't used right now, remove this check later.
 	if t == nil {
@@ -91,7 +91,7 @@ func (t *tracer) onDelete(key []byte) {
 	t.delete[string(key)] = struct{}{}
 }
 
-// insertList returns the tracked inserted trie nodes in list format.
+// 插入列表以列表格式返回插入的插入的trie节点。
 func (t *tracer) insertList() [][]byte {
 	// Tracer isn't used right now, remove this check later.
 	if t == nil {
@@ -118,17 +118,17 @@ func (t *tracer) deleteList() [][]byte {
 }
 
 /*
-// getPrev returns the cached original value of the specified node.
-func (t *tracer) getPrev(key []byte) []byte {
-	// Don't panic on uninitialized tracer, it's possible in testing.
-	if t == nil {
-		return nil
-	}
-	return t.origin[string(key)]
+// getPrev返回指定节点的缓存原始值。
+func（t *tracer）getPrev（key [] byte）[] byte {
+//不要恐慌对非初始化的示踪剂，可以进行测试。
+如果t == nil {
+返回无
+}
+返回t.origin [string（key）]
 }
 */
 
-// reset clears the content tracked by tracer.
+//重设清除Tracer跟踪的内容。
 func (t *tracer) reset() {
 	// Tracer isn't used right now, remove this check later.
 	if t == nil {

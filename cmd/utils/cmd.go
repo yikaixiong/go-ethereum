@@ -1,20 +1,20 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of go-ethereum.
+//版权所有2014年作者
+//此文件是Go-Ethereum的一部分。
 //
-// go-ethereum is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum是免费软件：您可以重新分配它和/或修改
+//根据GNU通用公共许可证的条款发布
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// go-ethereum is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// go-ethereum的分发是希望它有用的
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU通用公共许可证的副本
+//与Go-Ethereum一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package utils contains internal helper functions for go-ethereum commands.
+//软件包utils包含用于Go-Ethereum命令的内部辅助功能。
 package utils
 
 import (
@@ -48,14 +48,14 @@ const (
 	importBatchSize = 2500
 )
 
-// Fatalf formats a message to standard error and exits the program.
-// The message is also printed to standard output if standard error
-// is redirected to a different file.
+// FATALF将消息格式化为标准错误并退出程序。
+//如果标准错误，也将消息打印到标准输出
+//将其重定向到另一个文件。
 func Fatalf(format string, args ...interface{}) {
 	w := io.MultiWriter(os.Stdout, os.Stderr)
 	if runtime.GOOS == "windows" {
-		// The SameFile check below doesn't work on Windows.
-		// stdout is unlikely to get redirected though, so just print there.
+		// 下面的同一文件检查在Windows上不起作用。 
+        // STDOUT不太可能重定向，因此只需在此处打印即可。
 		w = os.Stdout
 	} else {
 		outf, _ := os.Stdout.Stat()
@@ -67,7 +67,8 @@ func Fatalf(format string, args ...interface{}) {
 	fmt.Fprintf(w, "Fatal: "+format+"\n", args...)
 	os.Exit(1)
 }
-// 开启节点
+
+//TODO: 开启节点
 func StartNode(ctx *cli.Context, stack *node.Node, isConsole bool) {
 	// 启动节点
 	if err := stack.Start(); err != nil {
@@ -118,6 +119,7 @@ func StartNode(ctx *cli.Context, stack *node.Node, isConsole bool) {
 	}()
 }
 
+// TODO: 监控免费磁盘空间
 func monitorFreeDiskSpace(sigc chan os.Signal, path string, freeDiskSpaceCritical uint64) {
 	for {
 		freeSpace, err := getFreeDiskSpace(path)
@@ -237,8 +239,8 @@ func missingBlocks(chain *core.BlockChain, blocks []*types.Block) []*types.Block
 	return nil
 }
 
-// ExportChain exports a blockchain into the specified file, truncating any data
-// already present in the file.
+// 导出链将区块链导出到指定的文件中，截断所有数据
+// 文件中已经存在。
 func ExportChain(blockchain *core.BlockChain, fn string) error {
 	log.Info("Exporting blockchain", "file", fn)
 
@@ -263,8 +265,8 @@ func ExportChain(blockchain *core.BlockChain, fn string) error {
 	return nil
 }
 
-// ExportAppendChain exports a blockchain into the specified file, appending to
-// the file if data already exists in it.
+// 导出Appendchain将区块链导出到指定文件中，附加到
+// 文件如果数据已经存在。
 func ExportAppendChain(blockchain *core.BlockChain, fn string, first uint64, last uint64) error {
 	log.Info("Exporting blockchain", "file", fn)
 
@@ -288,8 +290,8 @@ func ExportAppendChain(blockchain *core.BlockChain, fn string, first uint64, las
 	return nil
 }
 
-// ImportPreimages imports a batch of exported hash preimages into the database.
-// It's a part of the deprecated functionality, should be removed in the future.
+// ImportPreimages将一批导出的哈希预映射导入到数据库中。
+//这是未来不推荐的功能的一部分。
 func ImportPreimages(db ethdb.Database, fn string) error {
 	log.Info("Importing preimages", "file", fn)
 
@@ -335,9 +337,9 @@ func ImportPreimages(db ethdb.Database, fn string) error {
 	return nil
 }
 
-// ExportPreimages exports all known hash preimages into the specified file,
-// truncating any data already present in the file.
-// It's a part of the deprecated functionality, should be removed in the future.
+// 导出所有已知的哈希预映射到指定文件，
+//截断文件中已经存在的任何数据。
+//这是未来不推荐的功能的一部分。
 func ExportPreimages(db ethdb.Database, fn string) error {
 	log.Info("Exporting preimages", "file", fn)
 
@@ -366,11 +368,11 @@ func ExportPreimages(db ethdb.Database, fn string) error {
 	return nil
 }
 
-// exportHeader is used in the export/import flow. When we do an export,
-// the first element we output is the exportHeader.
-// Whenever a backwards-incompatible change is made, the Version header
-// should be bumped.
-// If the importer sees a higher version, it should reject the import.
+//Exportheader用于导出/进口流中。当我们进行出口时，
+//我们输出的第一个元素是Exportheader。
+//每当进行后退兼容的更改时，版本标题
+//应该碰撞。
+//如果进口商看到更高版本，则应拒绝导入。
 type exportHeader struct {
 	Magic    string // Always set to 'gethdbdump' for disambiguation
 	Version  uint64
@@ -384,7 +386,7 @@ const (
 	OpBatchDel = 1
 )
 
-// ImportLDBData imports a batch of snapshot data into the database
+// ExportldBdata将一批快照数据导入到数据库中
 func ImportLDBData(db ethdb.Database, f string, startIndex int64, interrupt chan struct{}) error {
 	log.Info("Importing leveldb data", "file", f)
 
@@ -489,8 +491,8 @@ func ImportLDBData(db ethdb.Database, f string, startIndex int64, interrupt chan
 	return nil
 }
 
-// ChainDataIterator is an interface wraps all necessary functions to iterate
-// the exporting chain data.
+// Chaindaiterator是一个接口包装的所有必要功能以迭代
+//导出链数据。
 type ChainDataIterator interface {
 	// Next returns the key-value pair for next exporting entry in the iterator.
 	// When the end is reached, it will return (0, nil, nil, false).
@@ -501,8 +503,8 @@ type ChainDataIterator interface {
 	Release()
 }
 
-// ExportChaindata exports the given data type (truncating any data already present)
-// in the file. If the suffix is 'gz', gzip compression is used.
+// ExportChainData导出给定的数据类型（截断所有已经存在的数据）
+//在文件中。如果后缀为“ GZ”，则使用GZIP压缩。
 func ExportChaindata(fn string, kind string, iter ChainDataIterator, interrupt chan struct{}) error {
 	log.Info("Exporting chain data", "file", fn, "kind", kind)
 	defer iter.Release()

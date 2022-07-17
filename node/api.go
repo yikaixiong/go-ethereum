@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package node
 
@@ -30,7 +30,7 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 )
 
-// apis returns the collection of built-in RPC APIs.
+// API返回内置RPC API的集合。
 func (n *Node) apis() []rpc.API {
 	return []rpc.API{
 		{
@@ -49,14 +49,14 @@ func (n *Node) apis() []rpc.API {
 	}
 }
 
-// adminAPI is the collection of administrative API methods exposed over
-// both secure and unsecure RPC channels.
+// Adminapi是暴露的管理API方法的集合
+//安全和不安全的RPC频道。
 type adminAPI struct {
 	node *Node // Node interfaced by this API
 }
 
-// AddPeer requests connecting to a remote node, and also maintaining the new
-// connection at all times, even reconnecting if it is lost.
+// AddPeer请求连接到远程节点，还维护新的
+//始终连接，甚至可以重新连接它是否丢失。
 func (api *adminAPI) AddPeer(url string) (bool, error) {
 	// Make sure the server is running, fail otherwise
 	server := api.node.Server()
@@ -72,14 +72,14 @@ func (api *adminAPI) AddPeer(url string) (bool, error) {
 	return true, nil
 }
 
-// RemovePeer disconnects from a remote node if the connection exists
+//如果连接存在，请删除与远程节点断开连接
 func (api *adminAPI) RemovePeer(url string) (bool, error) {
-	// Make sure the server is running, fail otherwise
+	// 确保服务器正在运行，否则会失败
 	server := api.node.Server()
 	if server == nil {
 		return false, ErrNodeStopped
 	}
-	// Try to remove the url as a static peer and return
+	// 尝试将URL删除为静态对等，然后返回
 	node, err := enode.Parse(enode.ValidSchemes, url)
 	if err != nil {
 		return false, fmt.Errorf("invalid enode: %v", err)
@@ -88,7 +88,7 @@ func (api *adminAPI) RemovePeer(url string) (bool, error) {
 	return true, nil
 }
 
-// AddTrustedPeer allows a remote node to always connect, even if slots are full
+// AddTrustedPeer允许远程节点始终连接，即使插槽已满
 func (api *adminAPI) AddTrustedPeer(url string) (bool, error) {
 	// Make sure the server is running, fail otherwise
 	server := api.node.Server()
@@ -103,8 +103,8 @@ func (api *adminAPI) AddTrustedPeer(url string) (bool, error) {
 	return true, nil
 }
 
-// RemoveTrustedPeer removes a remote node from the trusted peer set, but it
-// does not disconnect it automatically.
+// RemovetRustedPeer从可信赖的对等方面删除一个远程节点，但是
+//不会自动断开它。
 func (api *adminAPI) RemoveTrustedPeer(url string) (bool, error) {
 	// Make sure the server is running, fail otherwise
 	server := api.node.Server()
@@ -119,8 +119,8 @@ func (api *adminAPI) RemoveTrustedPeer(url string) (bool, error) {
 	return true, nil
 }
 
-// PeerEvents creates an RPC subscription which receives peer events from the
-// node's p2p.Server
+// PEEREVENTS创建了RPC订阅，该订阅从
+//节点的P2P.Server
 func (api *adminAPI) PeerEvents(ctx context.Context) (*rpc.Subscription, error) {
 	// Make sure the server is running, fail otherwise
 	server := api.node.Server()
@@ -157,7 +157,7 @@ func (api *adminAPI) PeerEvents(ctx context.Context) (*rpc.Subscription, error) 
 	return rpcSub, nil
 }
 
-// StartHTTP starts the HTTP RPC API server.
+// StarthTTP启动HTTP RPC API服务器。
 func (api *adminAPI) StartHTTP(host *string, port *int, cors *string, apis *string, vhosts *string) (bool, error) {
 	api.node.lock.Lock()
 	defer api.node.lock.Unlock()
@@ -211,27 +211,27 @@ func (api *adminAPI) StartHTTP(host *string, port *int, cors *string, apis *stri
 	return true, nil
 }
 
-// StartRPC starts the HTTP RPC API server.
-// Deprecated: use StartHTTP instead.
+// StarTrPC启动HTTP RPC API服务器。
+//弃用：改用STARTHTTP。
 func (api *adminAPI) StartRPC(host *string, port *int, cors *string, apis *string, vhosts *string) (bool, error) {
 	log.Warn("Deprecation warning", "method", "admin.StartRPC", "use-instead", "admin.StartHTTP")
 	return api.StartHTTP(host, port, cors, apis, vhosts)
 }
 
-// StopHTTP shuts down the HTTP server.
+// StopHTTP关闭HTTP服务器。
 func (api *adminAPI) StopHTTP() (bool, error) {
 	api.node.http.stop()
 	return true, nil
 }
 
-// StopRPC shuts down the HTTP server.
-// Deprecated: use StopHTTP instead.
+// StopRPC关闭HTTP服务器。
+//弃用：改用stophttp。
 func (api *adminAPI) StopRPC() (bool, error) {
 	log.Warn("Deprecation warning", "method", "admin.StopRPC", "use-instead", "admin.StopHTTP")
 	return api.StopHTTP()
 }
 
-// StartWS starts the websocket RPC API server.
+// Startws启动Websocket RPC API服务器。
 func (api *adminAPI) StartWS(host *string, port *int, allowedOrigins *string, apis *string) (bool, error) {
 	api.node.lock.Lock()
 	defer api.node.lock.Unlock()
@@ -283,15 +283,15 @@ func (api *adminAPI) StartWS(host *string, port *int, allowedOrigins *string, ap
 	return true, nil
 }
 
-// StopWS terminates all WebSocket servers.
+// Stopws终止所有WebSocket服务器。
 func (api *adminAPI) StopWS() (bool, error) {
 	api.node.http.stopWS()
 	api.node.ws.stop()
 	return true, nil
 }
 
-// Peers retrieves all the information we know about each individual peer at the
-// protocol granularity.
+// 同行检索我们知道的所有有关每个人的信息
+//协议粒度。
 func (api *adminAPI) Peers() ([]*p2p.PeerInfo, error) {
 	server := api.node.Server()
 	if server == nil {
@@ -300,8 +300,8 @@ func (api *adminAPI) Peers() ([]*p2p.PeerInfo, error) {
 	return server.PeersInfo(), nil
 }
 
-// NodeInfo retrieves all the information we know about the host node at the
-// protocol granularity.
+//NodeInfo检索我们知道的有关主机节点的所有信息
+//协议粒度。
 func (api *adminAPI) NodeInfo() (*p2p.NodeInfo, error) {
 	server := api.node.Server()
 	if server == nil {
@@ -310,23 +310,23 @@ func (api *adminAPI) NodeInfo() (*p2p.NodeInfo, error) {
 	return server.NodeInfo(), nil
 }
 
-// Datadir retrieves the current data directory the node is using.
+// Datadir检索节点正在使用的当前数据目录。
 func (api *adminAPI) Datadir() string {
 	return api.node.DataDir()
 }
 
-// web3API offers helper utils
+// Web3API提供帮助助手utils
 type web3API struct {
 	stack *Node
 }
 
-// ClientVersion returns the node name
+// 客户端返回节点名称
 func (s *web3API) ClientVersion() string {
 	return s.stack.Server().Name
 }
 
-// Sha3 applies the ethereum sha3 implementation on the input.
-// It assumes the input is hex encoded.
+// SHA3在输入上应用以太坊SHA3实现。
+//假设输入是编码的。
 func (s *web3API) Sha3(input hexutil.Bytes) hexutil.Bytes {
 	return crypto.Keccak256(input)
 }

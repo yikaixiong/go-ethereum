@@ -24,36 +24,36 @@ import (
 //提供指定的帐户。
 var ErrUnknownAccount = errors.New("unknown account")
 
-// ErrUnknownWallet is returned for any requested operation for which no backend
-// provides the specified wallet.
+// 返回任何请求的操作，返回errunknownwallet
+//提供指定的钱包。
 var ErrUnknownWallet = errors.New("unknown wallet")
 
-// ErrNotSupported is returned when an operation is requested from an account
-// backend that it does not support.
+// 从帐户请求操作时返回errnotsupported
+//后端不支持它。
 var ErrNotSupported = errors.New("not supported")
 
-// ErrInvalidPassphrase is returned when a decryption operation receives a bad
-// passphrase.
+// 解密操作收到不良
+//密码。
 var ErrInvalidPassphrase = errors.New("invalid password")
 
-// ErrWalletAlreadyOpen is returned if a wallet is attempted to be opened the
-// second time.
+// 如果试图打开钱包，将返回errwalletalReveOpen
+// 第二次。
 var ErrWalletAlreadyOpen = errors.New("wallet already open")
 
-// ErrWalletClosed is returned if a wallet is offline.
+// 如果钱包脱机，将返回errwalletcled。
 var ErrWalletClosed = errors.New("wallet closed")
 
-// AuthNeededError is returned by backends for signing requests where the user
-// is required to provide further authentication before signing can succeed.
+// AuthneededError由后端返回，用于签署用户的签名请求
+//必须在签名成功之前提供进一步的身份验证。
 //
-// This usually means either that a password needs to be supplied, or perhaps a
-// one time PIN code displayed by some hardware device.
+//这通常意味着需要提供密码，或者可能是
+//某些硬件设备显示的一次性PIN代码。
 type AuthNeededError struct {
-	Needed string // Extra authentication the user needs to provide
+	Needed string // 用户需要提供的额外认证
 }
 
-// NewAuthNeededError creates a new authentication error with the extra details
-// about the needed fields set.
+// NewauthneededeRror创建了一个新的身份验证错误，并提供了额外的详细信息
+//关于所需的字段设置。
 func NewAuthNeededError(needed string) error {
 	return &AuthNeededError{
 		Needed: needed,

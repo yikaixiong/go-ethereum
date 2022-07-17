@@ -1,18 +1,18 @@
-// Copyright 2019 The go-ethereum Authors
-// This file is part of go-ethereum.
+//版权所有2019年作者
+//此文件是Go-Ethereum的一部分。
 //
-// go-ethereum is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum是免费软件：您可以重新分配它和/或修改
+//根据GNU通用公共许可证的条款发布
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// go-ethereum is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// go-ethereum的分发是希望它有用的
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU通用公共许可证的副本
+//与Go-Ethereum一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package main
 
@@ -31,7 +31,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// newClient creates a client with specified remote URL.
+// 使用指定的远程URL创建客户端。
 func newClient(ctx *cli.Context) *ethclient.Client {
 	client, err := ethclient.Dial(ctx.String(nodeURLFlag.Name))
 	if err != nil {
@@ -40,7 +40,7 @@ func newClient(ctx *cli.Context) *ethclient.Client {
 	return client
 }
 
-// newRPCClient creates a rpc client with specified node URL.
+// NEWRPCCLIENT使用指定的节点URL创建RPC客户端。
 func newRPCClient(url string) *rpc.Client {
 	client, err := rpc.Dial(url)
 	if err != nil {
@@ -49,8 +49,8 @@ func newRPCClient(url string) *rpc.Client {
 	return client
 }
 
-// getContractAddr retrieves the register contract address through
-// rpc request.
+//GetContractAddr通过
+// RPC请求。
 func getContractAddr(client *rpc.Client) common.Address {
 	var addr string
 	if err := client.Call(&addr, "les_getCheckpointContractAddress"); err != nil {
@@ -59,8 +59,8 @@ func getContractAddr(client *rpc.Client) common.Address {
 	return common.HexToAddress(addr)
 }
 
-// getCheckpoint retrieves the specified checkpoint or the latest one
-// through rpc request.
+// GetCheckpoint检索指定的检查点或最新的检查点
+//通过RPC请求。
 func getCheckpoint(ctx *cli.Context, client *rpc.Client) *params.TrustedCheckpoint {
 	var checkpoint *params.TrustedCheckpoint
 
@@ -96,8 +96,8 @@ func getCheckpoint(ctx *cli.Context, client *rpc.Client) *params.TrustedCheckpoi
 	return checkpoint
 }
 
-// newContract creates a registrar contract instance with specified
-// contract address or the default contracts for mainnet or testnet.
+//Newtract与指定的注册商合同实例创建
+// Mainnet或TestNet的合同地址或默认合同。
 func newContract(client *rpc.Client) (common.Address, *checkpointoracle.CheckpointOracle) {
 	addr := getContractAddr(client)
 	if addr == (common.Address{}) {

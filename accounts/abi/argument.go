@@ -1,19 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
-
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 package abi
 
 import (
@@ -24,12 +23,12 @@ import (
 	"strings"
 )
 
-// Argument holds the name of the argument and the corresponding type.
-// Types are used when packing and testing arguments.
+//参数保存参数的名称和相应的类型。
+//包装和测试参数时使用类型。
 type Argument struct {
 	Name    string
 	Type    Type
-	Indexed bool // indexed is only used by events
+	Indexed bool //索引仅由事件使用
 }
 
 type Arguments []Argument
@@ -42,7 +41,7 @@ type ArgumentMarshaling struct {
 	Indexed      bool
 }
 
-// UnmarshalJSON implements json.Unmarshaler interface.
+// Unmarshaljson实现JSON.UNMARMALSHALER接口。
 func (argument *Argument) UnmarshalJSON(data []byte) error {
 	var arg ArgumentMarshaling
 	err := json.Unmarshal(data, &arg)
@@ -60,7 +59,7 @@ func (argument *Argument) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// NonIndexed returns the arguments with indexed arguments filtered out.
+// 非索引返回了用索引参数过滤的参数。
 func (arguments Arguments) NonIndexed() Arguments {
 	var ret []Argument
 	for _, arg := range arguments {
@@ -71,12 +70,12 @@ func (arguments Arguments) NonIndexed() Arguments {
 	return ret
 }
 
-// isTuple returns true for non-atomic constructs, like (uint,uint) or uint[].
+// 对于非原子构建体，例如（UINT，UINT）或UINT []。
 func (arguments Arguments) isTuple() bool {
 	return len(arguments) > 1
 }
 
-// Unpack performs the operation hexdata -> Go format.
+// 打开包装执行操作hexdata-> GO格式。
 func (arguments Arguments) Unpack(data []byte) ([]interface{}, error) {
 	if len(data) == 0 {
 		if len(arguments.NonIndexed()) != 0 {
@@ -87,7 +86,7 @@ func (arguments Arguments) Unpack(data []byte) ([]interface{}, error) {
 	return arguments.UnpackValues(data)
 }
 
-// UnpackIntoMap performs the operation hexdata -> mapping of argument name to argument value.
+// UncackIntomap执行操作hexdata->参数名称映射到参数值。
 func (arguments Arguments) UnpackIntoMap(v map[string]interface{}, data []byte) error {
 	// Make sure map is not nil
 	if v == nil {
@@ -109,7 +108,7 @@ func (arguments Arguments) UnpackIntoMap(v map[string]interface{}, data []byte) 
 	return nil
 }
 
-// Copy performs the operation go format -> provided struct.
+// 副本执行操作GO格式 - >提供的结构。
 func (arguments Arguments) Copy(v interface{}, values []interface{}) error {
 	// make sure the passed value is arguments pointer
 	if reflect.Ptr != reflect.ValueOf(v).Kind() {
@@ -127,7 +126,7 @@ func (arguments Arguments) Copy(v interface{}, values []interface{}) error {
 	return arguments.copyAtomic(v, values[0])
 }
 
-// unpackAtomic unpacks ( hexdata -> go ) a single value
+// 打开包装原子拆箱（十六进制数据 - > to）一个值
 func (arguments Arguments) copyAtomic(v interface{}, marshalledValues interface{}) error {
 	dst := reflect.ValueOf(v).Elem()
 	src := reflect.ValueOf(marshalledValues)
@@ -138,7 +137,7 @@ func (arguments Arguments) copyAtomic(v interface{}, marshalledValues interface{
 	return set(dst, src)
 }
 
-// copyTuple copies a batch of values from marshalledValues to v.
+// CopyTuple将一批值从架雪地节复制到v。
 func (arguments Arguments) copyTuple(v interface{}, marshalledValues []interface{}) error {
 	value := reflect.ValueOf(v).Elem()
 	nonIndexedArgs := arguments.NonIndexed()
@@ -178,9 +177,9 @@ func (arguments Arguments) copyTuple(v interface{}, marshalledValues []interface
 	return nil
 }
 
-// UnpackValues can be used to unpack ABI-encoded hexdata according to the ABI-specification,
-// without supplying a struct to unpack into. Instead, this method returns a list containing the
-// values. An atomic argument will be a list with one element.
+// 根据ABI规定，UncackValues可以用来解开ABI编码的六边形，
+//无需提供结构即可拆箱。相反，此方法返回包含的列表
+//值。原子论点将是一个列表，其中一个元素。
 func (arguments Arguments) UnpackValues(data []byte) ([]interface{}, error) {
 	nonIndexedArgs := arguments.NonIndexed()
 	retval := make([]interface{}, 0, len(nonIndexedArgs))
@@ -212,13 +211,13 @@ func (arguments Arguments) UnpackValues(data []byte) ([]interface{}, error) {
 	return retval, nil
 }
 
-// PackValues performs the operation Go format -> Hexdata.
-// It is the semantic opposite of UnpackValues.
+// PackValues执行操作GO格式 - > hexdata。
+//这是uncackValues的语义对立。
 func (arguments Arguments) PackValues(args []interface{}) ([]byte, error) {
 	return arguments.Pack(args...)
 }
 
-// Pack performs the operation Go format -> Hexdata.
+// PACK执行操作GO格式 - > hexdata。
 func (arguments Arguments) Pack(args ...interface{}) ([]byte, error) {
 	// Make sure arguments match up and pack them
 	abiArgs := arguments
@@ -261,7 +260,7 @@ func (arguments Arguments) Pack(args ...interface{}) ([]byte, error) {
 	return ret, nil
 }
 
-// ToCamelCase converts an under-score string to a camel-case string
+// Tocamelcase将尺寸下的字符串转换为骆驼箱字符串
 func ToCamelCase(input string) string {
 	parts := strings.Split(input, "_")
 	for i, s := range parts {

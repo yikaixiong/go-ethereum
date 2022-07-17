@@ -1,32 +1,32 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 /*
-Package hexutil implements hex encoding with 0x prefix.
-This encoding is used by the Ethereum RPC API to transport binary data in JSON payloads.
+包装己二实现了用0x前缀编码的十六进制。
+以太坊RPC API使用此编码来运输JSON有效载荷中的二进制数据。
 
-Encoding Rules
+编码规则
 
-All hex data must have prefix "0x".
+所有十六进制数据都必须具有前缀“ 0x”。
 
-For byte slices, the hex data must be of even length. An empty byte slice
-encodes as "0x".
+对于字节切片，十六进制数据必须均匀。一个空字节切片
+编码为“ 0x”。
 
-Integers are encoded using the least amount of digits (no leading zero digits). Their
-encoding may be of uneven length. The number zero encodes as "0x0".
+整数使用最小数字（无领先的零数字）编码。他们的
+编码的长度可能不均匀。零号码编码为“ 0x0”。
 */
 package hexutil
 
@@ -56,7 +56,7 @@ type decError struct{ msg string }
 
 func (err decError) Error() string { return err.msg }
 
-// Decode decodes a hex string with 0x prefix.
+// 解码带有0x前缀的十六进制字符串。
 func Decode(input string) ([]byte, error) {
 	if len(input) == 0 {
 		return nil, ErrEmptyString
@@ -71,7 +71,7 @@ func Decode(input string) ([]byte, error) {
 	return b, err
 }
 
-// MustDecode decodes a hex string with 0x prefix. It panics for invalid input.
+// MustDecode用0x前缀解码十六进制字符串。它对无效的输入感到恐慌。
 func MustDecode(input string) []byte {
 	dec, err := Decode(input)
 	if err != nil {

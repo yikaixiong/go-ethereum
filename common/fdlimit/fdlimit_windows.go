@@ -1,18 +1,18 @@
-// Copyright 2018 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权2018 go-ethereum作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package fdlimit
 
@@ -36,15 +36,15 @@ func Raise(max uint64) (uint64, error) {
 	return max, nil
 }
 
-// Current retrieves the number of file descriptors allowed to be opened by this
-// process.
+// 当前检索此文件允许打开的文件描述符数
+// 过程。
 func Current() (int, error) {
 	// Please see Raise for the reason why we use hard coded 16K as the limit
 	return hardlimit, nil
 }
 
-// Maximum retrieves the maximum number of file descriptors this process is
-// allowed to request for itself.
+//最大检索文件描述符的最大数量此过程是
+//允许自身请求。
 func Maximum() (int, error) {
 	return Current()
 }

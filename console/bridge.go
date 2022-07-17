@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package console
 
@@ -33,15 +33,15 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 )
 
-// bridge is a collection of JavaScript utility methods to bride the .js runtime
-// environment and the Go RPC connection backing the remote method calls.
+// 桥梁是JavaScript实用程序方法的集合
+//环境和GO RPC连接备份远程方法调用。
 type bridge struct {
 	client   *rpc.Client         // RPC client to execute Ethereum requests through
 	prompter prompt.UserPrompter // Input prompter to allow interactive user feedback
 	printer  io.Writer           // Output writer to serialize any display strings to
 }
 
-// newBridge creates a new JavaScript wrapper around an RPC client.
+// Newbridge周围围绕RPC客户端创建了一个新的JavaScript包装器。
 func newBridge(client *rpc.Client, prompter prompt.UserPrompter, printer io.Writer) *bridge {
 	return &bridge{
 		client:   client,
@@ -58,9 +58,9 @@ func getJeth(vm *goja.Runtime) *goja.Object {
 	return jeth.ToObject(vm)
 }
 
-// NewAccount is a wrapper around the personal.newAccount RPC method that uses a
-// non-echoing password prompt to acquire the passphrase and executes the original
-// RPC method (saved in jeth.newAccount) with it to actually execute the RPC call.
+// newAccount是围绕personal.newaccount rpc方法的包装器，它使用了
+//非回声密码提示以获取密码并执行原始密码
+// rpc方法（保存在jeth.newaccount中），并实际执行RPC调用。
 func (b *bridge) NewAccount(call jsre.Call) (goja.Value, error) {
 	var (
 		password string
@@ -97,8 +97,8 @@ func (b *bridge) NewAccount(call jsre.Call) (goja.Value, error) {
 	return ret, nil
 }
 
-// OpenWallet is a wrapper around personal.openWallet which can interpret and
-// react to certain error messages, such as the Trezor PIN matrix request.
+// OpenWallet是围绕个人的包装器。
+//对某些错误消息的反应，例如Trezor Pin矩阵请求。
 func (b *bridge) OpenWallet(call jsre.Call) (goja.Value, error) {
 	// Make sure we have a wallet specified to open
 	if call.Argument(0).ToObject(call.VM).ClassName() != "String" {
@@ -224,10 +224,10 @@ func (b *bridge) readPinAndReopenWallet(call jsre.Call) (goja.Value, error) {
 	return openWallet(goja.Null(), wallet, call.VM.ToValue(input))
 }
 
-// UnlockAccount is a wrapper around the personal.unlockAccount RPC method that
-// uses a non-echoing password prompt to acquire the passphrase and executes the
-// original RPC method (saved in jeth.unlockAccount) with it to actually execute
-// the RPC call.
+// UnlockacCount是围绕个人的包装器。
+//使用非回声密码提示来获取密码并执行
+//原始RPC方法（保存在jeth.unlockaccount中）与其实际执行
+// RPC调用。
 func (b *bridge) UnlockAccount(call jsre.Call) (goja.Value, error) {
 	if len(call.Arguments) < 1 {
 		return nil, fmt.Errorf("usage: unlockAccount(account, [ password, duration ])")
@@ -272,9 +272,9 @@ func (b *bridge) UnlockAccount(call jsre.Call) (goja.Value, error) {
 	return unlockAccount(goja.Null(), account, passwd, duration)
 }
 
-// Sign is a wrapper around the personal.sign RPC method that uses a non-echoing password
-// prompt to acquire the passphrase and executes the original RPC method (saved in
-// jeth.sign) with it to actually execute the RPC call.
+//符号是围绕persony.sign的rpc方法的包装器，该方法使用了非回声密码
+//提示获取密码并执行原始RPC方法（保存在
+// jeth.sign）与它实际执行RPC调用。
 func (b *bridge) Sign(call jsre.Call) (goja.Value, error) {
 	if nArgs := len(call.Arguments); nArgs < 2 {
 		return nil, fmt.Errorf("usage: sign(message, account, [ password ])")
@@ -312,7 +312,7 @@ func (b *bridge) Sign(call jsre.Call) (goja.Value, error) {
 	return sign(goja.Null(), message, account, passwd)
 }
 
-// Sleep will block the console for the specified number of seconds.
+// 睡眠将阻止指定秒数的控制台。
 func (b *bridge) Sleep(call jsre.Call) (goja.Value, error) {
 	if nArgs := len(call.Arguments); nArgs < 1 {
 		return nil, fmt.Errorf("usage: sleep(<number of seconds>)")
@@ -326,8 +326,8 @@ func (b *bridge) Sleep(call jsre.Call) (goja.Value, error) {
 	return call.VM.ToValue(true), nil
 }
 
-// SleepBlocks will block the console for a specified number of new blocks optionally
-// until the given timeout is reached.
+// Sleepblocks将可选地阻止指定数量的新块的控制台
+//直到达到给定超时为止。
 func (b *bridge) SleepBlocks(call jsre.Call) (goja.Value, error) {
 	// Parse the input parameters for the sleep.
 	var (

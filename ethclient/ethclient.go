@@ -1,20 +1,20 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package ethclient provides a client for the Ethereum RPC API.
+//软件包Ethclient为以太坊RPC API提供了一个客户端。
 package ethclient
 
 import (
@@ -31,12 +31,12 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 )
 
-// Client defines typed wrappers for the Ethereum RPC API.
+// 客户端为以太坊RPC API定义了打字包装。
 type Client struct {
 	c *rpc.Client
 }
 
-// Dial connects a client to the given URL.
+// 拨号将客户端连接到给定的URL。
 func Dial(rawurl string) (*Client, error) {
 	return DialContext(context.Background(), rawurl)
 }
@@ -49,7 +49,7 @@ func DialContext(ctx context.Context, rawurl string) (*Client, error) {
 	return NewClient(c), nil
 }
 
-// NewClient creates a client that uses the given RPC client.
+// NewClient创建使用给定RPC客户端的客户端。
 func NewClient(c *rpc.Client) *Client {
 	return &Client{c}
 }
@@ -60,7 +60,7 @@ func (ec *Client) Close() {
 
 // Blockchain Access
 
-// ChainID retrieves the current chain ID for transaction replay protection.
+// ChainID检索当前链ID以进行交易重播保护。
 func (ec *Client) ChainID(ctx context.Context) (*big.Int, error) {
 	var result hexutil.Big
 	err := ec.c.CallContext(ctx, &result, "eth_chainId")
@@ -70,31 +70,31 @@ func (ec *Client) ChainID(ctx context.Context) (*big.Int, error) {
 	return (*big.Int)(&result), err
 }
 
-// BlockByHash returns the given full block.
+// Blockbyhash返回给定的完整块。
 //
-// Note that loading full blocks requires two requests. Use HeaderByHash
-// if you don't need all transactions or uncle headers.
+//请注意，加载完整块需要两个请求。使用headerbyhash
+//如果您不需要所有交易或叔叔的标题。
 func (ec *Client) BlockByHash(ctx context.Context, hash common.Hash) (*types.Block, error) {
 	return ec.getBlock(ctx, "eth_getBlockByHash", hash, true)
 }
 
-// BlockByNumber returns a block from the current canonical chain. If number is nil, the
-// latest known block is returned.
+// BlockbyNumber返回距离当前规范链的街区。如果编号为零，
+//返回最新的已知块。
 //
-// Note that loading full blocks requires two requests. Use HeaderByNumber
-// if you don't need all transactions or uncle headers.
+//请注意，加载完整块需要两个请求。使用headerbynumber
+//如果您不需要所有交易或叔叔的标题。
 func (ec *Client) BlockByNumber(ctx context.Context, number *big.Int) (*types.Block, error) {
 	return ec.getBlock(ctx, "eth_getBlockByNumber", toBlockNumArg(number), true)
 }
 
-// BlockNumber returns the most recent block number
+// Blocknumber返回最近的块号
 func (ec *Client) BlockNumber(ctx context.Context) (uint64, error) {
 	var result hexutil.Uint64
 	err := ec.c.CallContext(ctx, &result, "eth_blockNumber")
 	return uint64(result), err
 }
 
-// PeerCount returns the number of p2p peers as reported by the net_peerCount method.
+// PeerCount返回Net_peerCount方法报告的P2P对等数的数量。
 func (ec *Client) PeerCount(ctx context.Context) (uint64, error) {
 	var result hexutil.Uint64
 	err := ec.c.CallContext(ctx, &result, "net_peerCount")
@@ -182,8 +182,8 @@ func (ec *Client) HeaderByHash(ctx context.Context, hash common.Hash) (*types.He
 	return head, err
 }
 
-// HeaderByNumber returns a block header from the current canonical chain. If number is
-// nil, the latest known header is returned.
+// HeaderByNumber从当前的规范链中返回一个块标头。如果是数字
+// nil，最新的已知标题退还了。
 func (ec *Client) HeaderByNumber(ctx context.Context, number *big.Int) (*types.Header, error) {
 	var head *types.Header
 	err := ec.c.CallContext(ctx, &head, "eth_getBlockByNumber", toBlockNumArg(number), false)
@@ -211,7 +211,7 @@ func (tx *rpcTransaction) UnmarshalJSON(msg []byte) error {
 	return json.Unmarshal(msg, &tx.txExtraInfo)
 }
 
-// TransactionByHash returns the transaction with the given hash.
+// TransactionByhash用给定的哈希返回交易。
 func (ec *Client) TransactionByHash(ctx context.Context, hash common.Hash) (tx *types.Transaction, isPending bool, err error) {
 	var json *rpcTransaction
 	err = ec.c.CallContext(ctx, &json, "eth_getTransactionByHash", hash)
@@ -228,12 +228,12 @@ func (ec *Client) TransactionByHash(ctx context.Context, hash common.Hash) (tx *
 	return json.tx, json.BlockNumber == nil, nil
 }
 
-// TransactionSender returns the sender address of the given transaction. The transaction
-// must be known to the remote node and included in the blockchain at the given block and
-// index. The sender is the one derived by the protocol at the time of inclusion.
+// Transactionsender返回给定交易的发送者地址。交易
+//必须是远程节点知道的，并在给定块的区块链中包含在区块链中，
+// 指数。发件人是包含时协议得出的一个。
 //
-// There is a fast-path for transactions retrieved by TransactionByHash and
-// TransactionInBlock. Getting their sender address can be done without an RPC interaction.
+//有一个通过TransactionByhash检索的交易的快速路径和
+// TransActionInblock。可以在没有RPC交互的情况下完成其发件人地址。
 func (ec *Client) TransactionSender(ctx context.Context, tx *types.Transaction, block common.Hash, index uint) (common.Address, error) {
 	// Try to load the address from the cache.
 	sender, err := types.Sender(&senderFromServer{blockhash: block}, tx)
@@ -255,14 +255,14 @@ func (ec *Client) TransactionSender(ctx context.Context, tx *types.Transaction, 
 	return meta.From, nil
 }
 
-// TransactionCount returns the total number of transactions in the given block.
+// TransactionCount返回给定块中的交易总数。
 func (ec *Client) TransactionCount(ctx context.Context, blockHash common.Hash) (uint, error) {
 	var num hexutil.Uint
 	err := ec.c.CallContext(ctx, &num, "eth_getBlockTransactionCountByHash", blockHash)
 	return uint(num), err
 }
 
-// TransactionInBlock returns a single transaction at index in the given block.
+// TransActionInblock返回给定块中索引的单个交易。
 func (ec *Client) TransactionInBlock(ctx context.Context, blockHash common.Hash, index uint) (*types.Transaction, error) {
 	var json *rpcTransaction
 	err := ec.c.CallContext(ctx, &json, "eth_getTransactionByBlockHashAndIndex", blockHash, hexutil.Uint64(index))
@@ -280,8 +280,8 @@ func (ec *Client) TransactionInBlock(ctx context.Context, blockHash common.Hash,
 	return json.tx, err
 }
 
-// TransactionReceipt returns the receipt of a transaction by transaction hash.
-// Note that the receipt is not available for pending transactions.
+// TransActionReceipt返回通过交易哈希收据。
+//请注意，收据不可用于待处理交易。
 func (ec *Client) TransactionReceipt(ctx context.Context, txHash common.Hash) (*types.Receipt, error) {
 	var r *types.Receipt
 	err := ec.c.CallContext(ctx, &r, "eth_getTransactionReceipt", txHash)
@@ -293,8 +293,8 @@ func (ec *Client) TransactionReceipt(ctx context.Context, txHash common.Hash) (*
 	return r, err
 }
 
-// SyncProgress retrieves the current progress of the sync algorithm. If there's
-// no sync currently running, it returns nil.
+// Syncrogress检索同步算法的当前进度。如果有
+//当前没有同步，它将返回零。
 func (ec *Client) SyncProgress(ctx context.Context) (*ethereum.SyncProgress, error) {
 	var raw json.RawMessage
 	if err := ec.c.CallContext(ctx, &raw, "eth_syncing"); err != nil {
@@ -312,15 +312,15 @@ func (ec *Client) SyncProgress(ctx context.Context) (*ethereum.SyncProgress, err
 	return p.toSyncProgress(), nil
 }
 
-// SubscribeNewHead subscribes to notifications about the current blockchain head
-// on the given channel.
+//订户订阅有关当前区块链头的通知
+//在给定的频道上。
 func (ec *Client) SubscribeNewHead(ctx context.Context, ch chan<- *types.Header) (ethereum.Subscription, error) {
 	return ec.c.EthSubscribe(ctx, ch, "newHeads")
 }
 
 // State Access
 
-// NetworkID returns the network ID (also known as the chain ID) for this chain.
+// NetworkID返回此链的网络ID（也称为链ID）。
 func (ec *Client) NetworkID(ctx context.Context) (*big.Int, error) {
 	version := new(big.Int)
 	var ver string
@@ -333,32 +333,32 @@ func (ec *Client) NetworkID(ctx context.Context) (*big.Int, error) {
 	return version, nil
 }
 
-// BalanceAt returns the wei balance of the given account.
-// The block number can be nil, in which case the balance is taken from the latest known block.
+// Balanceat返回给定帐户的WEI余额。
+//块号可以为零，在这种情况下，余额是从最新已知的块中获取的。
 func (ec *Client) BalanceAt(ctx context.Context, account common.Address, blockNumber *big.Int) (*big.Int, error) {
 	var result hexutil.Big
 	err := ec.c.CallContext(ctx, &result, "eth_getBalance", account, toBlockNumArg(blockNumber))
 	return (*big.Int)(&result), err
 }
 
-// StorageAt returns the value of key in the contract storage of the given account.
-// The block number can be nil, in which case the value is taken from the latest known block.
+// Storageat在给定帐户的合同存储中返回密钥的值。
+//块号可以为零，在这种情况下，值是从最新已知块中获取的。
 func (ec *Client) StorageAt(ctx context.Context, account common.Address, key common.Hash, blockNumber *big.Int) ([]byte, error) {
 	var result hexutil.Bytes
 	err := ec.c.CallContext(ctx, &result, "eth_getStorageAt", account, key, toBlockNumArg(blockNumber))
 	return result, err
 }
 
-// CodeAt returns the contract code of the given account.
-// The block number can be nil, in which case the code is taken from the latest known block.
+// 代码返回给定帐户的合同代码。
+//块号可以为零，在这种情况下，代码是从最新已知块中获取的。
 func (ec *Client) CodeAt(ctx context.Context, account common.Address, blockNumber *big.Int) ([]byte, error) {
 	var result hexutil.Bytes
 	err := ec.c.CallContext(ctx, &result, "eth_getCode", account, toBlockNumArg(blockNumber))
 	return result, err
 }
 
-// NonceAt returns the account nonce of the given account.
-// The block number can be nil, in which case the nonce is taken from the latest known block.
+// 非CEAT返回给定帐户的nonce。
+//块编号可以为零，在这种情况下，nonce取自最新的已知块。
 func (ec *Client) NonceAt(ctx context.Context, account common.Address, blockNumber *big.Int) (uint64, error) {
 	var result hexutil.Uint64
 	err := ec.c.CallContext(ctx, &result, "eth_getTransactionCount", account, toBlockNumArg(blockNumber))

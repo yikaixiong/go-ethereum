@@ -1,18 +1,18 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of go-ethereum.
+//版权所有2017年作者
+//此文件是Go-Ethereum的一部分。
 //
-// go-ethereum is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum是免费软件：您可以重新分配它和/或修改
+//根据GNU通用公共许可证的条款发布
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// go-ethereum is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// go-ethereum的分发是希望它有用的
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU通用公共许可证的副本
+//与Go-Ethereum一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package main
 
@@ -26,9 +26,9 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// getPassphrase obtains a passphrase given by the user.  It first checks the
-// --passfile command line flag and ultimately prompts the user for a
-// passphrase.
+// getPassphrase获得用户给出的密码。它首先检查
+//-- passfile命令行标志，并最终提示用户
+//密码。
 func getPassphrase(ctx *cli.Context, confirmation bool) string {
 	// Look for the --passwordfile flag.
 	passphraseFile := ctx.String(passphraseFlag.Name)
@@ -45,8 +45,8 @@ func getPassphrase(ctx *cli.Context, confirmation bool) string {
 	return utils.GetPassPhrase("", confirmation)
 }
 
-// mustPrintJSON prints the JSON encoding of the given object and
-// exits the program with an error message when the marshaling fails.
+// MUSTPRINTJSON打印给定对象的JSON编码和
+//当编制失败时，请通过错误消息退出程序。
 func mustPrintJSON(jsonObject interface{}) {
 	str, err := json.MarshalIndent(jsonObject, "", "  ")
 	if err != nil {

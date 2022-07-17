@@ -1,18 +1,18 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2017年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package accounts
 
@@ -25,50 +25,50 @@ import (
 	"strings"
 )
 
-// DefaultRootDerivationPath is the root path to which custom derivation endpoints
-// are appended. As such, the first account will be at m/44'/60'/0'/0, the second
-// at m/44'/60'/0'/1, etc.
+// DefaultrootDerivationPath是自定义推导终点的根路径
+//附加。因此，第一个帐户将在M/44'/60'/0'/0，第二个帐户
+//在M/44'/60'/0'/1，等等。
 var DefaultRootDerivationPath = DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0}
 
-// DefaultBaseDerivationPath is the base path from which custom derivation endpoints
-// are incremented. As such, the first account will be at m/44'/60'/0'/0/0, the second
-// at m/44'/60'/0'/0/1, etc.
+// DefaultBaseadErivationPath是自定义推导端点的基本路径
+//递增。因此，第一个帐户将在M/44'/60'/0'/0/0，第二个帐户
+//在M/44'/60'/0'/0/1，等等，等等。
 var DefaultBaseDerivationPath = DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 0}
 
-// LegacyLedgerBaseDerivationPath is the legacy base path from which custom derivation
-// endpoints are incremented. As such, the first account will be at m/44'/60'/0'/0, the
-// second at m/44'/60'/0'/1, etc.
+// LegacyledGerbasederivationPath是自定义推导的旧基础路径
+//端点会增加。因此，第一个帐户将在M/44'/60'/0'/0，
+//第二个位于M/44'/60'/0'/1，等等，等等。
 var LegacyLedgerBaseDerivationPath = DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0}
 
-// DerivationPath represents the computer friendly version of a hierarchical
-// deterministic wallet account derivation path.
+//推导Path代表层次结构的计算机友好版本
+//确定的钱包帐户派生路径。
 //
-// The BIP-32 spec https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
-// defines derivation paths to be of the form:
+// BIP-32规格https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
+//将派生路径定义为形式：
 //
-//   m / purpose' / coin_type' / account' / change / address_index
+// m / perim' / coin_type' / account' / change / address_index
 //
-// The BIP-44 spec https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
-// defines that the `purpose` be 44' (or 0x8000002C) for crypto currencies, and
-// SLIP-44 https://github.com/satoshilabs/slips/blob/master/slip-0044.md assigns
-// the `coin_type` 60' (or 0x8000003C) to Ethereum.
+// BIP-44规格https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
+//定义加密货币的`目的'be 44'（或0x8000002c）和
+// slip-44 https://github.com/satoshilabs/slips/blob/master/master/slip-0044.md分配
+//以太坊的“ COIN_TYPE” 60'（或0x8000003c）。
 //
-// The root path for Ethereum is m/44'/60'/0'/0 according to the specification
-// from https://github.com/ethereum/EIPs/issues/84, albeit it's not set in stone
-// yet whether accounts should increment the last component or the children of
-// that. We will go with the simpler approach of incrementing the last component.
+//根据规范，以太坊的根路径为m/44'/60'/0'/0
+//来自https://github.com/ethereum/eips/issues/84，尽管它不是在石头上设置的
+//但是帐户是应增加最后一个部分还是
+// 那。我们将采用更简单的方法来增加最后一个组件。
 type DerivationPath []uint32
 
-// ParseDerivationPath converts a user specified derivation path string to the
-// internal binary representation.
+// parsederivationPath将用户指定的派生路径字符串转换为
+//内部二进制表示。
 //
-// Full derivation paths need to start with the `m/` prefix, relative derivation
-// paths (which will get appended to the default root path) must not have prefixes
-// in front of the first element. Whitespace is ignored.
+//全推导路径需要从`m/`前缀，相对推导开始
+//路径（将附加到默认根路径）不得具有前缀
+//在第一个元素的前面。空格被忽略。
 func ParseDerivationPath(path string) (DerivationPath, error) {
 	var result DerivationPath
 
-	// Handle absolute or relative paths
+	// 处理绝对或相对路径
 	components := strings.Split(path, "/")
 	switch {
 	case len(components) == 0:
@@ -83,21 +83,21 @@ func ParseDerivationPath(path string) (DerivationPath, error) {
 	default:
 		result = append(result, DefaultRootDerivationPath...)
 	}
-	// All remaining components are relative, append one by one
+	// 所有剩余的组件都是相对的
 	if len(components) == 0 {
-		return nil, errors.New("empty derivation path") // Empty relative paths
+		return nil, errors.New("empty derivation path") // 空的相对路径
 	}
 	for _, component := range components {
-		// Ignore any user added whitespace
+		// 忽略任何用户添加的空格
 		component = strings.TrimSpace(component)
 		var value uint32
 
-		// Handle hardened paths
+		//处理硬性路径
 		if strings.HasSuffix(component, "'") {
 			value = 0x80000000
 			component = strings.TrimSpace(strings.TrimSuffix(component, "'"))
 		}
-		// Handle the non hardened component
+		//处理非硬化组件
 		bigval, ok := new(big.Int).SetString(component, 0)
 		if !ok {
 			return nil, fmt.Errorf("invalid component: %s", component)
@@ -117,8 +117,8 @@ func ParseDerivationPath(path string) (DerivationPath, error) {
 	return result, nil
 }
 
-// String implements the stringer interface, converting a binary derivation path
-// to its canonical representation.
+//字符串实现纵梁界面，转换二进制派生路径
+//到其规范表示。
 func (path DerivationPath) String() string {
 	result := "m"
 	for _, component := range path {
@@ -135,12 +135,12 @@ func (path DerivationPath) String() string {
 	return result
 }
 
-// MarshalJSON turns a derivation path into its json-serialized string
+//元帅将派生路径变成其JSON-Serialized String
 func (path DerivationPath) MarshalJSON() ([]byte, error) {
 	return json.Marshal(path.String())
 }
 
-// UnmarshalJSON a json-serialized string back into a derivation path
+// 将JSON序列化的字符串返回到派生路径
 func (path *DerivationPath) UnmarshalJSON(b []byte) error {
 	var dp string
 	var err error
@@ -151,8 +151,8 @@ func (path *DerivationPath) UnmarshalJSON(b []byte) error {
 	return err
 }
 
-// DefaultIterator creates a BIP-32 path iterator, which progresses by increasing the last component:
-// i.e. m/44'/60'/0'/0/0, m/44'/60'/0'/0/1, m/44'/60'/0'/0/2, ... m/44'/60'/0'/0/N.
+// Defaulterator创建一个BIP-32路径迭代器，该迭代器通过增加最后一个组件而进行：
+//即M/44'/60'/0'/0/0，M/44'/60'/0'/0/1，M/44'/60'/0'/0'/0/2，..M/44'/60'/0'/0/n。
 func DefaultIterator(base DerivationPath) func() DerivationPath {
 	path := make(DerivationPath, len(base))
 	copy(path[:], base[:])
@@ -164,9 +164,9 @@ func DefaultIterator(base DerivationPath) func() DerivationPath {
 	}
 }
 
-// LedgerLiveIterator creates a bip44 path iterator for Ledger Live.
-// Ledger Live increments the third component rather than the fifth component
-// i.e. m/44'/60'/0'/0/0, m/44'/60'/1'/0/0, m/44'/60'/2'/0/0, ... m/44'/60'/N'/0/0.
+// LEDGERLIVEITERATOR为LEDGER LIVE创建BIP44路径迭代器。
+// LEDGER实时增量第三个组件而不是第五个组件
+//即M/44'/60'/0'/0/0，M/44'/60'/1'/0/0，M/44'/60'/2'/2'/0/0，..M/44'/60'/n'/0/0。
 func LedgerLiveIterator(base DerivationPath) func() DerivationPath {
 	path := make(DerivationPath, len(base))
 	copy(path[:], base[:])

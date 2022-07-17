@@ -1,38 +1,38 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of go-ethereum.
+//版权所有2017年作者
+//此文件是Go-Ethereum的一部分。
 //
-// go-ethereum is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum是免费软件：您可以重新分配它和/或修改
+//根据GNU通用公共许可证的条款发布
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// go-ethereum is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// go-ethereum的分发是希望它有用的
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU通用公共许可证的副本
+//与Go-Ethereum一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// p2psim provides a command-line client for a simulation HTTP API.
+// P2PSIM为模拟HTTP API提供了命令行客户端。
 //
-// Here is an example of creating a 2 node network with the first node
-// connected to the second:
+//这是创建使用第一个节点的2节点网络的示例
+//连接到第二个：
 //
-//     $ p2psim node create
-//     Created node01
+// $ p2PSIM节点创建
+//创建的Node01
 //
-//     $ p2psim node start node01
-//     Started node01
+// $ p2PSIM节点启动node01
+//启动Node01
 //
-//     $ p2psim node create
-//     Created node02
+// $ p2PSIM节点创建
+//创建的Node02
 //
-//     $ p2psim node start node02
-//     Started node02
+// $ p2PSIM节点启动node02
+//启动Node02
 //
-//     $ p2psim node connect node01 node02
-//     Connected node01 to node02
+// $ p2PSIM节点连接node01 node02
+//将Node01连接到Node02
 //
 package main
 
@@ -107,6 +107,7 @@ var (
 	gitDate   string
 )
 
+// 主函数
 func main() {
 	app := flags.NewApp(gitCommit, gitDate, "devp2p simulation command-line client")
 	app.Flags = []cli.Flag{
@@ -250,6 +251,7 @@ func streamNetwork(ctx *cli.Context) error {
 	}
 }
 
+// 创建快照
 func createSnapshot(ctx *cli.Context) error {
 	if ctx.NArg() != 0 {
 		return cli.ShowCommandHelp(ctx, ctx.Command.Name)
@@ -261,6 +263,7 @@ func createSnapshot(ctx *cli.Context) error {
 	return json.NewEncoder(os.Stdout).Encode(snap)
 }
 
+// 导入快照
 func loadSnapshot(ctx *cli.Context) error {
 	if ctx.NArg() != 0 {
 		return cli.ShowCommandHelp(ctx, ctx.Command.Name)
@@ -272,6 +275,7 @@ func loadSnapshot(ctx *cli.Context) error {
 	return client.LoadSnapshot(snap)
 }
 
+// 节点列表
 func listNodes(ctx *cli.Context) error {
 	if ctx.NArg() != 0 {
 		return cli.ShowCommandHelp(ctx, ctx.Command.Name)
@@ -289,6 +293,7 @@ func listNodes(ctx *cli.Context) error {
 	return nil
 }
 
+
 func protocolList(node *p2p.NodeInfo) []string {
 	protos := make([]string, 0, len(node.Protocols))
 	for name := range node.Protocols {
@@ -297,6 +302,7 @@ func protocolList(node *p2p.NodeInfo) []string {
 	return protos
 }
 
+// 创建节点
 func createNode(ctx *cli.Context) error {
 	if ctx.NArg() != 0 {
 		return cli.ShowCommandHelp(ctx, ctx.Command.Name)
@@ -322,6 +328,7 @@ func createNode(ctx *cli.Context) error {
 	return nil
 }
 
+// 展示节点
 func showNode(ctx *cli.Context) error {
 	if ctx.NArg() != 1 {
 		return cli.ShowCommandHelp(ctx, ctx.Command.Name)
@@ -346,6 +353,7 @@ func showNode(ctx *cli.Context) error {
 	return nil
 }
 
+// 开启节点
 func startNode(ctx *cli.Context) error {
 	if ctx.NArg() != 1 {
 		return cli.ShowCommandHelp(ctx, ctx.Command.Name)
@@ -358,6 +366,7 @@ func startNode(ctx *cli.Context) error {
 	return nil
 }
 
+// 停止节点
 func stopNode(ctx *cli.Context) error {
 	if ctx.NArg() != 1 {
 		return cli.ShowCommandHelp(ctx, ctx.Command.Name)
@@ -370,6 +379,7 @@ func stopNode(ctx *cli.Context) error {
 	return nil
 }
 
+// 链接节点
 func connectNode(ctx *cli.Context) error {
 	if ctx.NArg() != 2 {
 		return cli.ShowCommandHelp(ctx, ctx.Command.Name)
@@ -384,6 +394,7 @@ func connectNode(ctx *cli.Context) error {
 	return nil
 }
 
+// 断开链接
 func disconnectNode(ctx *cli.Context) error {
 	args := ctx.Args()
 	if args.Len() != 2 {
@@ -398,6 +409,7 @@ func disconnectNode(ctx *cli.Context) error {
 	return nil
 }
 
+// rpc节点
 func rpcNode(ctx *cli.Context) error {
 	args := ctx.Args()
 	if args.Len() < 2 {
@@ -423,6 +435,7 @@ func rpcNode(ctx *cli.Context) error {
 	return json.NewEncoder(ctx.App.Writer).Encode(result)
 }
 
+// rpc订阅
 func rpcSubscribe(client *rpc.Client, out io.Writer, method string, args ...string) error {
 	parts := strings.SplitN(method, "_", 2)
 	namespace := parts[0]

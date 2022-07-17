@@ -1,25 +1,25 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package rpc
 
 import "fmt"
 
-// HTTPError is returned by client operations when the HTTP status code of the
-// response is not a 2xx status.
+//当HTTP状态代码的httperror返回httperror
+//响应不是2xx状态。
 type HTTPError struct {
 	StatusCode int
 	Status     string
@@ -33,19 +33,19 @@ func (err HTTPError) Error() string {
 	return fmt.Sprintf("%v: %s", err.Status, err.Body)
 }
 
-// Error wraps RPC errors, which contain an error code in addition to the message.
+//错误包装RPC错误，该错误除了消息外还包含错误代码。
 type Error interface {
 	Error() string  // returns the message
 	ErrorCode() int // returns the code
 }
 
-// A DataError contains some data in addition to the error message.
+// 除了错误消息外，DataError还包含一些数据。
 type DataError interface {
 	Error() string          // returns the message
 	ErrorData() interface{} // returns the error data
 }
 
-// Error types defined below are the built-in JSON-RPC errors.
+// 下面定义的错误类型是内置的JSON-RPC错误。
 
 var (
 	_ Error = new(methodNotFoundError)
@@ -88,14 +88,14 @@ func (e *invalidRequestError) ErrorCode() int { return -32600 }
 
 func (e *invalidRequestError) Error() string { return e.message }
 
-// received message is invalid
+// 收到的消息无效
 type invalidMessageError struct{ message string }
 
 func (e *invalidMessageError) ErrorCode() int { return -32700 }
 
 func (e *invalidMessageError) Error() string { return e.message }
 
-// unable to decode supplied params, or an invalid number of parameters
+// 无法解码提供的参数或无效的参数数
 type invalidParamsError struct{ message string }
 
 func (e *invalidParamsError) ErrorCode() int { return -32602 }

@@ -1,18 +1,18 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2017年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package accounts
 
@@ -23,24 +23,24 @@ import (
 	"strings"
 )
 
-// URL represents the canonical identification URL of a wallet or account.
+// URL表示钱包或帐户的规范识别URL。
 //
-// It is a simplified version of url.URL, with the important limitations (which
-// are considered features here) that it contains value-copyable components only,
-// as well as that it doesn't do any URL encoding/decoding of special characters.
+//这是url.url的简化版本，具有重要的限制（
+//在这里被视为功能），它仅包含可取值的组件，
+//以及它不执行特殊字符的任何URL编码/解码。
 //
-// The former is important to allow an account to be copied without leaving live
-// references to the original version, whereas the latter is important to ensure
-// one single canonical form opposed to many allowed ones by the RFC 3986 spec.
+//前者很重要，允许复制帐户而不离开现场
+//引用原始版本，而后者对于确保
+//一种单一的规范形式，与RFC 3986规格相反，与许多允许的形式相反。
 //
-// As such, these URLs should not be used outside of the scope of an Ethereum
-// wallet or account.
+//因此，这些URL不应在以太坊范围之外使用
+//钱包或帐户。
 type URL struct {
-	Scheme string // Protocol scheme to identify a capable account backend
-	Path   string // Path for the backend to identify a unique entity
+	Scheme string // 协议方案以识别功能强大的帐户后端
+	Path   string //后端识别独特实体的路径
 }
 
-// parseURL converts a user supplied URL into the accounts specific structure.
+// Parseurl将提供的用户URL转换为特定帐户结构。
 func parseURL(url string) (URL, error) {
 	parts := strings.Split(url, "://")
 	if len(parts) != 2 || parts[0] == "" {
@@ -52,7 +52,7 @@ func parseURL(url string) (URL, error) {
 	}, nil
 }
 
-// String implements the stringer interface.
+// 字符串实现纵梁界面。
 func (u URL) String() string {
 	if u.Scheme != "" {
 		return fmt.Sprintf("%s://%s", u.Scheme, u.Path)
@@ -60,7 +60,7 @@ func (u URL) String() string {
 	return u.Path
 }
 
-// TerminalString implements the log.TerminalStringer interface.
+// 终端引以实现log.terminalstringer接口。
 func (u URL) TerminalString() string {
 	url := u.String()
 	if len(url) > 32 {
@@ -69,12 +69,12 @@ func (u URL) TerminalString() string {
 	return url
 }
 
-// MarshalJSON implements the json.Marshaller interface.
+// Marshaljson实现JSON.MARSHALLER界面。
 func (u URL) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.String())
 }
 
-// UnmarshalJSON parses url.
+// Unmarshaljson解析URL。
 func (u *URL) UnmarshalJSON(input []byte) error {
 	var textURL string
 	err := json.Unmarshal(input, &textURL)
@@ -90,7 +90,7 @@ func (u *URL) UnmarshalJSON(input []byte) error {
 	return nil
 }
 
-// Cmp compares x and y and returns:
+// CMP比较X和Y和返回：
 //
 //   -1 if x <  y
 //    0 if x == y

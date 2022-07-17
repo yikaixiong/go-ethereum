@@ -1,41 +1,41 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2017年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package consensus
 
 import "errors"
 
 var (
-	// ErrUnknownAncestor is returned when validating a block requires an ancestor
-	// that is unknown.
+	// 验证块需要祖先时返回errunknownancestor
+//那是未知的。
 	ErrUnknownAncestor = errors.New("unknown ancestor")
 
-	// ErrPrunedAncestor is returned when validating a block requires an ancestor
-	// that is known, but the state of which is not available.
+	// 验证块需要祖先时返回Errprunedancestor
+	//这是已知的，但其状态不可用。
 	ErrPrunedAncestor = errors.New("pruned ancestor")
 
-	// ErrFutureBlock is returned when a block's timestamp is in the future according
-	// to the current node.
+	// 当块的时间戳将来返回ErrFutureBlock
+	//到当前节点。
 	ErrFutureBlock = errors.New("block in the future")
 
-	// ErrInvalidNumber is returned if a block's number doesn't equal its parent's
-	// plus one.
+	// 如果一个块的号码不等于其父的，则返回errinvalidnumber
+	// 加一。
 	ErrInvalidNumber = errors.New("invalid block number")
 
-	// ErrInvalidTerminalBlock is returned if a block is invalid wrt. the terminal
-	// total difficulty.
+	// 如果块无效WRT，则返回Errinvalidterminalblock。终点站
+//总难度。
 	ErrInvalidTerminalBlock = errors.New("invalid terminal block")
 )

@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package rpc
 
@@ -28,9 +28,9 @@ import (
 const MetadataApi = "rpc"
 const EngineApi = "engine"
 
-// CodecOption specifies which type of messages a codec supports.
+// codecoption指定编解码器支持的消息类型。
 //
-// Deprecated: this option is no longer honored by Server.
+//弃用：此选项不再由服务器兑现。
 type CodecOption int
 
 const (
@@ -41,7 +41,7 @@ const (
 	OptionSubscriptions = 1 << iota // support pub sub
 )
 
-// Server is an RPC server.
+// 服务器是RPC服务器。
 type Server struct {
 	services serviceRegistry
 	idgen    func() ID
@@ -49,7 +49,7 @@ type Server struct {
 	codecs   mapset.Set
 }
 
-// NewServer creates a new server instance with no registered handlers.
+// Newserver创建一个没有注册处理程序的新服务器实例。
 func NewServer() *Server {
 	server := &Server{idgen: randomIDGenerator(), codecs: mapset.NewSet(), run: 1}
 	// Register the default service providing meta information about the RPC service such
@@ -59,19 +59,19 @@ func NewServer() *Server {
 	return server
 }
 
-// RegisterName creates a service for the given receiver type under the given name. When no
-// methods on the given receiver match the criteria to be either a RPC method or a
-// subscription an error is returned. Otherwise a new service is created and added to the
-// service collection this server provides to clients.
+// registername根据给定名称为给定接收器类型创建服务。当没有
+//给定接收器上的方法匹配标准为RPC方法或
+//订阅返回错误。否则将创建新服务并添加到
+//该服务器向客户端提供的服务集合。
 func (s *Server) RegisterName(name string, receiver interface{}) error {
 	return s.services.registerName(name, receiver)
 }
 
-// ServeCodec reads incoming requests from codec, calls the appropriate callback and writes
-// the response back using the given codec. It will block until the codec is closed or the
-// server is stopped. In either case the codec is closed.
+// Servecodec读取来自编解码器的传入请求，调用适当的回调并写入
+//使用给定编解码器回复。它将阻止直到编解码器关闭或
+//服务器已停止。无论哪种情况，编解码器都关闭。
 //
-// Note that codec options are no longer supported.
+//请注意，不再支持编解码器选项。
 func (s *Server) ServeCodec(codec ServerCodec, options CodecOption) {
 	defer codec.close()
 
@@ -89,9 +89,9 @@ func (s *Server) ServeCodec(codec ServerCodec, options CodecOption) {
 	c.Close()
 }
 
-// serveSingleRequest reads and processes a single RPC request from the given codec. This
-// is used to serve HTTP connections. Subscriptions and reverse calls are not allowed in
-// this mode.
+//ServesingLereQuest读取并处理给定编解码器的单个RPC请求。这个
+//用于服务HTTP连接。不允许订阅和反向调用
+//此模式。
 func (s *Server) serveSingleRequest(ctx context.Context, codec ServerCodec) {
 	// Don't serve if server is stopped.
 	if atomic.LoadInt32(&s.run) == 0 {
@@ -116,9 +116,9 @@ func (s *Server) serveSingleRequest(ctx context.Context, codec ServerCodec) {
 	}
 }
 
-// Stop stops reading new requests, waits for stopPendingRequestTimeout to allow pending
-// requests to finish, then closes all codecs which will cancel pending requests and
-// subscriptions.
+// 停止停止阅读新请求，等待停止请求超时以允许待处理
+//要求完成的请求，然后关闭所有将取消待处理请求的编解码器和
+//订阅。
 func (s *Server) Stop() {
 	if atomic.CompareAndSwapInt32(&s.run, 1, 0) {
 		log.Debug("RPC server shutting down")
@@ -129,8 +129,8 @@ func (s *Server) Stop() {
 	}
 }
 
-// RPCService gives meta information about the server.
-// e.g. gives information about the loaded modules.
+// RPCService提供有关服务器的元信息。
+//例如提供有关加载模块的信息。
 type RPCService struct {
 	server *Server
 }
@@ -146,12 +146,11 @@ func (s *RPCService) Modules() map[string]string {
 	}
 	return modules
 }
-
-// PeerInfo contains information about the remote end of the network connection.
+// Peerinfo包含有关网络连接远端的信息。
 //
-// This is available within RPC method handlers through the context. Call
-// PeerInfoFromContext to get information about the client connection related to
-// the current method call.
+//这可以通过上下文中的RPC方法处理程序提供。称呼
+// peerInfoFromContext获取有关客户连接的信息
+//当前方法调用。
 type PeerInfo struct {
 	// Transport is name of the protocol used by the client.
 	// This can be "http", "ws" or "ipc".
@@ -173,10 +172,10 @@ type PeerInfo struct {
 
 type peerInfoContextKey struct{}
 
-// PeerInfoFromContext returns information about the client's network connection.
-// Use this with the context passed to RPC method handler functions.
+// PeerInfoFromContext返回有关客户端网络连接的信息。
+//将其与传递给RPC方法处理程序功能的上下文一起使用。
 //
-// The zero value is returned if no connection info is present in ctx.
+//如果CTX中没有连接信息，则返回零值。
 func PeerInfoFromContext(ctx context.Context) PeerInfo {
 	info, _ := ctx.Value(peerInfoContextKey{}).(PeerInfo)
 	return info

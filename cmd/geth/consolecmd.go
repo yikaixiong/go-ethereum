@@ -66,8 +66,8 @@ JavaScript API. See https://geth.ethereum.org/docs/interface/javascript-console`
 	}
 )
 
-// localConsole starts a new geth node, attaching a JavaScript console to it at the
-// same time.
+// Localconsole启动了一个新的Geth节点，将JavaScript控制台连接到它
+// 同时。
 func localConsole(ctx *cli.Context) error {
 	// Create and start the node based on the CLI flags
 	prepare(ctx)

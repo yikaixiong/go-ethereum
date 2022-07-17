@@ -1,18 +1,18 @@
-// Copyright 2018 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权2018 go-ethereum作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package abi
 
@@ -27,14 +27,14 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
-// MakeTopics converts a filter query argument list into a filter topic set.
+// 石材台词将过滤器查询参数列表转换为过滤主题集。
 func MakeTopics(query ...[]interface{}) ([][]common.Hash, error) {
 	topics := make([][]common.Hash, len(query))
 	for i, filter := range query {
 		for _, rule := range filter {
 			var topic common.Hash
 
-			// Try to generate the topic based on simple types
+			// 尝试根据简单类型生成主题
 			switch rule := rule.(type) {
 			case common.Hash:
 				copy(topic[:], rule[:])
@@ -101,8 +101,8 @@ func MakeTopics(query ...[]interface{}) ([][]common.Hash, error) {
 func genIntType(rule int64, size uint) []byte {
 	var topic [common.HashLength]byte
 	if rule < 0 {
-		// if a rule is negative, we need to put it into two's complement.
-		// extended to common.HashLength bytes.
+		// 如果规则为负，我们需要将其放入两者的补充中。
+//扩展到common.hashlength字节。
 		topic = [common.HashLength]byte{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255}
 	}
 	for i := uint(0); i < size; i++ {
@@ -111,7 +111,7 @@ func genIntType(rule int64, size uint) []byte {
 	return topic[:]
 }
 
-// ParseTopics converts the indexed topic fields into actual log field values.
+// arteSopics将索引主题字段转换为实际日志字段值。
 func ParseTopics(out interface{}, fields Arguments, topics []common.Hash) error {
 	return parseTopicWithSetter(fields, topics,
 		func(arg Argument, reconstr interface{}) {
@@ -120,7 +120,7 @@ func ParseTopics(out interface{}, fields Arguments, topics []common.Hash) error 
 		})
 }
 
-// ParseTopicsIntoMap converts the indexed topic field-value pairs into map key-value pairs.
+//ParsetopicsIntomap将索引主题字段值对转换为地图键值对。
 func ParseTopicsIntoMap(out map[string]interface{}, fields Arguments, topics []common.Hash) error {
 	return parseTopicWithSetter(fields, topics,
 		func(arg Argument, reconstr interface{}) {
@@ -128,17 +128,17 @@ func ParseTopicsIntoMap(out map[string]interface{}, fields Arguments, topics []c
 		})
 }
 
-// parseTopicWithSetter converts the indexed topic field-value pairs and stores them using the
-// provided set function.
+// parsetopicWithSetter转换索引主题字段值对，并使用
+//提供的设置功能。
 //
-// Note, dynamic types cannot be reconstructed since they get mapped to Keccak256
-// hashes as the topic value!
+//注意，由于将动态类型映射到Keccak256，因此无法重建动态类型
+//哈希作为主题价值！
 func parseTopicWithSetter(fields Arguments, topics []common.Hash, setter func(Argument, interface{})) error {
-	// Sanity check that the fields and topics match up
+	// 理智检查字段和主题是否匹配
 	if len(fields) != len(topics) {
 		return errors.New("topic/field count mismatch")
 	}
-	// Iterate over all the fields and reconstruct them from topics
+	// 在所有领域中迭代并从主题中重建它们
 	for i, arg := range fields {
 		if !arg.Indexed {
 			return errors.New("non-indexed field in topic reconstruction")

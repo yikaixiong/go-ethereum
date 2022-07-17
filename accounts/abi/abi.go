@@ -1,19 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
-
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 package abi
 
 import (
@@ -27,23 +26,23 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
-// The ABI holds information about a contract's context and available
-// invokable methods. It will allow you to type check function calls and
-// packs data accordingly.
+// ABI持有有关合同背景和可用的信息
+//可调用方法。它将允许您键入检查函数调用和
+//相应地包装数据。
 type ABI struct {
 	Constructor Method
 	Methods     map[string]Method
 	Events      map[string]Event
 	Errors      map[string]Error
 
-	// Additional "special" functions introduced in solidity v0.6.0.
-	// It's separated from the original default fallback. Each contract
-	// can only define one fallback and receive function.
-	Fallback Method // Note it's also used to represent legacy fallback before v0.6.0
+	// 固体v0.6.0中引入的其他“特殊”功能。
+	//它与原始默认后回来分开。每个合同
+	//只能定义一个后备并接收功能。
+	Fallback Method // 请注意，它也用于表示v0.6.0之前的遗产后备
 	Receive  Method
 }
 
-// JSON returns a parsed ABI interface and error if it failed.
+// JSON返回解析的ABI接口和错误，如果失败。
 func JSON(reader io.Reader) (ABI, error) {
 	dec := json.NewDecoder(reader)
 
@@ -54,11 +53,11 @@ func JSON(reader io.Reader) (ABI, error) {
 	return abi, nil
 }
 
-// Pack the given method name to conform the ABI. Method call's data
-// will consist of method_id, args0, arg1, ... argN. Method id consists
-// of 4 bytes and arguments are all 32 bytes.
-// Method ids are created from the first 4 bytes of the hash of the
-// methods string signature. (signature = baz(uint32,string32))
+// 打包给定的方法名称以符合ABI。方法调用数据
+//将由method_id，args0，arg1，... argn组成。方法ID组成
+// 4个字节和参数为32个字节。
+//方法ID是从该哈希的前4个字节创建的
+//方法字符串签名。（签名= baz（uint32，string32））
 func (abi ABI) Pack(name string, args ...interface{}) ([]byte, error) {
 	// Fetch the ABI of the requested method
 	if name == "" {
@@ -77,13 +76,13 @@ func (abi ABI) Pack(name string, args ...interface{}) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Pack up the method ID too if not a constructor and return
+	// 如果不是构造函数，也打包了方法ID并返回
 	return append(method.ID, arguments...), nil
 }
 
 func (abi ABI) getArguments(name string, data []byte) (Arguments, error) {
-	// since there can't be naming collisions with contracts and events,
-	// we need to decide whether we're calling a method or an event
+	// 由于不能与合同和事件发生命名碰撞，因此
+//我们需要确定我们是在调用方法还是事件
 	var args Arguments
 	if method, ok := abi.Methods[name]; ok {
 		if len(data)%32 != 0 {
@@ -100,7 +99,7 @@ func (abi ABI) getArguments(name string, data []byte) (Arguments, error) {
 	return args, nil
 }
 
-// Unpack unpacks the output according to the abi specification.
+// 根据ABI规范解开输出的包装。
 func (abi ABI) Unpack(name string, data []byte) ([]interface{}, error) {
 	args, err := abi.getArguments(name, data)
 	if err != nil {
@@ -109,9 +108,9 @@ func (abi ABI) Unpack(name string, data []byte) ([]interface{}, error) {
 	return args.Unpack(data)
 }
 
-// UnpackIntoInterface unpacks the output in v according to the abi specification.
-// It performs an additional copy. Please only use, if you want to unpack into a
-// structure that does not strictly conform to the abi structure (e.g. has additional arguments)
+// 根据ABI规范，UncackIntoInterface解开V中的输出。
+//它执行附加副本。如果您想打开一个包装，请仅使用
+//不严格符合ABI结构的结构（例如，还有其他参数）
 func (abi ABI) UnpackIntoInterface(v interface{}, name string, data []byte) error {
 	args, err := abi.getArguments(name, data)
 	if err != nil {
@@ -124,7 +123,7 @@ func (abi ABI) UnpackIntoInterface(v interface{}, name string, data []byte) erro
 	return args.Copy(v, unpacked)
 }
 
-// UnpackIntoMap unpacks a log into the provided map[string]interface{}.
+// UnwackIntomap将日志打开到提供的映射[String]接口{}中。
 func (abi ABI) UnpackIntoMap(v map[string]interface{}, name string, data []byte) (err error) {
 	args, err := abi.getArguments(name, data)
 	if err != nil {
@@ -133,7 +132,7 @@ func (abi ABI) UnpackIntoMap(v map[string]interface{}, name string, data []byte)
 	return args.UnpackIntoMap(v, data)
 }
 
-// UnmarshalJSON implements json.Unmarshaler interface.
+// Unmarshaljson实现JSON.UNMARMALSHALER接口。
 func (abi *ABI) UnmarshalJSON(data []byte) error {
 	var fields []struct {
 		Type    string
@@ -141,8 +140,8 @@ func (abi *ABI) UnmarshalJSON(data []byte) error {
 		Inputs  []Argument
 		Outputs []Argument
 
-		// Status indicator which can be: "pure", "view",
-		// "nonpayable" or "payable".
+		// 状态指示灯可以：“纯”，“查看”，
+//“不可付款”或“应付”。
 		StateMutability string
 
 		// Deprecated Status indicators, but removed in v0.6.0.
@@ -197,8 +196,8 @@ func (abi *ABI) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// MethodById looks up a method by the 4-byte id,
-// returns nil if none found.
+//MethodByid通过4字节ID查找一种方法，
+//如果找不到，则返回零。
 func (abi *ABI) MethodById(sigdata []byte) (*Method, error) {
 	if len(sigdata) < 4 {
 		return nil, fmt.Errorf("data too short (%d bytes) for abi method lookup", len(sigdata))
@@ -211,8 +210,8 @@ func (abi *ABI) MethodById(sigdata []byte) (*Method, error) {
 	return nil, fmt.Errorf("no method with id: %#x", sigdata[:4])
 }
 
-// EventByID looks an event up by its topic hash in the
-// ABI and returns nil if none found.
+// EventByid在其主题上看起来像是一个事件
+// ABI，如果没有发现，则将返回零。
 func (abi *ABI) EventByID(topic common.Hash) (*Event, error) {
 	for _, event := range abi.Events {
 		if bytes.Equal(event.ID.Bytes(), topic.Bytes()) {
@@ -222,23 +221,23 @@ func (abi *ABI) EventByID(topic common.Hash) (*Event, error) {
 	return nil, fmt.Errorf("no event with id: %#x", topic.Hex())
 }
 
-// HasFallback returns an indicator whether a fallback function is included.
+// Hasfallback返回是否包括后备功能。
 func (abi *ABI) HasFallback() bool {
 	return abi.Fallback.Type == Fallback
 }
 
-// HasReceive returns an indicator whether a receive function is included.
+// HASRECEIVE返回是否包括接收功能。
 func (abi *ABI) HasReceive() bool {
 	return abi.Receive.Type == Receive
 }
 
-// revertSelector is a special function selector for revert reason unpacking.
+// 归还分量是特殊的功能选择器，因为恢复了理由解开包装。
 var revertSelector = crypto.Keccak256([]byte("Error(string)"))[:4]
 
-// UnpackRevert resolves the abi-encoded revert reason. According to the solidity
-// spec https://solidity.readthedocs.io/en/latest/control-structures.html#revert,
-// the provided revert reason is abi-encoded as if it were a call to a function
-// `Error(string)`. So it's a special tool for it.
+// UnwackReverver解决了ABI编码的还原原因。根据坚固性
+//规格https://solity.readthedocs.io/en/latest/control-sstructures.html#revert，
+//所提供的恢复原因是对函数的调用的abi编码
+//`error（string）`。因此，这是一个特殊的工具。
 func UnpackRevert(data []byte) (string, error) {
 	if len(data) < 4 {
 		return "", errors.New("invalid data for unpacking")

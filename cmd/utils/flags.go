@@ -1,20 +1,20 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of go-ethereum.
+//版权所有2015年作者
+//此文件是Go-Ethereum的一部分。
 //
-// go-ethereum is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum是免费软件：您可以重新分配它和/或修改
+//根据GNU通用公共许可证的条款发布
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// go-ethereum is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// go-ethereum的分发是希望它有用的
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU General Public License
-// along with go-ethereum. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU通用公共许可证的副本
+//与Go-Ethereum一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package utils contains internal helper functions for go-ethereum commands.
+//软件包utils包含用于Go-Ethereum命令的内部辅助功能。
 package utils
 
 import (
@@ -69,15 +69,15 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// These are all the command line flags we support.
-// If you add to this list, please remember to include the
-// flag in the appropriate command definition.
+//这些都是我们支持的所有命令行标志。
+//如果添加到此列表中，请记住包括
+//在适当的命令定义中标记。
 //
-// The flags are defined here so their names and help texts
-// are the same for all commands.
+//这里定义了标志，因此它们的名称和帮助文本
+//对于所有命令都是相同的。
 
 var (
-	// General settings
+	// 通用设置
 	DataDirFlag = &flags.DirectoryFlag{
 		Name:     "datadir",
 		Usage:    "Data directory for the databases and keystore",
@@ -973,7 +973,7 @@ var (
 )
 
 var (
-	// TestnetFlags is the flag group of all built-in supported testnets.
+	// TestNetFlags是所有内置支持的测试网的标志组。
 	TestnetFlags = []cli.Flag{
 		RopstenFlag,
 		RinkebyFlag,
@@ -981,12 +981,12 @@ var (
 		SepoliaFlag,
 		KilnFlag,
 	}
-	// NetworkFlags is the flag group of all built-in supported networks.
+	// NetworkFlags是所有内置支持网络的标志组。
 	NetworkFlags = append([]cli.Flag{
 		MainnetFlag,
 	}, TestnetFlags...)
 
-	// DatabasePathFlags is the flag group of all database path flags.
+	// DataBasePathFlags是所有数据库路径标志的标志组。
 	DatabasePathFlags = []cli.Flag{
 		DataDirFlag,
 		AncientFlag,
@@ -994,7 +994,7 @@ var (
 	}
 )
 
-// GroupFlags combines the given flag slices together and returns the merged one.
+// GroupFlags将给定的标志切片组合在一起，并返回合并后的旗帜。
 func GroupFlags(groups ...[]cli.Flag) []cli.Flag {
 	var ret []cli.Flag
 	for _, group := range groups {
@@ -1003,9 +1003,9 @@ func GroupFlags(groups ...[]cli.Flag) []cli.Flag {
 	return ret
 }
 
-// MakeDataDir retrieves the currently requested data directory, terminating
-// if none (or the empty string) is specified. If the node is starting a testnet,
-// then a subdirectory of the specified datadir will be used.
+// makedatadir检索当前请求的数据目录，终止
+//如果未指定无（或空字符串）。如果节点启动了testnet，
+//然后将使用指定datadir的子目录。
 func MakeDataDir(ctx *cli.Context) string {
 	if path := ctx.String(DataDirFlag.Name); path != "" {
 		if ctx.Bool(RopstenFlag.Name) {
@@ -1031,9 +1031,9 @@ func MakeDataDir(ctx *cli.Context) string {
 	return ""
 }
 
-// setNodeKey creates a node key from set command line flags, either loading it
-// from a file or as a specified hex value. If neither flags were provided, this
-// method returns nil and an emphemeral key is to be generated.
+// setNodekey从set命令行标志创建节点键，要么加载它
+// 从文件或指定的十六进制值。如果没有提供任何标志，那么
+// 方法返回零，将要生成一个过道密钥。
 func setNodeKey(ctx *cli.Context, cfg *p2p.Config) {
 	var (
 		hex  = ctx.String(NodeKeyHexFlag.Name)
@@ -1057,15 +1057,15 @@ func setNodeKey(ctx *cli.Context, cfg *p2p.Config) {
 	}
 }
 
-// setNodeUserIdent creates the user identifier from CLI flags.
+// setNodeuserident从CLI标志创建用户标识符。
 func setNodeUserIdent(ctx *cli.Context, cfg *node.Config) {
 	if identity := ctx.String(IdentityFlag.Name); len(identity) > 0 {
 		cfg.UserIdent = identity
 	}
 }
 
-// setBootstrapNodes creates a list of bootstrap nodes from the command line
-// flags, reverting to pre-configured ones if none have been specified.
+// setBootstrapnodes从命令行创建了引导节点的列表
+//标志，如果没有指定，则恢复为预配置的标志。
 func setBootstrapNodes(ctx *cli.Context, cfg *p2p.Config) {
 	urls := params.MainnetBootnodes
 	switch {
@@ -1101,8 +1101,8 @@ func setBootstrapNodes(ctx *cli.Context, cfg *p2p.Config) {
 	}
 }
 
-// setBootstrapNodesV5 creates a list of bootstrap nodes from the command line
-// flags, reverting to pre-configured ones if none have been specified.
+// setBootstrapnodesv5从命令行创建了引导节点的列表
+//标志，如果没有指定，则恢复为预配置的标志。
 func setBootstrapNodesV5(ctx *cli.Context, cfg *p2p.Config) {
 	urls := params.V5Bootnodes
 	switch {
@@ -1125,8 +1125,8 @@ func setBootstrapNodesV5(ctx *cli.Context, cfg *p2p.Config) {
 	}
 }
 
-// setListenAddress creates TCP/UDP listening address strings from set command
-// line flags
+// SetListenAddress从SET命令创建TCP/UDP听力地址字符串
+//线标志
 func setListenAddress(ctx *cli.Context, cfg *p2p.Config) {
 	if ctx.IsSet(ListenPortFlag.Name) {
 		cfg.ListenAddr = fmt.Sprintf(":%d", ctx.Int(ListenPortFlag.Name))
@@ -1136,7 +1136,7 @@ func setListenAddress(ctx *cli.Context, cfg *p2p.Config) {
 	}
 }
 
-// setNAT creates a port mapper from command line flags.
+// SETNAT从命令行标志创建端口映射器。
 func setNAT(ctx *cli.Context, cfg *p2p.Config) {
 	if ctx.IsSet(NATFlag.Name) {
 		natif, err := nat.Parse(ctx.String(NATFlag.Name))
@@ -1147,8 +1147,8 @@ func setNAT(ctx *cli.Context, cfg *p2p.Config) {
 	}
 }
 
-// SplitAndTrim splits input separated by a comma
-// and trims excessive white space from the substrings.
+// splitandtrim拆分输入被逗号分隔
+//并修剪从子字符串中过多的白色空间。
 func SplitAndTrim(input string) (ret []string) {
 	l := strings.Split(input, ",")
 	for _, r := range l {
@@ -1159,8 +1159,8 @@ func SplitAndTrim(input string) (ret []string) {
 	return ret
 }
 
-// setHTTP creates the HTTP RPC listener interface string from the set
-// command line flags, returning empty if the HTTP endpoint is disabled.
+// SETHTTP从SET创建HTTP RPC侦听器接口字符串
+//命令行标志，如果禁用了HTTP端点，则返回空。
 func setHTTP(ctx *cli.Context, cfg *node.Config) {
 	if ctx.Bool(HTTPEnabledFlag.Name) && cfg.HTTPHost == "" {
 		cfg.HTTPHost = "127.0.0.1"
@@ -1204,9 +1204,8 @@ func setHTTP(ctx *cli.Context, cfg *node.Config) {
 		cfg.AllowUnprotectedTxs = ctx.Bool(AllowUnprotectedTxs.Name)
 	}
 }
-
-// setGraphQL creates the GraphQL listener interface string from the set
-// command line flags, returning empty if the GraphQL endpoint is disabled.
+// setGraphQl从集合创建GraphQl侦听器接口字符串
+//命令行标志，如果禁用了GraphQl端点，则返回空。
 func setGraphQL(ctx *cli.Context, cfg *node.Config) {
 	if ctx.IsSet(GraphQLCORSDomainFlag.Name) {
 		cfg.GraphQLCors = SplitAndTrim(ctx.String(GraphQLCORSDomainFlag.Name))
@@ -1216,8 +1215,8 @@ func setGraphQL(ctx *cli.Context, cfg *node.Config) {
 	}
 }
 
-// setWS creates the WebSocket RPC listener interface string from the set
-// command line flags, returning empty if the HTTP endpoint is disabled.
+//SETWS从集合创建WebSocket RPC侦听器接口字符串
+//命令行标志，如果禁用了HTTP端点，则返回空。
 func setWS(ctx *cli.Context, cfg *node.Config) {
 	if ctx.Bool(WSEnabledFlag.Name) && cfg.WSHost == "" {
 		cfg.WSHost = "127.0.0.1"
@@ -1242,8 +1241,8 @@ func setWS(ctx *cli.Context, cfg *node.Config) {
 	}
 }
 
-// setIPC creates an IPC path configuration from the set command line flags,
-// returning an empty string if IPC was explicitly disabled, or the set path.
+// SETIPC从设置命令行标志创建IPC路径配置，
+//如果明确禁用IPC或设置路径，请返回一个空字符串。
 func setIPC(ctx *cli.Context, cfg *node.Config) {
 	CheckExclusive(ctx, IPCDisabledFlag, IPCPathFlag)
 	switch {
@@ -1254,7 +1253,7 @@ func setIPC(ctx *cli.Context, cfg *node.Config) {
 	}
 }
 
-// setLes configures the les server and ultra light client settings from the command line flags.
+// Setles从命令行标志配置LES服务器和Ultra Light客户端设置。
 func setLes(ctx *cli.Context, cfg *ethconfig.Config) {
 	if ctx.IsSet(LightServeFlag.Name) {
 		cfg.LightServ = ctx.Int(LightServeFlag.Name)
@@ -1289,8 +1288,8 @@ func setLes(ctx *cli.Context, cfg *ethconfig.Config) {
 	}
 }
 
-// MakeDatabaseHandles raises out the number of allowed file handles per process
-// for Geth and returns half of the allowance to assign to the database.
+// makedatabasehandles增加了每个过程允许的文件处理的数量
+//对于Geth，并将津贴的一半返回到数据库中。
 func MakeDatabaseHandles(max int) int {
 	limit, err := fdlimit.Maximum()
 	if err != nil {
@@ -1316,8 +1315,8 @@ func MakeDatabaseHandles(max int) int {
 	return int(raised / 2) // Leave half for networking and other stuff
 }
 
-// MakeAddress converts an account specified directly as a hex encoded string or
-// a key index in the key store to an internal account representation.
+// makeaddress转换一个直接指定为十六进制字符串或
+//密钥存储中的密钥索引到内部帐户表示。
 func MakeAddress(ks *keystore.KeyStore, account string) (accounts.Account, error) {
 	// If the specified account is a valid address, return it
 	if common.IsHexAddress(account) {
@@ -1341,8 +1340,8 @@ func MakeAddress(ks *keystore.KeyStore, account string) (accounts.Account, error
 	return accs[index], nil
 }
 
-// setEtherbase retrieves the etherbase either from the directly specified
-// command line flags or from the keystore if CLI indexed.
+// setetherbase从直接指定的
+//命令行标志或如果CLI索引，则来自密钥库。
 func setEtherbase(ctx *cli.Context, ks *keystore.KeyStore, cfg *ethconfig.Config) {
 	// Extract the current etherbase
 	var etherbase string
@@ -1363,7 +1362,7 @@ func setEtherbase(ctx *cli.Context, ks *keystore.KeyStore, cfg *ethconfig.Config
 	}
 }
 
-// MakePasswordList reads password lines from the file specified by the global --password flag.
+// MakePasswordList从全局 -  password标志指定的文件中读取密码行。
 func MakePasswordList(ctx *cli.Context) []string {
 	path := ctx.Path(PasswordFileFlag.Name)
 	if path == "" {
@@ -1454,7 +1453,7 @@ func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config) {
 	}
 }
 
-// SetNodeConfig applies node-related command line flags to the config.
+// SetNodeConfig将与节点相关的命令行标志应用于配置。
 func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
 	SetP2PConfig(ctx, &cfg.P2P)
 	setIPC(ctx, cfg)
@@ -1685,9 +1684,9 @@ func setRequiredBlocks(ctx *cli.Context, cfg *ethconfig.Config) {
 	}
 }
 
-// CheckExclusive verifies that only a single instance of the provided flags was
-// set by the user. Each flag might optionally be followed by a string type to
-// specialize it further.
+// checkexclusive验证只有提供标志的一个实例是
+//用户设置。每个标志可能会选择随后是字符串类型
+//进一步专业。
 func CheckExclusive(ctx *cli.Context, args ...interface{}) {
 	set := make([]string, 0, 1)
 	for i := 0; i < len(args); i++ {
@@ -1726,7 +1725,7 @@ func CheckExclusive(ctx *cli.Context, args ...interface{}) {
 	}
 }
 
-// SetEthConfig applies eth-related command line flags to the config.
+// SetEthConfig将与ETH相关的命令行标志应用于配置。
 func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *ethconfig.Config) {
 	// Avoid conflicting network flags
 	CheckExclusive(ctx, MainnetFlag, DeveloperFlag, RopstenFlag, RinkebyFlag, GoerliFlag, SepoliaFlag, KilnFlag)
@@ -1967,8 +1966,8 @@ func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *ethconfig.Config) {
 	}
 }
 
-// SetDNSDiscoveryDefaults configures DNS discovery with the given URL if
-// no URLs are set.
+// setdnsdiscoveryDefaults使用给定的URL配置DNS发现
+//未设置URL。
 func SetDNSDiscoveryDefaults(cfg *ethconfig.Config, genesis common.Hash) {
 	if cfg.EthDiscoveryURLs != nil {
 		return // already set through flags/config
@@ -2022,8 +2021,8 @@ func RegisterEthService(stack *node.Node, cfg *ethconfig.Config) (ethapi.Backend
 	return backend.APIBackend, backend
 }
 
-// RegisterEthStatsService configures the Ethereum Stats daemon and adds it to
-// the given node.
+// RegisterEthstatsService配置以太坊统计守护程序，并将其添加到
+//给定节点。
 func RegisterEthStatsService(stack *node.Node, backend ethapi.Backend, url string) {
 	if err := ethstats.New(stack, backend, backend.Engine(), url); err != nil {
 		Fatalf("Failed to register the Ethereum Stats service: %v", err)
