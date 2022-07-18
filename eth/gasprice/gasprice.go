@@ -32,7 +32,7 @@ import (
 )
 
 const sampleNumber = 3 // Number of transactions sampled in a block
-在一个块中采样的交易数量
+// 在一个块中采样的交易数量
 var (
 	DefaultMaxPrice    = big.NewInt(500 * params.GWei)
 	DefaultIgnorePrice = big.NewInt(2 * params.Wei)
@@ -249,10 +249,10 @@ func (s *txSorter) Less(i, j int) bool {
 	return tip1.Cmp(tip2) < 0
 }
 
-// getBlockPrices calculates the lowest transaction gas price in a given block
-// and sends it to the result channel. If the block is empty or all transactions
-// are sent by the miner itself(it doesn't make any sense to include this kind of
-// transaction prices for sampling), nil gasprice is returned.
+//GetBlockPrices计算给定块中最低的交易气价
+//并将其发送到结果频道。如果块为空或所有交易
+//是矿工本身发送的（包括此类
+//抽样的交易价格），返回NIL GASPRICE。
 func (oracle *Oracle) getBlockValues(ctx context.Context, signer types.Signer, blockNum uint64, limit int, ignoreUnder *big.Int, result chan results, quit chan struct{}) {
 	block, err := oracle.backend.BlockByNumber(ctx, rpc.BlockNumber(blockNum))
 	if block == nil {

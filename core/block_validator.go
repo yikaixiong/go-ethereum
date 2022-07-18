@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package core
 
@@ -26,10 +26,10 @@ import (
 	"github.com/ethereum/go-ethereum/trie"
 )
 
-// BlockValidator is responsible for validating block headers, uncles and
-// processed state.
+// BlockValidator负责验证块标头，叔叔和
+//处理状态。
 //
-// BlockValidator implements Validator.
+// BlockValidator实施验证器。
 type BlockValidator struct {
 	config *params.ChainConfig // Chain configuration options
 	bc     *BlockChain         // Canonical block chain
@@ -46,9 +46,9 @@ func NewBlockValidator(config *params.ChainConfig, blockchain *BlockChain, engin
 	return validator
 }
 
-// ValidateBody validates the given block's uncles and verifies the block
-// header's transaction and uncle roots. The headers are assumed to be already
-// validated at this point.
+//验证机体验证给定块的叔叔并验证块
+//标题的交易和根源。假定标题已经是
+//此时已验证。
 func (v *BlockValidator) ValidateBody(block *types.Block) error {
 	// Check whether the block's known, and if not, that it's linkable
 	if v.bc.HasBlockAndState(block.Hash(), block.NumberU64()) {
@@ -74,10 +74,10 @@ func (v *BlockValidator) ValidateBody(block *types.Block) error {
 	return nil
 }
 
-// ValidateState validates the various changes that happen after a state
-// transition, such as amount of used gas, the receipt roots and the state root
-// itself. ValidateState returns a database batch if the validation was a success
-// otherwise nil and an error is returned.
+// ValicateTate验证了状态之后发生的各种更改
+//过渡，例如用过的气体数量，收据根和状态根
+//本身。如果验证成功
+//否则，零零，返回错误。
 func (v *BlockValidator) ValidateState(block *types.Block, statedb *state.StateDB, receipts types.Receipts, usedGas uint64) error {
 	header := block.Header()
 	if block.GasUsed() != usedGas {
@@ -102,9 +102,9 @@ func (v *BlockValidator) ValidateState(block *types.Block, statedb *state.StateD
 	return nil
 }
 
-// CalcGasLimit computes the gas limit of the next block after parent. It aims
-// to keep the baseline gas close to the provided target, and increase it towards
-// the target if the baseline gas is lower.
+// CalcGaslimit计算父母之后下一个区块的气体限制。它的目标
+//使基线气体接近所提供的目标，并将其增加朝向
+//目标如果基线气体较低。
 func CalcGasLimit(parentGasLimit, desiredLimit uint64) uint64 {
 	delta := parentGasLimit/params.GasLimitBoundDivisor - 1
 	limit := parentGasLimit

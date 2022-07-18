@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package vm
 
@@ -23,29 +23,29 @@ import (
 	"github.com/holiman/uint256"
 )
 
-// ContractRef is a reference to the contract's backing object
+// 违规是对合同的支持对象的引用
 type ContractRef interface {
 	Address() common.Address
 }
 
-// AccountRef implements ContractRef.
+// Accountref实施违规行为。
 //
-// Account references are used during EVM initialisation and
-// it's primary use is to fetch addresses. Removing this object
-// proves difficult because of the cached jump destinations which
-// are fetched from the parent contract (i.e. the caller), which
-// is a ContractRef.
+//在EVM初始化期间使用帐户参考和
+//它的主要用途是获取地址。删除此对象
+//证明很困难，因为可缓存的跳跃目的地
+//是从父母合同（即呼叫者）中获取的，
+//是违约。
 type AccountRef common.Address
 
-// Address casts AccountRef to a Address
+// 地址将Accountref施加到地址
 func (ar AccountRef) Address() common.Address { return (common.Address)(ar) }
 
-// Contract represents an ethereum contract in the state database. It contains
-// the contract code, calling arguments. Contract implements ContractRef
+// 合同代表州数据库中的以太坊合同。它包含
+//合同代码，调用参数。合同实施违约
 type Contract struct {
-	// CallerAddress is the result of the caller which initialised this
-	// contract. However when the "call method" is delegated this value
-	// needs to be initialised to that of the caller's caller.
+	// CallerAddress是呼叫者的结果，该呼叫者初始化了此
+// 合同。但是，当“呼叫方法”被委派给此值时
+//需要初始化为呼叫者的呼叫者。
 	CallerAddress common.Address
 	caller        ContractRef
 	self          ContractRef
@@ -62,19 +62,19 @@ type Contract struct {
 	value *big.Int
 }
 
-// NewContract returns a new contract environment for the execution of EVM.
+// Newtract返回一个新的合同环境，用于执行EVM。
 func NewContract(caller ContractRef, object ContractRef, value *big.Int, gas uint64) *Contract {
 	c := &Contract{CallerAddress: caller.Address(), caller: caller, self: object}
 
 	if parent, ok := caller.(*Contract); ok {
-		// Reuse JUMPDEST analysis from parent context if available.
+		// 如果可用，请从父上下文重复使用最跳跃的分析。
 		c.jumpdests = parent.jumpdests
 	} else {
 		c.jumpdests = make(map[common.Hash]bitvec)
 	}
 
-	// Gas should be a pointer so it can safely be reduced through the run
-	// This pointer will be off the state transition
+	// 气体应该是指针，以便可以通过运行安全地减少
+	//该指针将不在状态过渡
 	c.Gas = gas
 	// ensures a value is set
 	c.value = value
@@ -84,8 +84,8 @@ func NewContract(caller ContractRef, object ContractRef, value *big.Int, gas uin
 
 func (c *Contract) validJumpdest(dest *uint256.Int) bool {
 	udest, overflow := dest.Uint64WithOverflow()
-	// PC cannot go beyond len(code) and certainly can't be bigger than 63bits.
-	// Don't bother checking for JUMPDEST in that case.
+	// PC不能超越LEN（代码），当然不能超过63bits。
+	//在这种情况下，不要打扰检查最跳跃。
 	if overflow || udest >= uint64(len(c.Code)) {
 		return false
 	}
@@ -96,8 +96,8 @@ func (c *Contract) validJumpdest(dest *uint256.Int) bool {
 	return c.isCode(udest)
 }
 
-// isCode returns true if the provided PC location is an actual opcode, as
-// opposed to a data-segment following a PUSHN operation.
+// 如果提供的PC位置是实际的OPCODE，则ISCODE返回true
+//反对推送操作后的数据段。
 func (c *Contract) isCode(udest uint64) bool {
 	// Do we already have an analysis laying around?
 	if c.analysis != nil {
@@ -129,8 +129,8 @@ func (c *Contract) isCode(udest uint64) bool {
 	return c.analysis.codeSegment(udest)
 }
 
-// AsDelegate sets the contract to be a delegate call and returns the current
-// contract (for chaining calls)
+// Asdelegate将合同设置为代表呼叫，并退还当前
+//合同（用于封闭电话）
 func (c *Contract) AsDelegate() *Contract {
 	// NOTE: caller must, at all times be a contract. It should never happen
 	// that caller is something other than a Contract.
@@ -141,7 +141,7 @@ func (c *Contract) AsDelegate() *Contract {
 	return c
 }
 
-// GetOp returns the n'th element in the contract's byte array
+// getop返回合同字节阵列中的n'th元素
 func (c *Contract) GetOp(n uint64) OpCode {
 	if n < uint64(len(c.Code)) {
 		return OpCode(c.Code[n])

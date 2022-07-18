@@ -1,18 +1,18 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package core
 
@@ -37,32 +37,32 @@ import (
 )
 
 const (
-	// chainHeadChanSize is the size of channel listening to ChainHeadEvent.
+	// cHainheadChansize是聆听Chainheadevent的频道的大小。
 	chainHeadChanSize = 10
 
-	// txSlotSize is used to calculate how many data slots a single transaction
-	// takes up based on its size. The slots are used as DoS protection, ensuring
-	// that validating a new transaction remains a constant operation (in reality
-	// O(maxslots), where max slots are 4 currently).
+	// txslotsize用于计算单个事务的数据插槽多少
+	//根据其大小占用。插槽用作DOS保护，确保
+	//验证新事务的该验证仍然是一个恒定的操作（实际上
+	// o（maxslots），其中最大插槽当前为4）。
 	txSlotSize = 32 * 1024
 
-	// txMaxSize is the maximum size a single transaction can have. This field has
-	// non-trivial consequences: larger transactions are significantly harder and
-	// more expensive to propagate; larger transactions also take more resources
-	// to validate whether they fit into the pool or not.
+	// txmaxsize是单个交易可以拥有的最大尺寸。这个领域有
+	//非平地后果：较大的交易更加困难，并且
+	//传播更昂贵；较大的交易还需要更多资源
+	//验证它们是否适合游泳池。
 	txMaxSize = 4 * txSlotSize // 128KB
 )
 
 var (
-	// ErrAlreadyKnown is returned if the transactions is already contained
-	// within the pool.
+	// 如果交易已包含
+//在游泳池内。
 	ErrAlreadyKnown = errors.New("already known")
 
-	// ErrInvalidSender is returned if the transaction contains an invalid signature.
+	// 如果交易包含无效签名，则返回Errinvalidsender。
 	ErrInvalidSender = errors.New("invalid sender")
 
-	// ErrUnderpriced is returned if a transaction's gas price is below the minimum
-	// configured for the transaction pool.
+	// 如果交易的汽油价格低于最低，则返回错误定价
+//为事务池配置。
 	ErrUnderpriced = errors.New("transaction underpriced")
 
 	// ErrTxPoolOverflow is returned if the transaction pool is full and can't accpet
@@ -93,32 +93,32 @@ var (
 )
 
 var (
-	// Metrics for the pending pool
+	// 待池的指标
 	pendingDiscardMeter   = metrics.NewRegisteredMeter("txpool/pending/discard", nil)
 	pendingReplaceMeter   = metrics.NewRegisteredMeter("txpool/pending/replace", nil)
 	pendingRateLimitMeter = metrics.NewRegisteredMeter("txpool/pending/ratelimit", nil) // Dropped due to rate limiting
 	pendingNofundsMeter   = metrics.NewRegisteredMeter("txpool/pending/nofunds", nil)   // Dropped due to out-of-funds
 
-	// Metrics for the queued pool
+	// 排队池的指标
 	queuedDiscardMeter   = metrics.NewRegisteredMeter("txpool/queued/discard", nil)
 	queuedReplaceMeter   = metrics.NewRegisteredMeter("txpool/queued/replace", nil)
 	queuedRateLimitMeter = metrics.NewRegisteredMeter("txpool/queued/ratelimit", nil) // Dropped due to rate limiting
 	queuedNofundsMeter   = metrics.NewRegisteredMeter("txpool/queued/nofunds", nil)   // Dropped due to out-of-funds
 	queuedEvictionMeter  = metrics.NewRegisteredMeter("txpool/queued/eviction", nil)  // Dropped due to lifetime
 
-	// General tx metrics
+	// 一般的TX指标
 	knownTxMeter       = metrics.NewRegisteredMeter("txpool/known", nil)
 	validTxMeter       = metrics.NewRegisteredMeter("txpool/valid", nil)
 	invalidTxMeter     = metrics.NewRegisteredMeter("txpool/invalid", nil)
 	underpricedTxMeter = metrics.NewRegisteredMeter("txpool/underpriced", nil)
 	overflowedTxMeter  = metrics.NewRegisteredMeter("txpool/overflowed", nil)
-	// throttleTxMeter counts how many transactions are rejected due to too-many-changes between
-	// txpool reorgs.
+	// thorottletxmeter计算由于过于多次变化而拒绝了多少交易
+// txpool reorgs。
 	throttleTxMeter = metrics.NewRegisteredMeter("txpool/throttle", nil)
-	// reorgDurationTimer measures how long time a txpool reorg takes.
+	// ReorgdurationTimer测量TXPOOL REORG需要多长时间。
 	reorgDurationTimer = metrics.NewRegisteredTimer("txpool/reorgtime", nil)
-	// dropBetweenReorgHistogram counts how many drops we experience between two reorg runs. It is expected
-	// that this number is pretty low, since txpool reorgs happen very frequently.
+	// Dropbeteweweweweorghistogram计算了我们在两个Reorg运行之间经历了多少滴。预计
+//这个数字很低，因为TXPOOL REORGS经常发生。
 	dropBetweenReorgHistogram = metrics.NewRegisteredHistogram("txpool/dropbetweenreorg", nil, metrics.NewExpDecaySample(1028, 0.015))
 
 	pendingGauge = metrics.NewRegisteredGauge("txpool/pending", nil)
@@ -129,7 +129,7 @@ var (
 	reheapTimer = metrics.NewRegisteredTimer("txpool/reheap", nil)
 )
 
-// TxStatus is the current status of a transaction as seen by the pool.
+//TXSTATUS是池看到的交易的当前状态。
 type TxStatus uint
 
 const (
@@ -139,8 +139,8 @@ const (
 	TxStatusIncluded
 )
 
-// blockChain provides the state of blockchain and current gas limit to do
-// some pre checks in tx pool and event subscribers.
+// 区块链提供区块链和当前气体限制的状态
+//在TX池和事件订户中进行一些预先检查。
 type blockChain interface {
 	CurrentBlock() *types.Block
 	GetBlock(hash common.Hash, number uint64) *types.Block
@@ -149,7 +149,7 @@ type blockChain interface {
 	SubscribeChainHeadEvent(ch chan<- ChainHeadEvent) event.Subscription
 }
 
-// TxPoolConfig are the configuration parameters of the transaction pool.
+// TXPoolConfig是事务池的配置参数。
 type TxPoolConfig struct {
 	Locals    []common.Address // Addresses that should be treated by default as local
 	NoLocals  bool             // Whether local transaction handling should be disabled
@@ -167,8 +167,8 @@ type TxPoolConfig struct {
 	Lifetime time.Duration // Maximum amount of time non-executable transaction are queued
 }
 
-// DefaultTxPoolConfig contains the default configurations for the transaction
-// pool.
+// DefaultTXPoolConfig包含交易的默认配置
+// 水池。
 var DefaultTxPoolConfig = TxPoolConfig{
 	Journal:   "transactions.rlp",
 	Rejournal: time.Hour,
@@ -184,8 +184,8 @@ var DefaultTxPoolConfig = TxPoolConfig{
 	Lifetime: 3 * time.Hour,
 }
 
-// sanitize checks the provided user configurations and changes anything that's
-// unreasonable or unworkable.
+// 消毒检查提供的用户配置并更改任何内容
+//不合理或不可行。
 func (config *TxPoolConfig) sanitize() TxPoolConfig {
 	conf := *config
 	if conf.Rejournal < time.Second {
@@ -274,8 +274,8 @@ type txpoolResetRequest struct {
 	oldHead, newHead *types.Header
 }
 
-// NewTxPool creates a new transaction pool to gather, sort and filter inbound
-// transactions from the network.
+// newtxpool创建一个新的交易池，以收集，分类和过滤入站
+//网络交易。
 func NewTxPool(config TxPoolConfig, chainconfig *params.ChainConfig, chain blockChain) *TxPool {
 	// Sanitize the input to ensure no vulnerable gas prices are set
 	config = (&config).sanitize()
@@ -331,9 +331,9 @@ func NewTxPool(config TxPoolConfig, chainconfig *params.ChainConfig, chain block
 	return pool
 }
 
-// loop is the transaction pool's main event loop, waiting for and reacting to
-// outside blockchain events as well as for various reporting and transaction
-// eviction events.
+// 循环是交易池的主要事件循环，等待并做出反应
+//外部区块链事件以及各种报告和交易
+//驱逐事件。
 func (pool *TxPool) loop() {
 	defer pool.wg.Done()
 
@@ -410,7 +410,7 @@ func (pool *TxPool) loop() {
 	}
 }
 
-// Stop terminates the transaction pool.
+// 停止终止交易池。
 func (pool *TxPool) Stop() {
 	// Unsubscribe all subscriptions registered from txpool
 	pool.scope.Close()
@@ -425,13 +425,13 @@ func (pool *TxPool) Stop() {
 	log.Info("Transaction pool stopped")
 }
 
-// SubscribeNewTxsEvent registers a subscription of NewTxsEvent and
-// starts sending event to the given channel.
+// 订阅txsevent注册newtxsevent的订阅和
+//开始将事件发送到给定的频道。
 func (pool *TxPool) SubscribeNewTxsEvent(ch chan<- NewTxsEvent) event.Subscription {
 	return pool.scope.Track(pool.txFeed.Subscribe(ch))
 }
 
-// GasPrice returns the current gas price enforced by the transaction pool.
+// Gasprice返回交易池执行的当前天然气价格。
 func (pool *TxPool) GasPrice() *big.Int {
 	pool.mu.RLock()
 	defer pool.mu.RUnlock()
@@ -439,8 +439,8 @@ func (pool *TxPool) GasPrice() *big.Int {
 	return new(big.Int).Set(pool.gasPrice)
 }
 
-// SetGasPrice updates the minimum price required by the transaction pool for a
-// new transaction, and drops all transactions below this threshold.
+// SETGASPRICE更新了交易池所需的最低价格
+//新的交易，并将所有交易降至此阈值以下。
 func (pool *TxPool) SetGasPrice(price *big.Int) {
 	pool.mu.Lock()
 	defer pool.mu.Unlock()
@@ -460,8 +460,8 @@ func (pool *TxPool) SetGasPrice(price *big.Int) {
 	log.Info("Transaction pool price threshold updated", "price", price)
 }
 
-// Nonce returns the next nonce of an account, with all transactions executable
-// by the pool already applied on top.
+// N一旦返回帐户的下一个nonce，所有交易可执行
+//在泳池上已经应用在顶部。
 func (pool *TxPool) Nonce(addr common.Address) uint64 {
 	pool.mu.RLock()
 	defer pool.mu.RUnlock()
@@ -469,8 +469,8 @@ func (pool *TxPool) Nonce(addr common.Address) uint64 {
 	return pool.pendingNonces.get(addr)
 }
 
-// Stats retrieves the current pool stats, namely the number of pending and the
-// number of queued (non-executable) transactions.
+// 统计数据检索当前的池统计数据，即待处理的数量和
+//排队（非执行）交易的数量。
 func (pool *TxPool) Stats() (int, int) {
 	pool.mu.RLock()
 	defer pool.mu.RUnlock()
@@ -478,8 +478,8 @@ func (pool *TxPool) Stats() (int, int) {
 	return pool.stats()
 }
 
-// stats retrieves the current pool stats, namely the number of pending and the
-// number of queued (non-executable) transactions.
+// 统计数据检索当前的池统计数据，即待处理的数量和
+//排队（非执行）交易的数量。
 func (pool *TxPool) stats() (int, int) {
 	pending := 0
 	for _, list := range pool.pending {
@@ -492,8 +492,8 @@ func (pool *TxPool) stats() (int, int) {
 	return pending, queued
 }
 
-// Content retrieves the data content of the transaction pool, returning all the
-// pending as well as queued transactions, grouped by account and sorted by nonce.
+// 内容检索交易池的数据内容，返回所有
+//等待和排队的交易，按帐户分组并按Nonce进行分类。
 func (pool *TxPool) Content() (map[common.Address]types.Transactions, map[common.Address]types.Transactions) {
 	pool.mu.Lock()
 	defer pool.mu.Unlock()
@@ -509,8 +509,8 @@ func (pool *TxPool) Content() (map[common.Address]types.Transactions, map[common
 	return pending, queued
 }
 
-// ContentFrom retrieves the data content of the transaction pool, returning the
-// pending as well as queued transactions of this address, grouped by nonce.
+// Contents从检索事务池的数据内容，返回
+//待定以及该地址的排队交易，由Nonce分组。
 func (pool *TxPool) ContentFrom(addr common.Address) (types.Transactions, types.Transactions) {
 	pool.mu.RLock()
 	defer pool.mu.RUnlock()
@@ -526,13 +526,13 @@ func (pool *TxPool) ContentFrom(addr common.Address) (types.Transactions, types.
 	return pending, queued
 }
 
-// Pending retrieves all currently processable transactions, grouped by origin
-// account and sorted by nonce. The returned transaction set is a copy and can be
-// freely modified by calling code.
+// 等待检索当前可处理的所有交易，按原点分组
+//帐户并按Nonce排序。返回的交易集是一个副本，可以是
+//通过调用代码自由修改。
 //
-// The enforceTips parameter can be used to do an extra filtering on the pending
-// transactions and only return those whose **effective** tip is large enough in
-// the next pending execution environment.
+// enforcetips参数可用于在待处理上进行额外的过滤
+//交易，仅返回那些**有效**小费足够大的交易
+//下一个待处理的执行环境。
 func (pool *TxPool) Pending(enforceTips bool) map[common.Address]types.Transactions {
 	pool.mu.Lock()
 	defer pool.mu.Unlock()
@@ -557,7 +557,7 @@ func (pool *TxPool) Pending(enforceTips bool) map[common.Address]types.Transacti
 	return pending
 }
 
-// Locals retrieves the accounts currently considered local by the pool.
+// 当地人检索当前被视为本地的帐户。
 func (pool *TxPool) Locals() []common.Address {
 	pool.mu.Lock()
 	defer pool.mu.Unlock()
@@ -565,9 +565,9 @@ func (pool *TxPool) Locals() []common.Address {
 	return pool.locals.flatten()
 }
 
-// local retrieves all currently known local transactions, grouped by origin
-// account and sorted by nonce. The returned transaction set is a copy and can be
-// freely modified by calling code.
+// 本地检索所有当前已知的本地交易，按原点分组
+//帐户并按Nonce排序。返回的交易集是一个副本，可以是
+//通过调用代码自由修改。
 func (pool *TxPool) local() map[common.Address]types.Transactions {
 	txs := make(map[common.Address]types.Transactions)
 	for addr := range pool.locals.accounts {
@@ -645,13 +645,13 @@ func (pool *TxPool) validateTx(tx *types.Transaction, local bool) error {
 	return nil
 }
 
-// add validates a transaction and inserts it into the non-executable queue for later
-// pending promotion and execution. If the transaction is a replacement for an already
-// pending or queued one, it overwrites the previous transaction if its price is higher.
+//添加验证交易并将其插入不可执行的队列
+//等待晋升和执行。如果交易是已经替代的
+//待定或排队一个，如果其价格更高，它会覆盖先前的交易。
 //
-// If a newly added transaction is marked as local, its sending account will be
-// be added to the allowlist, preventing any associated transaction from being dropped
-// out of the pool due to pricing constraints.
+//如果将新添加的交易标记为本地，则其发送帐户将为
+//添加到允许列表中，以防止任何相关的交易被丢弃
+//由于定价限制而离开游泳池。
 func (pool *TxPool) add(tx *types.Transaction, local bool) (replaced bool, err error) {
 	// If the transaction is already known, discard it
 	hash := tx.Hash()

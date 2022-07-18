@@ -1,18 +1,18 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package vm
 
@@ -37,13 +37,13 @@ var (
 	ErrInvalidCode              = errors.New("invalid code: must not begin with 0xef")
 	ErrNonceUintOverflow        = errors.New("nonce uint64 overflow")
 
-	// errStopToken is an internal token indicating interpreter loop termination,
-	// never returned to outside callers.
+	// ErrSoptoken是一个内部令牌，指示解释器循环终止，
+    //从未回到外部呼叫者。
 	errStopToken = errors.New("stop token")
 )
 
-// ErrStackUnderflow wraps an evm error when the items on the stack less
-// than the minimal requirement.
+// 当堆栈上的项目少时，Errstackunderflow包裹EVM错误
+//比最小要求。
 type ErrStackUnderflow struct {
 	stackLen int
 	required int
@@ -53,8 +53,8 @@ func (e *ErrStackUnderflow) Error() string {
 	return fmt.Sprintf("stack underflow (%d <=> %d)", e.stackLen, e.required)
 }
 
-// ErrStackOverflow wraps an evm error when the items on the stack exceeds
-// the maximum allowance.
+// 当堆栈上的项目超过
+//最大津贴。
 type ErrStackOverflow struct {
 	stackLen int
 	limit    int
@@ -64,7 +64,7 @@ func (e *ErrStackOverflow) Error() string {
 	return fmt.Sprintf("stack limit reached %d (%d)", e.stackLen, e.limit)
 }
 
-// ErrInvalidOpCode wraps an evm error when an invalid opcode is encountered.
+// 遇到无效的操作码时，ErrinvalidopCode包裹EVM错误。
 type ErrInvalidOpCode struct {
 	opcode OpCode
 }

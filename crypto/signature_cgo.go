@@ -1,21 +1,21 @@
-// Copyright 2017 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2017年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-//go:build !nacl && !js && cgo && !gofuzz
-// +build !nacl,!js,cgo,!gofuzz
+// go：build！nacl &&！JS && cgo &&！gofuzz
+// +build！nacl，！js，cgo，！gofuzz
 
 package crypto
 
@@ -27,13 +27,12 @@ import (
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/crypto/secp256k1"
 )
-
-// Ecrecover returns the uncompressed public key that created the given signature.
+// ecrecover返回创建给定签名的未压缩公钥。
 func Ecrecover(hash, sig []byte) ([]byte, error) {
 	return secp256k1.RecoverPubkey(hash, sig)
 }
 
-// SigToPub returns the public key that created the given signature.
+// Sigtopub返回创建给定签名的公共密钥。
 func SigToPub(hash, sig []byte) (*ecdsa.PublicKey, error) {
 	s, err := Ecrecover(hash, sig)
 	if err != nil {
@@ -44,14 +43,14 @@ func SigToPub(hash, sig []byte) (*ecdsa.PublicKey, error) {
 	return &ecdsa.PublicKey{Curve: S256(), X: x, Y: y}, nil
 }
 
-// Sign calculates an ECDSA signature.
+//符号计算ECDSA签名。
 //
-// This function is susceptible to chosen plaintext attacks that can leak
-// information about the private key that is used for signing. Callers must
-// be aware that the given digest cannot be chosen by an adversery. Common
-// solution is to hash any input before calculating the signature.
+//此功能容易受到可能泄漏的明文攻击
+//有关用于签名的私钥的信息。呼叫者必须
+//请注意，给定的摘要不能由对手选择。常见的
+//解决方案是在计算签名之前放置任何输入。
 //
-// The produced signature is in the [R || S || V] format where V is 0 or 1.
+//产生的签名在[r ||S ||v]格式，其中v为0或1。
 func Sign(digestHash []byte, prv *ecdsa.PrivateKey) (sig []byte, err error) {
 	if len(digestHash) != DigestLength {
 		return nil, fmt.Errorf("hash is required to be exactly %d bytes (%d)", DigestLength, len(digestHash))
@@ -61,9 +60,9 @@ func Sign(digestHash []byte, prv *ecdsa.PrivateKey) (sig []byte, err error) {
 	return secp256k1.Sign(digestHash, seckey)
 }
 
-// VerifySignature checks that the given public key created signature over digest.
-// The public key should be in compressed (33 bytes) or uncompressed (65 bytes) format.
-// The signature should have the 64 byte [R || S] format.
+//验证符号检查给定的公钥是否通过摘要创建了签名。
+//公共密钥应采用压缩（33个字节）或未压缩（65个字节）格式。
+//签名应具有64个字节[r ||S]格式。
 func VerifySignature(pubkey, digestHash, signature []byte) bool {
 	return secp256k1.VerifySignature(pubkey, digestHash, signature)
 }
@@ -77,12 +76,12 @@ func DecompressPubkey(pubkey []byte) (*ecdsa.PublicKey, error) {
 	return &ecdsa.PublicKey{X: x, Y: y, Curve: S256()}, nil
 }
 
-// CompressPubkey encodes a public key to the 33-byte compressed format.
+// CompressPubkey编码33字节压缩格式的公共密钥。
 func CompressPubkey(pubkey *ecdsa.PublicKey) []byte {
 	return secp256k1.CompressPubkey(pubkey.X, pubkey.Y)
 }
 
-// S256 returns an instance of the secp256k1 curve.
+// S256返回SECP256K1曲线的实例。
 func S256() elliptic.Curve {
 	return secp256k1.S256()
 }

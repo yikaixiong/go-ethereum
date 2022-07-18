@@ -92,29 +92,29 @@ const (
 	maxTimeFutureBlocks = 30
 	TriesInMemory       = 128
 
-	// BlockChainVersion ensures that an incompatible database forces a resync from scratch.
+	// BlockchainVersion确保不兼容的数据库从头开始迫使Resync。
 	//
-	// Changelog:
+	// ChangElog：
 	//
-	// - Version 4
-	//   The following incompatible database changes were added:
-	//   * the `BlockNumber`, `TxHash`, `TxIndex`, `BlockHash` and `Index` fields of log are deleted
-	//   * the `Bloom` field of receipt is deleted
-	//   * the `BlockIndex` and `TxIndex` fields of txlookup are deleted
-	// - Version 5
-	//  The following incompatible database changes were added:
-	//    * the `TxHash`, `GasCost`, and `ContractAddress` fields are no longer stored for a receipt
-	//    * the `TxHash`, `GasCost`, and `ContractAddress` fields are computed by looking up the
-	//      receipts' corresponding block
-	// - Version 6
-	//  The following incompatible database changes were added:
-	//    * Transaction lookup information stores the corresponding block number instead of block hash
-	// - Version 7
-	//  The following incompatible database changes were added:
-	//    * Use freezer as the ancient database to maintain all ancient data
-	// - Version 8
-	//  The following incompatible database changes were added:
-	//    * New scheme for contract code in order to separate the codes and trie nodes
+	//-版本4
+	//添加了以下不兼容的数据库更改：
+	// *``blocknumber`，txhash`，txIndex`，blockhash`和dog index“ log of Log''字段已删除
+	// *删除了收据的“绽放”字段
+	// *删除了txlookup的`blockIndex`和`txIndex`字段删除
+	//-版本5
+	//添加了以下不兼容的数据库更改：
+	// *`txhash`，`gascost`和``contractdress''字段不再存储在收据中
+	// *`txhash'，`gascost`和``contractdress''字段是通过查找来计算的
+	//收据的相应块
+	//-版本6
+	//添加了以下不兼容的数据库更改：
+	// *事务查找信息存储相应的块号而不是块哈希
+	//-版本7
+	//添加了以下不兼容的数据库更改：
+	// *使用冰箱作为古代数据库来维护所有古代数据
+	//-版本8
+	//添加了以下不兼容的数据库更改：
+	// *合同代码的新方案，以分开代码和Trie节点
 	BlockChainVersion uint64 = 8
 )
 
@@ -224,9 +224,9 @@ type BlockChain struct {
 	vmConfig   vm.Config
 }
 
-// NewBlockChain returns a fully initialised block chain using information
-// available in the database. It initialises the default Ethereum Validator
-// and Processor.
+// NewBlockchain使用信息返回完全初始化的块链
+//数据库中可用。它初始化默认以太坊验证器
+//和处理器。
 func NewBlockChain(db ethdb.Database, cacheConfig *CacheConfig, chainConfig *params.ChainConfig, engine consensus.Engine, vmConfig vm.Config, shouldPreserve func(header *types.Header) bool, txLookupLimit *uint64) (*BlockChain, error) {
 	if cacheConfig == nil {
 		cacheConfig = defaultCacheConfig
@@ -420,10 +420,10 @@ func NewBlockChain(db ethdb.Database, cacheConfig *CacheConfig, chainConfig *par
 	return bc, nil
 }
 
-// empty returns an indicator whether the blockchain is empty.
-// Note, it's a special case that we connect a non-empty ancient
-// database with an empty node, so that we can plugin the ancient
-// into node seamlessly.
+// 空返回指示器是否为空。
+//注意，这是我们连接非空的古老的特殊情况
+//带有空节点的数据库，以便我们可以插入古代
+//无缝进入节点。
 func (bc *BlockChain) empty() bool {
 	genesis := bc.genesisBlock.Hash()
 	for _, hash := range []common.Hash{rawdb.ReadHeadBlockHash(bc.db), rawdb.ReadHeadHeaderHash(bc.db), rawdb.ReadHeadFastBlockHash(bc.db)} {
@@ -434,8 +434,8 @@ func (bc *BlockChain) empty() bool {
 	return true
 }
 
-// loadLastState loads the last known chain state from the database. This method
-// assumes that the chain manager mutex is held.
+// LOADLASTSTATE从数据库加载了最后一个已知的链状态。这个方法
+//假设持有链条经理Mutex。
 func (bc *BlockChain) loadLastState() error {
 	// Restore the last known head block
 	head := rawdb.ReadHeadBlockHash(bc.db)
@@ -504,29 +504,29 @@ func (bc *BlockChain) loadLastState() error {
 	return nil
 }
 
-// SetHead rewinds the local chain to a new head. Depending on whether the node
-// was fast synced or full synced and in which state, the method will try to
-// delete minimal data from disk whilst retaining chain consistency.
+// Sethead将本地链条倒回到新的头上。取决于节点是否
+//快速同步或完全同步，在哪种状态下，该方法将尝试
+//从磁盘中删除最小数据，同时保留链一致性。
 func (bc *BlockChain) SetHead(head uint64) error {
 	_, err := bc.setHeadBeyondRoot(head, common.Hash{}, false)
 	return err
 }
 
-// SetFinalized sets the finalized block.
+// SetFinalized设置最终块。
 func (bc *BlockChain) SetFinalized(block *types.Block) {
 	bc.currentFinalizedBlock.Store(block)
 	rawdb.WriteFinalizedBlockHash(bc.db, block.Hash())
 	headFinalizedBlockGauge.Update(int64(block.NumberU64()))
 }
 
-// setHeadBeyondRoot rewinds the local chain to a new head with the extra condition
-// that the rewind must pass the specified state root. This method is meant to be
-// used when rewinding with snapshots enabled to ensure that we go back further than
-// persistent disk layer. Depending on whether the node was fast synced or full, and
-// in which state, the method will try to delete minimal data from disk whilst
-// retaining chain consistency.
+// setheadbeyondroot将本地链倒回到一个新的头部，额外的状态
+//倒带必须通过指定的状态根。这种方法是
+//启用快照时使用时使用
+//持久性磁盘层。取决于节点是快速同步还是完整的，并且
+//在哪种状态下，该方法将尝试从磁盘中删除最小数据
+//保留链的一致性。
 //
-// The method returns the block number where the requested root cap was found.
+//该方法返回找到请求的根帽的块号。
 func (bc *BlockChain) setHeadBeyondRoot(head uint64, root common.Hash, repair bool) (uint64, error) {
 	if !bc.chainmu.TryLock() {
 		return 0, errChainStopped
@@ -677,8 +677,8 @@ func (bc *BlockChain) setHeadBeyondRoot(head uint64, root common.Hash, repair bo
 	return rootNumber, bc.loadLastState()
 }
 
-// SnapSyncCommitHead sets the current head block to the one defined by the hash
-// irrelevant what the chain contents were prior.
+// snapsynccommithead将当前的头块设置为由哈希定义的块
+//无关紧要的链含量是什么。
 func (bc *BlockChain) SnapSyncCommitHead(hash common.Hash) error {
 	// Make sure that both the block as well at its state trie exists
 	block := bc.GetBlockByHash(hash)
@@ -711,8 +711,8 @@ func (bc *BlockChain) Reset() error {
 	return bc.ResetWithGenesisBlock(bc.genesisBlock)
 }
 
-// ResetWithGenesisBlock purges the entire blockchain, restoring it to the
-// specified genesis state.
+// 重置对肌块清除整个区块链，将其还原为
+//指定的创世纪。
 func (bc *BlockChain) ResetWithGenesisBlock(genesis *types.Block) error {
 	// Dump the entire block chain and purge the caches
 	if err := bc.SetHead(0); err != nil {
@@ -748,7 +748,7 @@ func (bc *BlockChain) Export(w io.Writer) error {
 	return bc.ExportN(w, uint64(0), bc.CurrentBlock().NumberU64())
 }
 
-// ExportN writes a subset of the active chain to the given writer.
+// Exportn将活动链的子集写入给定的作者。
 func (bc *BlockChain) ExportN(w io.Writer, first uint64, last uint64) error {
 	if !bc.chainmu.TryLock() {
 		return errChainStopped
@@ -777,12 +777,12 @@ func (bc *BlockChain) ExportN(w io.Writer, first uint64, last uint64) error {
 	return nil
 }
 
-// writeHeadBlock injects a new head block into the current block chain. This method
-// assumes that the block is indeed a true head. It will also reset the head
-// header and the head fast sync block to this very same block if they are older
-// or if they are on a different side chain.
+// WriteHeadBlock向当前块链注入一个新的头块。这个方法
+//假设块确实是真正的头部。它也将重置头部
+//标题和头部快速同步块，如果它们年龄较大
+//或如果它们在不同的侧链上。
 //
-// Note, this function assumes that the `mu` mutex is held!
+//注意，此功能假设持有`mu'mutex！
 func (bc *BlockChain) writeHeadBlock(block *types.Block) {
 	// Add the block to the canonical chain number scheme and mark as the head
 	batch := bc.db.NewBatch()
@@ -806,8 +806,8 @@ func (bc *BlockChain) writeHeadBlock(block *types.Block) {
 	headBlockGauge.Update(int64(block.NumberU64()))
 }
 
-// Stop stops the blockchain service. If any imports are currently in progress
-// it will abort them using the procInterrupt.
+// 停止阻止区块链服务。如果目前正在进行任何进口
+//它将使用Procintrupt中止它们。
 func (bc *BlockChain) Stop() {
 	if !atomic.CompareAndSwapInt32(&bc.running, 0, 1) {
 		return
@@ -878,9 +878,9 @@ func (bc *BlockChain) Stop() {
 	log.Info("Blockchain stopped")
 }
 
-// StopInsert interrupts all insertion methods, causing them to return
-// errInsertionInterrupted as soon as possible. Insertion is permanently disabled after
-// calling this method.
+// StopInsert中断所有插入方法，导致它们返回
+// Errinsertioniondiond Admist Aigt。插入后永久禁用
+//调用此方法。
 func (bc *BlockChain) StopInsert() {
 	atomic.StoreInt32(&bc.procInterrupt, 1)
 }
@@ -917,8 +917,8 @@ const (
 	SideStatTy
 )
 
-// InsertReceiptChain attempts to complete an already existing header chain with
-// transaction and receipt data.
+// Insertreceiptchain试图通过
+//交易和收据数据。
 func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain []types.Receipts, ancientLimit uint64) (int, error) {
 	// We don't require the chainMu here since we want to maximize the
 	// concurrency of header insertion and receipt insertion.
@@ -1188,9 +1188,9 @@ func (bc *BlockChain) InsertReceiptChain(blockChain types.Blocks, receiptChain [
 
 var lastWrite uint64
 
-// writeBlockWithoutState writes only the block and its metadata to the database,
-// but does not write any state. This is used to construct competing side forks
-// up to the point where they exceed the canonical total difficulty.
+// WriteBlockWithOutState仅将块及其元数据写入数据库，
+//但不写任何状态。这用于构建竞争的叉子
+//直到它们超过规范的总难度。
 func (bc *BlockChain) writeBlockWithoutState(block *types.Block, td *big.Int) (err error) {
 	if bc.insertStopped() {
 		return errInsertionInterrupted
@@ -1205,8 +1205,8 @@ func (bc *BlockChain) writeBlockWithoutState(block *types.Block, td *big.Int) (e
 	return nil
 }
 
-// writeKnownBlock updates the head block flag with a known block
-// and introduces chain reorg if necessary.
+// Write已知Block用已知块更新Head Block标志
+//必要时介绍链条。
 func (bc *BlockChain) writeKnownBlock(block *types.Block) error {
 	current := bc.CurrentBlock()
 	if block.ParentHash() != current.Hash() {
@@ -1218,8 +1218,8 @@ func (bc *BlockChain) writeKnownBlock(block *types.Block) error {
 	return nil
 }
 
-// writeBlockWithState writes block, metadata and corresponding state data to the
-// database.
+// WriteBlockWithState将块，元数据和相应状态数据写入
+//数据库。
 func (bc *BlockChain) writeBlockWithState(block *types.Block, receipts []*types.Receipt, logs []*types.Log, state *state.StateDB) error {
 	// Calculate the total difficulty of the block
 	ptd := bc.GetTd(block.ParentHash(), block.NumberU64()-1)
@@ -1301,8 +1301,8 @@ func (bc *BlockChain) writeBlockWithState(block *types.Block, receipts []*types.
 	return nil
 }
 
-// WriteBlockAndSetHead writes the given block and all associated state to the database,
-// and applies the block as the new chain head.
+// writeblockandsethead将给定的块和所有相关状态写入数据库，
+//并将块作为新链头应用。
 func (bc *BlockChain) WriteBlockAndSetHead(block *types.Block, receipts []*types.Receipt, logs []*types.Log, state *state.StateDB, emitHeadEvent bool) (status WriteStatus, err error) {
 	if !bc.chainmu.TryLock() {
 		return NonStatTy, errChainStopped
@@ -1312,8 +1312,8 @@ func (bc *BlockChain) WriteBlockAndSetHead(block *types.Block, receipts []*types
 	return bc.writeBlockAndSetHead(block, receipts, logs, state, emitHeadEvent)
 }
 
-// writeBlockAndSetHead is the internal implementation of WriteBlockAndSetHead.
-// This function expects the chain mutex to be held.
+// WriteBlockandSehead是WriteBlockandSehead的内部实现。
+//此功能预计将持有链静脉。
 func (bc *BlockChain) writeBlockAndSetHead(block *types.Block, receipts []*types.Receipt, logs []*types.Log, state *state.StateDB, emitHeadEvent bool) (status WriteStatus, err error) {
 	if err := bc.writeBlockWithState(block, receipts, logs, state); err != nil {
 		return NonStatTy, err
@@ -1359,12 +1359,12 @@ func (bc *BlockChain) writeBlockAndSetHead(block *types.Block, receipts []*types
 	return status, nil
 }
 
-// addFutureBlock checks if the block is within the max allowed window to get
-// accepted for future processing, and returns an error if the block is too far
-// ahead and was not added.
+// AddFutureBlock检查块是否在最大允许的窗口内
+//接受将来处理的接受，如果块太远，将返回错误
+//提前，没有添加。
 //
-// TODO after the transition, the future block shouldn't be kept. Because
-// it's not checked in the Geth side anymore.
+// TODO过渡后，不应保留未来的块。因为
+//它不再在Geth的一侧进行检查。
 func (bc *BlockChain) addFutureBlock(block *types.Block) error {
 	max := uint64(time.Now().Unix() + maxTimeFutureBlocks)
 	if block.Time() > max {
@@ -1378,10 +1378,10 @@ func (bc *BlockChain) addFutureBlock(block *types.Block) error {
 	return nil
 }
 
-// InsertChain attempts to insert the given batch of blocks in to the canonical
-// chain or, otherwise, create a fork. If an error is returned it will return
-// the index number of the failing block as well an error describing what went
-// wrong. After insertion is done, all accumulated events will be fired.
+// 插入链尝试将给定的块插入到规范中
+//链或否则创建一个叉子。如果返回错误，它将返回
+//失败块的索引号以及描述发生了什么的错误
+// 错误的。插入后，将解雇所有累积事件。
 func (bc *BlockChain) InsertChain(chain types.Blocks) (int, error) {
 	// Sanity check that we have something meaningful to import
 	if len(chain) == 0 {
@@ -1413,14 +1413,14 @@ func (bc *BlockChain) InsertChain(chain types.Blocks) (int, error) {
 	return bc.insertChain(chain, true, true)
 }
 
-// insertChain is the internal implementation of InsertChain, which assumes that
-// 1) chains are contiguous, and 2) The chain mutex is held.
+// 插入链是插入链的内部实现，它假设
+// 1）链是连续的，2）链静脉固定。
 //
-// This method is split out so that import batches that require re-injecting
-// historical blocks can do so without releasing the lock, which could lead to
-// racey behaviour. If a sidechain import is in progress, and the historic state
-// is imported, but then new canon-head is added before the actual sidechain
-// completes, then the historic state could be pruned again
+//该方法被拆除，以便需要重新注射的导入批次
+//历史块可以在不发布锁的情况下这样做，这可能导致
+//种族行为。如果侧chain进口正在进行，并且历史性状态
+//已导入，但随后在实际的侧chain之前添加了新的佳能头部
+//完成，然后可以再次修剪历史状态
 func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals, setHead bool) (int, error) {
 	// If the chain is terminating, don't even bother starting up.
 	if bc.insertStopped() {
@@ -1752,13 +1752,13 @@ func (bc *BlockChain) insertChain(chain types.Blocks, verifySeals, setHead bool)
 	return it.index, err
 }
 
-// insertSideChain is called when an import batch hits upon a pruned ancestor
-// error, which happens when a sidechain with a sufficiently old fork-block is
-// found.
+// 当进口批处理对修剪的祖先撞击时，插入式插座被称为
+//错误，当侧chain带有足够旧的叉块为
+// 成立。
 //
-// The method writes all (header-and-body-valid) blocks to disk, then tries to
-// switch over to the new chain if the TD exceeded the current chain.
-// insertSideChain is only used pre-merge.
+//该方法将所有（标题和body-valid）块写入磁盘，然后尝试
+//如果TD超过当前链，请切换到新链。
+// InsertsIdeChain仅使用预合并。
 func (bc *BlockChain) insertSideChain(block *types.Block, it *insertIterator) (int, error) {
 	var (
 		externTd  *big.Int
@@ -1882,10 +1882,10 @@ func (bc *BlockChain) insertSideChain(block *types.Block, it *insertIterator) (i
 	return 0, nil
 }
 
-// recoverAncestors finds the closest ancestor with available state and re-execute
-// all the ancestor blocks since that.
-// recoverAncestors is only used post-merge.
-// We return the hash of the latest block that we could correctly validate.
+// RecuthanceStors找到了具有可用状态并重新执行的最接近的祖先
+//此后所有的祖先障碍。
+// recunderAnceStors仅使用后合并。
+//我们返回可以正确验证的最新块的哈希。
 func (bc *BlockChain) recoverAncestors(block *types.Block) (common.Hash, error) {
 	// Gather all the sidechain hashes (full blocks may be memory heavy)
 	var (
@@ -1927,9 +1927,9 @@ func (bc *BlockChain) recoverAncestors(block *types.Block) (common.Hash, error) 
 	return block.Hash(), nil
 }
 
-// collectLogs collects the logs that were generated or removed during
-// the processing of the block that corresponds with the given hash.
-// These logs are later announced as deleted or reborn.
+// collectlogs收集在期间生成或删除的日志
+//与给定哈希相对应的块的处理。
+//这些日志后来被宣布为已删除或重生。
 func (bc *BlockChain) collectLogs(hash common.Hash, removed bool) []*types.Log {
 	number := bc.hc.GetBlockNumber(hash)
 	if number == nil {
@@ -1965,11 +1965,11 @@ func mergeLogs(logs [][]*types.Log, reverse bool) []*types.Log {
 	return ret
 }
 
-// reorg takes two blocks, an old chain and a new chain and will reconstruct the
-// blocks and inserts them to be part of the new canonical chain and accumulates
-// potential missing transactions and post an event about them.
-// Note the new head block won't be processed here, callers need to handle it
-// externally.
+// Reorg占据了两个街区，一个旧链和一个新链，将重建
+//块并插入它们成为新规范链的一部分并积累
+//潜在的丢失交易并发布有关它们的事件。
+//注意在这里不会处理新的头部块，呼叫者需要处理它
+//外部。
 func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 	var (
 		newChain    types.Blocks
@@ -2127,11 +2127,11 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 	return nil
 }
 
-// InsertBlockWithoutSetHead executes the block, runs the necessary verification
-// upon it and then persist the block and the associate state into the database.
-// The key difference between the InsertChain is it won't do the canonical chain
-// updating. It relies on the additional SetCanonical call to finalize the entire
-// procedure.
+// insertblockwithoutsEthead执行块，运行必要的验证
+//在其上，然后将块和关联状态持续到数据库中。
+//插入链之间的关键区别在于它不会执行规范链
+//更新。它依靠其他setCanonical呼叫来最终确定整个
+// 程序。
 func (bc *BlockChain) InsertBlockWithoutSetHead(block *types.Block) error {
 	if !bc.chainmu.TryLock() {
 		return errChainStopped

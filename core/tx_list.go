@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package core
 
@@ -29,8 +29,8 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-// nonceHeap is a heap.Interface implementation over 64bit unsigned integers for
-// retrieving sorted transactions from the possibly gapped future queue.
+// nonceheap是64位未签名整数的堆
+//从可能的未来队列中检索分类的交易。
 type nonceHeap []uint64
 
 func (h nonceHeap) Len() int           { return len(h) }
@@ -49,15 +49,15 @@ func (h *nonceHeap) Pop() interface{} {
 	return x
 }
 
-// txSortedMap is a nonce->transaction hash map with a heap based index to allow
-// iterating over the contents in a nonce-incrementing way.
+// txSortedMap是具有基于堆索引的非CE->交易哈希地图
+//以非CENCRENTING的方式迭代内容。
 type txSortedMap struct {
 	items map[uint64]*types.Transaction // Hash map storing the transaction data
 	index *nonceHeap                    // Heap of nonces of all the stored transactions (non-strict mode)
 	cache types.Transactions            // Cache of the transactions already sorted
 }
 
-// newTxSortedMap creates a new nonce-sorted transaction map.
+// NewTxSortedMap创建了一个新的非CES级交易图。
 func newTxSortedMap() *txSortedMap {
 	return &txSortedMap{
 		items: make(map[uint64]*types.Transaction),
@@ -65,13 +65,13 @@ func newTxSortedMap() *txSortedMap {
 	}
 }
 
-// Get retrieves the current transactions associated with the given nonce.
+//获取与给定非CE相关的当前交易。
 func (m *txSortedMap) Get(nonce uint64) *types.Transaction {
 	return m.items[nonce]
 }
 
-// Put inserts a new transaction into the map, also updating the map's nonce
-// index. If a transaction already exists with the same nonce, it's overwritten.
+// 将新事务插入到地图中，也更新地图的Nonce
+// 指数。如果交易已经以相同的nonce存在，则将其覆盖。
 func (m *txSortedMap) Put(tx *types.Transaction) {
 	nonce := tx.Nonce()
 	if m.items[nonce] == nil {
@@ -80,9 +80,9 @@ func (m *txSortedMap) Put(tx *types.Transaction) {
 	m.items[nonce], m.cache = tx, nil
 }
 
-// Forward removes all transactions from the map with a nonce lower than the
-// provided threshold. Every removed transaction is returned for any post-removal
-// maintenance.
+// 向前删除从地图的所有交易，非CE低于
+//提供阈值。每次删除的交易都将返回任何拆卸后
+// 维护。
 func (m *txSortedMap) Forward(threshold uint64) types.Transactions {
 	var removed types.Transactions
 
@@ -122,8 +122,8 @@ func (m *txSortedMap) reheap() {
 	m.cache = nil
 }
 
-// filter is identical to Filter, but **does not** regenerate the heap. This method
-// should only be used if followed immediately by a call to Filter or reheap()
+// 过滤器与过滤相同，但**不**再生堆。这个方法
+//仅在立即进行过滤或重新调用（）呼叫时才能使用//
 func (m *txSortedMap) filter(filter func(*types.Transaction) bool) types.Transactions {
 	var removed types.Transactions
 
@@ -140,8 +140,8 @@ func (m *txSortedMap) filter(filter func(*types.Transaction) bool) types.Transac
 	return removed
 }
 
-// Cap places a hard limit on the number of items, returning all transactions
-// exceeding that limit.
+// 上限对项目数量进行了严格的限制，返回所有交易
+//超过该限制。
 func (m *txSortedMap) Cap(threshold int) types.Transactions {
 	// Short circuit if the number of items is under the limit
 	if len(m.items) <= threshold {
@@ -165,8 +165,8 @@ func (m *txSortedMap) Cap(threshold int) types.Transactions {
 	return drops
 }
 
-// Remove deletes a transaction from the maintained map, returning whether the
-// transaction was found.
+// 删除从维护地图中删除交易，返回是否返回
+//找到交易。
 func (m *txSortedMap) Remove(nonce uint64) bool {
 	// Short circuit if no transaction is present
 	_, ok := m.items[nonce]
@@ -186,13 +186,13 @@ func (m *txSortedMap) Remove(nonce uint64) bool {
 	return true
 }
 
-// Ready retrieves a sequentially increasing list of transactions starting at the
-// provided nonce that is ready for processing. The returned transactions will be
-// removed from the list.
+// Ready检索一项从以前开始的交易列表
+//提供准备处理的nonce。返回的交易将是
+//从列表中删除。
 //
-// Note, all transactions with nonces lower than start will also be returned to
-// prevent getting into and invalid state. This is not something that should ever
-// happen but better to be self correcting than failing!
+//注意，所有NONCES低于开始的所有交易也将返回到
+//防止进入和无效状态。这不是应该的
+//发生，但是自我纠正比失败更好！
 func (m *txSortedMap) Ready(start uint64) types.Transactions {
 	// Short circuit if no transactions are available
 	if m.index.Len() == 0 || (*m.index)[0] > start {
@@ -320,15 +320,15 @@ func (l *txList) Forward(threshold uint64) types.Transactions {
 	return l.txs.Forward(threshold)
 }
 
-// Filter removes all transactions from the list with a cost or gas limit higher
-// than the provided thresholds. Every removed transaction is returned for any
-// post-removal maintenance. Strict-mode invalidated transactions are also
-// returned.
+// 过滤器将所有交易从列表中删除，成本或气体限制更高
+//比提供的阈值。每次删除的交易都将返回任何
+//收集后维护。严格模式无效的交易也是
+// 回来。
 //
-// This method uses the cached costcap and gascap to quickly decide if there's even
-// a point in calculating all the costs or if the balance covers all. If the threshold
-// is lower than the costgas cap, the caps will be reset to a new high after removing
-// the newly invalidated transactions.
+//此方法使用缓存的CostCap和GasCap快速决定是否有
+//计算所有费用或余额是否涵盖所有费用的观点。如果阈值
+//低于Costgas帽，卸下后，帽子将重置为新的高位
+//新无效的交易。
 func (l *txList) Filter(costLimit *big.Int, gasLimit uint64) (types.Transactions, types.Transactions) {
 	// If all transactions are below the threshold, short circuit
 	if l.costcap.Cmp(costLimit) <= 0 && l.gascap <= gasLimit {
@@ -360,15 +360,15 @@ func (l *txList) Filter(costLimit *big.Int, gasLimit uint64) (types.Transactions
 	return removed, invalids
 }
 
-// Cap places a hard limit on the number of items, returning all transactions
-// exceeding that limit.
+// 上限对项目数量进行了严格的限制，返回所有交易
+//超过该限制。
 func (l *txList) Cap(threshold int) types.Transactions {
 	return l.txs.Cap(threshold)
 }
 
-// Remove deletes a transaction from the maintained list, returning whether the
-// transaction was found, and also returning any transaction invalidated due to
-// the deletion (strict mode only).
+// 删除从维护列表中删除交易，返回是否返回
+//找到交易，还返回由于
+//删除（仅严格模式）。
 func (l *txList) Remove(tx *types.Transaction) (bool, types.Transactions) {
 	// Remove the transaction from the set
 	nonce := tx.Nonce()
@@ -382,13 +382,13 @@ func (l *txList) Remove(tx *types.Transaction) (bool, types.Transactions) {
 	return true, nil
 }
 
-// Ready retrieves a sequentially increasing list of transactions starting at the
-// provided nonce that is ready for processing. The returned transactions will be
-// removed from the list.
+// Ready检索一项从以前开始的交易列表
+//提供准备处理的nonce。返回的交易将是
+//从列表中删除。
 //
-// Note, all transactions with nonces lower than start will also be returned to
-// prevent getting into and invalid state. This is not something that should ever
-// happen but better to be self correcting than failing!
+//注意，所有NONCES低于开始的所有交易也将返回到
+//防止进入和无效状态。这不是应该的
+//发生，但是自我纠正比失败更好！
 func (l *txList) Ready(start uint64) types.Transactions {
 	return l.txs.Ready(start)
 }

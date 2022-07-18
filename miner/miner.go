@@ -35,14 +35,14 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 )
 
-// Backend wraps all methods required for mining. Only full node is capable
-// to offer all the functions here.
+// 后端包装采矿所需的所有方法。只有完整节点才能
+//在这里提供所有功能。
 type Backend interface {
 	BlockChain() *core.BlockChain
 	TxPool() *core.TxPool
 }
 
-// Config is the configuration parameters of mining.
+// 配置是采矿的配置参数。
 type Config struct {
 	Etherbase  common.Address `toml:",omitempty"` // Public address for block mining rewards (default = first account)
 	Notify     []string       `toml:",omitempty"` // HTTP URL list to be notified of new work packages (only useful in ethash).
@@ -55,7 +55,7 @@ type Config struct {
 	Noverify   bool           // Disable remote mining solution verification(only useful in ethash).
 }
 
-// Miner creates blocks and searches for proof-of-work values.
+// 矿工创建块并搜索工作证明值。
 type Miner struct {
 	mux      *event.TypeMux
 	worker   *worker
@@ -84,10 +84,10 @@ func New(eth Backend, config *Config, chainConfig *params.ChainConfig, mux *even
 	return miner
 }
 
-// update keeps track of the downloader events. Please be aware that this is a one shot type of update loop.
-// It's entered once and as soon as `Done` or `Failed` has been broadcasted the events are unregistered and
-// the loop is exited. This to prevent a major security vuln where external parties can DOS you with blocks
-// and halt your mining operation for as long as the DOS continues.
+// 更新跟踪下载器事件。请注意，这是一种单镜头的更新循环。
+//一旦播放了``完成''或``失败''的事件即将注册，并且
+//循环退出。这是为了防止外部各方可以用块的主要安全性vuln
+//只要DOS继续前进，就会停止采矿业务。
 func (miner *Miner) update() {
 	defer miner.wg.Done()
 
@@ -182,26 +182,26 @@ func (miner *Miner) SetExtra(extra []byte) error {
 	return nil
 }
 
-// SetRecommitInterval sets the interval for sealing work resubmitting.
+// SetRecommitInterval设置了密封工作重新提交的间隔。
 func (miner *Miner) SetRecommitInterval(interval time.Duration) {
 	miner.worker.setRecommitInterval(interval)
 }
 
-// Pending returns the currently pending block and associated state.
+// 等待返回当前待处理的块和相关状态。
 func (miner *Miner) Pending() (*types.Block, *state.StateDB) {
 	return miner.worker.pending()
 }
 
-// PendingBlock returns the currently pending block.
+// pendendBlock返回当前未决的块。
 //
-// Note, to access both the pending block and the pending state
-// simultaneously, please use Pending(), as the pending state can
-// change between multiple method calls
+//注意，要访问待处理的块和待处理状态
+//同时，请使用repending（），如待处理状态可以
+//在多个方法调用之间更改
 func (miner *Miner) PendingBlock() *types.Block {
 	return miner.worker.pendingBlock()
 }
 
-// PendingBlockAndReceipts returns the currently pending block and corresponding receipts.
+// perdendblockandReceipts返回当前待处理的块和相应的收据。
 func (miner *Miner) PendingBlockAndReceipts() (*types.Block, types.Receipts) {
 	return miner.worker.pendingBlockAndReceipts()
 }
@@ -211,25 +211,25 @@ func (miner *Miner) SetEtherbase(addr common.Address) {
 	miner.worker.setEtherbase(addr)
 }
 
-// SetGasCeil sets the gaslimit to strive for when mining blocks post 1559.
-// For pre-1559 blocks, it sets the ceiling.
+//设定的GASCEIL将气体限制设置为1559年后采矿块时的努力。
+//对于1559年前的块，它设置了天花板。
 func (miner *Miner) SetGasCeil(ceil uint64) {
 	miner.worker.setGasCeil(ceil)
 }
 
-// EnablePreseal turns on the preseal mining feature. It's enabled by default.
-// Note this function shouldn't be exposed to API, it's unnecessary for users
-// (miners) to actually know the underlying detail. It's only for outside project
-// which uses this library.
+// 启用PRESEAL打开Peseal采矿功能。默认情况下启用了它。
+//注意此功能不应暴露于API，对于用户来说是不必要的
+//（矿工）实际了解基础细节。仅适用于外部项目
+//使用此库。
 func (miner *Miner) EnablePreseal() {
 	miner.worker.enablePreseal()
 }
 
-// DisablePreseal turns off the preseal mining feature. It's necessary for some
-// fake consensus engine which can seal blocks instantaneously.
-// Note this function shouldn't be exposed to API, it's unnecessary for users
-// (miners) to actually know the underlying detail. It's only for outside project
-// which uses this library.
+// Disable Proseal关闭Prepeal采矿功能。有些人有必要
+//假共识引擎，可以立即密封块。
+//注意此功能不应暴露于API，对于用户来说是不必要的
+//（矿工）实际了解基础细节。仅适用于外部项目
+//使用此库。
 func (miner *Miner) DisablePreseal() {
 	miner.worker.disablePreseal()
 }

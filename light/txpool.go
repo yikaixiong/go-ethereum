@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package light
 
@@ -39,15 +39,15 @@ const (
 	chainHeadChanSize = 10
 )
 
-// txPermanent is the number of mined blocks after a mined transaction is
-// considered permanent and no rollback is expected
+// Txpermanent是开采交易后的开采块数量
+//被认为是永久的，预计不会回滚
 var txPermanent = uint64(500)
 
-// TxPool implements the transaction pool for light clients, which keeps track
-// of the status of locally created transactions, detecting if they are included
-// in a block (mined) or rolled back. There are no queued transactions since we
-// always receive all locally signed transactions in the same order as they are
-// created.
+// TXPOOL实现了轻型客户的交易池，这保持了跟踪
+//本地创建的交易状态的状态，检测是否包括
+//在街区（开采）或向后滚动。没有排队的交易，因为我们
+//始终以与原样的顺序接收所有本地签名的交易
+//创建。
 type TxPool struct {
 	config       *params.ChainConfig
 	signer       types.Signer
@@ -71,15 +71,15 @@ type TxPool struct {
 	eip2718  bool // Fork indicator whether we are in the eip2718 stage.
 }
 
-// TxRelayBackend provides an interface to the mechanism that forwards transacions
-// to the ETH network. The implementations of the functions should be non-blocking.
+// TXRELAYBACKEND提供了转发Transacions的机制的接口
+//到ETH网络。功能的实现应无障碍。
 //
-// Send instructs backend to forward new transactions
-// NewHead notifies backend about a new head after processed by the tx pool,
-//  including  mined and rolled back transactions since the last event
-// Discard notifies backend about transactions that should be discarded either
-//  because they have been replaced by a re-send or because they have been mined
-//  long ago and no rollback is expected
+//将后端发送指令转发新交易
+// Newhead通过TX池处理后，通知后端关于新的头部，
+//包括上次事件以来的开采和回滚交易
+//丢弃通知后端有关应丢弃的交易的通知
+//因为它们已被重新定位代替或因为已被开采而取代
+//很久以前，预计不会回滚
 type TxRelayBackend interface {
 	Send(txs types.Transactions)
 	NewHead(head common.Hash, mined []common.Hash, rollback []common.Hash)
@@ -110,14 +110,14 @@ func NewTxPool(config *params.ChainConfig, chain *LightChain, relay TxRelayBacke
 	return pool
 }
 
-// currentState returns the light state of the current head header
+// Curstrate返回当前标头的光状态
 func (pool *TxPool) currentState(ctx context.Context) *state.StateDB {
 	return NewState(ctx, pool.chain.CurrentHeader(), pool.odr)
 }
 
-// GetNonce returns the "pending" nonce of a given address. It always queries
-// the nonce belonging to the latest header too in order to detect if another
-// client using the same key sent a transaction.
+// GetNonce返回给定地址的“待处理” nonce。它总是查询
+//也属于最新标头的nonce，以便检测另一个
+//使用同一密钥的客户端发送交易。
 func (pool *TxPool) GetNonce(ctx context.Context, addr common.Address) (uint64, error) {
 	state := pool.currentState(ctx)
 	nonce := state.GetNonce(addr)
@@ -134,11 +134,11 @@ func (pool *TxPool) GetNonce(ctx context.Context, addr common.Address) (uint64, 
 	return nonce, nil
 }
 
-// txStateChanges stores the recent changes between pending/mined states of
-// transactions. True means mined, false means rolled back, no entry means no change
+// TXSTATATECHANGES存储了最近的待处理/开采状态的变化
+//交易。真正的手段开采，错误意味着退缩，没有进入意味着没有更改
 type txStateChanges map[common.Hash]bool
 
-// setState sets the status of a tx to either recently mined or recently rolled back
+// SetState将TX的状态设置为最近开采或最近回滚的状态
 func (txc txStateChanges) setState(txHash common.Hash, mined bool) {
 	val, ent := txc[txHash]
 	if ent && (val != mined) {
@@ -148,7 +148,7 @@ func (txc txStateChanges) setState(txHash common.Hash, mined bool) {
 	}
 }
 
-// getLists creates lists of mined and rolled back tx hashes
+// GetLists创建了开采和回滚的列表TX哈希
 func (txc txStateChanges) getLists() (mined []common.Hash, rollback []common.Hash) {
 	for hash, val := range txc {
 		if val {
@@ -160,9 +160,9 @@ func (txc txStateChanges) getLists() (mined []common.Hash, rollback []common.Has
 	return
 }
 
-// checkMinedTxs checks newly added blocks for the currently pending transactions
-// and marks them as mined if necessary. It also stores block position in the db
-// and adds them to the received txStateChanges map.
+// CheckMinedTXS检查当前未决的交易的新添加的块
+//并在必要时标记为开采。它还将块位置存储在DB中
+//并将它们添加到接收到的TXSTATATECHANGES地图中。
 func (pool *TxPool) checkMinedTxs(ctx context.Context, hash common.Hash, number uint64, txc txStateChanges) error {
 	// If no transactions are pending, we don't care about anything
 	if len(pool.pending) == 0 {
@@ -197,8 +197,8 @@ func (pool *TxPool) checkMinedTxs(ctx context.Context, hash common.Hash, number 
 	return nil
 }
 
-// rollbackTxs marks the transactions contained in recently rolled back blocks
-// as rolled back. It also removes any positional lookup entries.
+// RollbackTXS标记了最近滚动后块中包含的交易
+//回滚。它还可以删除任何位置查找条目。
 func (pool *TxPool) rollbackTxs(hash common.Hash, txc txStateChanges) {
 	batch := pool.chainDb.NewBatch()
 	if list, ok := pool.mined[hash]; ok {
@@ -213,12 +213,12 @@ func (pool *TxPool) rollbackTxs(hash common.Hash, txc txStateChanges) {
 	batch.Write()
 }
 
-// reorgOnNewHead sets a new head header, processing (and rolling back if necessary)
-// the blocks since the last known head and returns a txStateChanges map containing
-// the recently mined and rolled back transaction hashes. If an error (context
-// timeout) occurs during checking new blocks, it leaves the locally known head
-// at the latest checked block and still returns a valid txStateChanges, making it
-// possible to continue checking the missing blocks at the next chain head event
+// Reorgonnewhead设置了一个新的头标头，处理（如有必要，请向后回滚）
+//自从最后一个已知的头部以来的块，并返回包含的txstatechanges地图
+//最近开采和回滚的交易哈希。如果有错误（上下文
+//超时）发生在检查新块时，它留下了本地知名的头部
+//在最新的检查块中，仍然返回有效的txstatechanges，使其成为
+//可能在下一个连锁主事件中继续检查缺失的块
 func (pool *TxPool) reorgOnNewHead(ctx context.Context, newHeader *types.Header) (txStateChanges, error) {
 	txc := make(txStateChanges)
 	oldh := pool.chain.GetHeaderByHash(pool.head)
@@ -278,12 +278,12 @@ func (pool *TxPool) reorgOnNewHead(ctx context.Context, newHeader *types.Header)
 	return txc, nil
 }
 
-// blockCheckTimeout is the time limit for checking new blocks for mined
-// transactions. Checking resumes at the next chain head event if timed out.
+// BlockCheckTimeOut是检查开采新块的时间限制
+//交易。如果时间表的话，请检查下一个连锁主事件的简历。
 const blockCheckTimeout = time.Second * 3
 
-// eventLoop processes chain head events and also notifies the tx relay backend
-// about the new head hash and tx state changes
+// EventLoop处理链头事件，还通知TX继电器后端
+//关于新的Head Hash和TX状态更改
 func (pool *TxPool) eventLoop() {
 	for {
 		select {
@@ -342,7 +342,7 @@ func (pool *TxPool) Stats() (pending int) {
 	return
 }
 
-// validateTx checks whether a transaction is valid according to the consensus rules.
+// VIALATETX检查事务是否根据共识规则有效。
 func (pool *TxPool) validateTx(ctx context.Context, tx *types.Transaction) error {
 	// Validate sender
 	var (
@@ -392,8 +392,8 @@ func (pool *TxPool) validateTx(ctx context.Context, tx *types.Transaction) error
 	return currentState.Error()
 }
 
-// add validates a new transaction and sets its state pending if processable.
-// It also updates the locally stored nonce if necessary.
+// 添加验证新事务，并设置其状态待处理（如果可以处理）。
+//如果必要时，它还更新本地存储的nonce。
 func (pool *TxPool) add(ctx context.Context, tx *types.Transaction) error {
 	hash := tx.Hash()
 
@@ -426,8 +426,8 @@ func (pool *TxPool) add(ctx context.Context, tx *types.Transaction) error {
 	return nil
 }
 
-// Add adds a transaction to the pool if valid and passes it to the tx relay
-// backend
+// 如果有效，将添加到池中的交易并将其传递给TX继电器
+//后端
 func (pool *TxPool) Add(ctx context.Context, tx *types.Transaction) error {
 	pool.mu.Lock()
 	defer pool.mu.Unlock()
@@ -446,8 +446,8 @@ func (pool *TxPool) Add(ctx context.Context, tx *types.Transaction) error {
 	return nil
 }
 
-// AddTransactions adds all valid transactions to the pool and passes them to
-// the tx relay backend
+// AddTransactions将所有有效的交易添加到池中，并将其传递给
+// TX继电器后端
 func (pool *TxPool) AddBatch(ctx context.Context, txs []*types.Transaction) {
 	pool.mu.Lock()
 	defer pool.mu.Unlock()
@@ -463,8 +463,8 @@ func (pool *TxPool) AddBatch(ctx context.Context, txs []*types.Transaction) {
 	}
 }
 
-// GetTransaction returns a transaction if it is contained in the pool
-// and nil otherwise.
+// GetTransaction如果包含在池中的交易将返回交易
+//否则零。
 func (pool *TxPool) GetTransaction(hash common.Hash) *types.Transaction {
 	// check the txs first
 	if tx, ok := pool.pending[hash]; ok {
@@ -473,8 +473,8 @@ func (pool *TxPool) GetTransaction(hash common.Hash) *types.Transaction {
 	return nil
 }
 
-// GetTransactions returns all currently processable transactions.
-// The returned slice may be modified by the caller.
+// GetTransactions返回当前可处理的所有交易。
+//返回的切片可以由呼叫者修改。
 func (pool *TxPool) GetTransactions() (txs types.Transactions, err error) {
 	pool.mu.RLock()
 	defer pool.mu.RUnlock()
@@ -488,8 +488,8 @@ func (pool *TxPool) GetTransactions() (txs types.Transactions, err error) {
 	return txs, nil
 }
 
-// Content retrieves the data content of the transaction pool, returning all the
-// pending as well as queued transactions, grouped by account and nonce.
+// 内容检索交易池的数据内容，返回所有
+//待定和排队交易，按帐户和nonce分组。
 func (pool *TxPool) Content() (map[common.Address]types.Transactions, map[common.Address]types.Transactions) {
 	pool.mu.RLock()
 	defer pool.mu.RUnlock()
@@ -505,8 +505,8 @@ func (pool *TxPool) Content() (map[common.Address]types.Transactions, map[common
 	return pending, queued
 }
 
-// ContentFrom retrieves the data content of the transaction pool, returning the
-// pending as well as queued transactions of this address, grouped by nonce.
+// Contents从检索事务池的数据内容，返回
+//待定以及该地址的排队交易，由Nonce分组。
 func (pool *TxPool) ContentFrom(addr common.Address) (types.Transactions, types.Transactions) {
 	pool.mu.RLock()
 	defer pool.mu.RUnlock()

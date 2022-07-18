@@ -15,7 +15,7 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 )
 
-// MarshalTOML marshals as TOML.
+// 元帅的元帅饰演汤姆尔。
 func (c Config) MarshalTOML() (interface{}, error) {
 	type Config struct {
 		Genesis                         *core.Genesis `toml:",omitempty"`

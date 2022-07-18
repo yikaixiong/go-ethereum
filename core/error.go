@@ -1,18 +1,18 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package core
 
@@ -23,28 +23,28 @@ import (
 )
 
 var (
-	// ErrKnownBlock is returned when a block to import is already known locally.
+	// 当要导入的块已在本地已知时，将返回错误的框架。
 	ErrKnownBlock = errors.New("block already known")
 
-	// ErrBannedHash is returned if a block to import is on the banned list.
+	// 如果要导入的块在禁止的列表中，将返回ErrbannedHash。
 	ErrBannedHash = errors.New("banned hash")
 
-	// ErrNoGenesis is returned when there is no Genesis Block.
+	// 当没有创世纪障碍时，返回错误的发生。
 	ErrNoGenesis = errors.New("genesis not found in chain")
 
 	errSideChainReceipts = errors.New("side blocks can't be accepted as ancient chain data")
 )
 
-// List of evm-call-message pre-checking errors. All state transition messages will
-// be pre-checked before execution. If any invalidation detected, the corresponding
-// error should be returned which is defined here.
+// EVM-CALL-MESSAGE预检查错误列表。所有国家过渡消息将
+//在执行前进行预先检查。如果检测到任何无效，相应的
+//应返回错误，此处定义。
 //
-// - If the pre-checking happens in the miner, then the transaction won't be packed.
-// - If the pre-checking happens in the block processing procedure, then a "BAD BLOCk"
-// error should be emitted.
+//-如果预检查发生在矿工中，则不会包装交易。
+//-如果预检查发生在块处理过程中，则“不良块”
+//应该发出错误。
 var (
-	// ErrNonceTooLow is returned if the nonce of a transaction is lower than the
-	// one present in the local chain.
+	// 如果交易的nonce低于
+	//当地链中的一个。
 	ErrNonceTooLow = errors.New("nonce too low")
 
 	// ErrNonceTooHigh is returned if the nonce of a transaction is higher than the

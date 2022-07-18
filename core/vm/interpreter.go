@@ -1,18 +1,18 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package vm
 
@@ -24,7 +24,7 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 )
 
-// Config are the configuration options for the Interpreter
+// 配置是解释器的配置选项
 type Config struct {
 	Debug                   bool      // Enables debugging
 	Tracer                  EVMLogger // Opcode logger
@@ -36,23 +36,23 @@ type Config struct {
 	ExtraEips []int // Additional EIPS that are to be enabled
 }
 
-// ScopeContext contains the things that are per-call, such as stack and memory,
-// but not transients like pc and gas
+// scopecontext包含每句话的内容，例如堆栈和内存，
+//但没有PC和气体等瞬态
 type ScopeContext struct {
 	Memory   *Memory
 	Stack    *Stack
 	Contract *Contract
 }
 
-// keccakState wraps sha3.state. In addition to the usual hash methods, it also supports
-// Read to get a variable amount of data from the hash state. Read is faster than Sum
-// because it doesn't copy the internal state, but also modifies the internal state.
+// Keccakstate包裹Sha3.state。除了通常的哈希方法外，它还支持
+//阅读以获取哈希状态的可变数据。阅读速度比总和快
+//因为它不复制内部状态，而是修改内部状态。
 type keccakState interface {
 	hash.Hash
 	Read([]byte) (int, error)
 }
 
-// EVMInterpreter represents an EVM interpreter
+//EVMINTERPRETER代表EVM解释器
 type EVMInterpreter struct {
 	evm *EVM
 	cfg Config
@@ -64,7 +64,7 @@ type EVMInterpreter struct {
 	returnData []byte // Last CALL's return data for subsequent reuse
 }
 
-// NewEVMInterpreter returns a new instance of the Interpreter.
+// NewevminterPreter返回解释器的新实例。
 func NewEVMInterpreter(evm *EVM, cfg Config) *EVMInterpreter {
 	// If jump table was not initialised we set the default one.
 	if cfg.JumpTable == nil {
@@ -107,12 +107,12 @@ func NewEVMInterpreter(evm *EVM, cfg Config) *EVMInterpreter {
 	}
 }
 
-// Run loops and evaluates the contract's code with the given input data and returns
-// the return byte-slice and an error if one occurred.
+//运行循环并使用给定的输入数据评估合同的代码和返回
+//返回字节板和如果发生的错误。
 //
-// It's important to note that any errors returned by the interpreter should be
-// considered a revert-and-consume-all-gas operation except for
-// ErrExecutionReverted which means revert-and-keep-gas-left.
+//重要的是要注意，口译员返回的任何错误都应该是
+//被认为是恢复和处理的全加速操作
+// errexecutionreverved，这意味着还原和左右。
 func (in *EVMInterpreter) Run(contract *Contract, input []byte, readOnly bool) (ret []byte, err error) {
 
 	// Increment the call depth which is restricted to 1024

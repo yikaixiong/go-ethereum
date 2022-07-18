@@ -4,7 +4,7 @@ import (
 	"sync/atomic"
 )
 
-// Counters hold an int64 value that can be incremented and decremented.
+// 计数器具有可以增加和减少的INT64值。
 type Counter interface {
 	Clear()
 	Count() int64
@@ -13,8 +13,8 @@ type Counter interface {
 	Snapshot() Counter
 }
 
-// GetOrRegisterCounter returns an existing Counter or constructs and registers
-// a new StandardCounter.
+// GetorRegisterCounter返回现有计数器或构造和寄存器
+//一个新的标准环境。
 func GetOrRegisterCounter(name string, r Registry) Counter {
 	if nil == r {
 		r = DefaultRegistry
@@ -22,10 +22,10 @@ func GetOrRegisterCounter(name string, r Registry) Counter {
 	return r.GetOrRegister(name, NewCounter).(Counter)
 }
 
-// GetOrRegisterCounterForced returns an existing Counter or constructs and registers a
-// new Counter no matter the global switch is enabled or not.
-// Be sure to unregister the counter from the registry once it is of no use to
-// allow for garbage collection.
+// getorregistercounterforced返回现有计数器或构造和注册
+//无论启用全局开关是否启用了新的计数器。
+//请确保一旦注册表就没有用，请登记柜台
+//允许收集垃圾。
 func GetOrRegisterCounterForced(name string, r Registry) Counter {
 	if nil == r {
 		r = DefaultRegistry

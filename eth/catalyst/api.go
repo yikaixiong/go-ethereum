@@ -14,6 +14,9 @@
 //您应该收到GNU较少的通用公共许可证的副本
 //与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
+
+// TODO:  catalyst 催化剂
+
 //包装催化剂实现临时ETH1/ETH2 RPC集成。
 package catalyst
 
@@ -37,7 +40,7 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 )
 
-// Register adds catalyst APIs to the full node.
+// 注册将催化剂API添加到完整节点。
 func Register(stack *node.Node, backend *eth.Ethereum) error {
 	log.Warn("Catalyst mode enabled", "protocol", "eth")
 	stack.RegisterAPIs([]rpc.API{
@@ -59,8 +62,8 @@ type ConsensusAPI struct {
 	forkChoiceLock sync.Mutex
 }
 
-// NewConsensusAPI creates a new consensus api for the given backend.
-// The underlying blockchain needs to have a valid terminal total difficulty set.
+//NewConsensusapi为给定的后端创建了新的共识API。
+//基础区块链需要具有有效的终端总难度集。
 func NewConsensusAPI(eth *eth.Ethereum) *ConsensusAPI {
 	if eth.BlockChain().Config().TerminalTotalDifficulty == nil {
 		panic("Catalyst started without valid total difficulty")
@@ -72,16 +75,16 @@ func NewConsensusAPI(eth *eth.Ethereum) *ConsensusAPI {
 	}
 }
 
-// ForkchoiceUpdatedV1 has several responsibilities:
-// If the method is called with an empty head block:
-// 		we return success, which can be used to check if the catalyst mode is enabled
-// If the total difficulty was not reached:
-// 		we return INVALID
-// If the finalizedBlockHash is set:
-// 		we check if we have the finalizedBlockHash in our db, if not we start a sync
-// We try to set our blockchain to the headBlock
-// If there are payloadAttributes:
-// 		we try to assemble a block with the payloadAttributes and return its payloadID
+// forkchoIceupDatedV1有几个责任：
+//如果该方法被带有空头部块：
+//我们返回成功，可用于检查催化剂模式是否启用
+//如果没有达到总难度：
+//我们返回无效
+//如果设置了最终确定的blockhash：
+//我们检查DB中是否有最终确定的blockhash，如果没有，我们开始同步
+//我们试图将区块链设置为台面
+//如果有payloadAttributes：
+//我们尝试通过PAYLOADATTRIBUTES组装一个块并返回其PAYLOADID
 func (api *ConsensusAPI) ForkchoiceUpdatedV1(update beacon.ForkchoiceStateV1, payloadAttributes *beacon.PayloadAttributesV1) (beacon.ForkChoiceResponse, error) {
 	api.forkChoiceLock.Lock()
 	defer api.forkChoiceLock.Unlock()

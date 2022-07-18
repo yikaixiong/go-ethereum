@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package vm
 
@@ -30,17 +30,17 @@ const (
 	GasExtStep     uint64 = 20
 )
 
-// callGas returns the actual gas cost of the call.
+// callgas返回通话的实际气体成本。
 //
-// The cost of gas was changed during the homestead price change HF.
-// As part of EIP 150 (TangerineWhistle), the returned gas is gas - base * 63 / 64.
+//在宅基地价格变化期间，天然气成本发生了变化。
+//作为EIP 150的一部分（TangerineWhistle），返回的气体为气体 - 碱 * 63 /64。
 func callGas(isEip150 bool, availableGas, base uint64, callCost *uint256.Int) (uint64, error) {
 	if isEip150 {
 		availableGas = availableGas - base
 		gas := availableGas - availableGas/64
-		// If the bit length exceeds 64 bit we know that the newly calculated "gas" for EIP150
-		// is smaller than the requested amount. Therefore we return the new gas instead
-		// of returning an error.
+		// 如果位长度超过64位，我们会知道EIP150的新计算的“气”
+		//小于请求的金额。因此，我们改为退货
+		//返回错误。
 		if !callCost.IsUint64() || gas < callCost.Uint64() {
 			return gas, nil
 		}

@@ -1,18 +1,18 @@
-// Copyright 2016 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2016年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package event
 
@@ -24,28 +24,28 @@ import (
 	"github.com/ethereum/go-ethereum/common/mclock"
 )
 
-// Subscription represents a stream of events. The carrier of the events is typically a
-// channel, but isn't part of the interface.
+//订阅代表事件流。事件的载体通常是
+//频道，但不是接口的一部分。
 //
-// Subscriptions can fail while established. Failures are reported through an error
-// channel. It receives a value if there is an issue with the subscription (e.g. the
-// network connection delivering the events has been closed). Only one value will ever be
-// sent.
+//建立时订阅可能会失败。通过错误报告失败
+// 渠道。如果订阅存在问题，它将获得值（例如
+//交付事件的网络连接已关闭）。只有一个值
+// 发送。
 //
-// The error channel is closed when the subscription ends successfully (i.e. when the
-// source of events is closed). It is also closed when Unsubscribe is called.
+//当订阅成功结束时，错误通道已关闭（即
+//事件来源已关闭）。当调用取消订阅时，它也会关闭。
 //
-// The Unsubscribe method cancels the sending of events. You must call Unsubscribe in all
-// cases to ensure that resources related to the subscription are released. It can be
-// called any number of times.
+//取消订阅方法取消事件的发送。您必须致电全部订阅
+//确保发布与订阅有关的资源的情况。有可能
+//调用任何次数。
 type Subscription interface {
 	Err() <-chan error // returns the error channel
 	Unsubscribe()      // cancels sending of events, closing the error channel
 }
 
-// NewSubscription runs a producer function as a subscription in a new goroutine. The
-// channel given to the producer is closed when Unsubscribe is called. If fn returns an
-// error, it is sent on the subscription's error channel.
+// Newsubscription在新Goroutine中作为订阅运行生产者功能。这
+//给出生产者的频道在调用取消订阅时关闭。如果FN返回
+//错误，它是在订阅的错误频道上发送的。
 func NewSubscription(producer func(<-chan struct{}) error) Subscription {
 	s := &funcSub{unsub: make(chan struct{}), err: make(chan error, 1)}
 	go func() {

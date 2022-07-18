@@ -1,18 +1,18 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package vm
 
@@ -27,17 +27,17 @@ import (
 	"github.com/holiman/uint256"
 )
 
-// emptyCodeHash is used by create to ensure deployment is disallowed to already
-// deployed contract addresses (relevant after the account abstraction).
+// Create使用空库德哈什（emptyCodehash）来确保部署不允许
+//部署的合同地址（帐户抽象后相关）。
 var emptyCodeHash = crypto.Keccak256Hash(nil)
 
 type (
-	// CanTransferFunc is the signature of a transfer guard function
+	// cantransferfunc是转移护罩功能的签名
 	CanTransferFunc func(StateDB, common.Address, *big.Int) bool
-	// TransferFunc is the signature of a transfer function
+	// TransferFunc是传输函数的签名
 	TransferFunc func(StateDB, common.Address, common.Address, *big.Int)
-	// GetHashFunc returns the n'th block hash in the blockchain
-	// and is used by the BLOCKHASH EVM op code.
+	// gethashfunc返回区块链中的n'th块哈希
+//并由Blockhash EVM OP代码使用。
 	GetHashFunc func(uint64) common.Hash
 )
 
@@ -57,8 +57,8 @@ func (evm *EVM) precompile(addr common.Address) (PrecompiledContract, bool) {
 	return p, ok
 }
 
-// BlockContext provides the EVM with auxiliary information. Once provided
-// it shouldn't be modified.
+// BlockContext为EVM提供辅助信息。一旦提供
+//不应修改它。
 type BlockContext struct {
 	// CanTransfer returns whether the account contains
 	// sufficient ether to transfer the value
@@ -86,15 +86,15 @@ type TxContext struct {
 	GasPrice *big.Int       // Provides information for GASPRICE
 }
 
-// EVM is the Ethereum Virtual Machine base object and provides
-// the necessary tools to run a contract on the given state with
-// the provided context. It should be noted that any error
-// generated through any of the calls should be considered a
-// revert-state-and-consume-all-gas operation, no checks on
-// specific errors should ever be performed. The interpreter makes
-// sure that any errors generated are to be considered faulty code.
+// EVM是以太坊虚拟机基础对象，并提供
+//与给定状态下合同的必要工具
+//提供的上下文。应该注意的是任何错误
+//通过任何电话生成的
+//恢复状态 - 兼容 - 全加气，没有检查
+//应该执行特定错误。口译员制作
+//确保生成的任何错误应视为错误的代码。
 //
-// The EVM should never be reused and is not thread safe.
+//不应重复使用EVM，也不应安全。
 type EVM struct {
 	// Context provides auxiliary blockchain related information
 	Context BlockContext
@@ -123,8 +123,8 @@ type EVM struct {
 	callGasTemp uint64
 }
 
-// NewEVM returns a new EVM. The returned EVM is not thread safe and should
-// only ever be used *once*.
+// Newevm返回新的EVM。返回的EVM不安全，应该
+//仅使用 *一次 *。
 func NewEVM(blockCtx BlockContext, txCtx TxContext, statedb StateDB, chainConfig *params.ChainConfig, config Config) *EVM {
 	evm := &EVM{
 		Context:     blockCtx,
@@ -138,33 +138,34 @@ func NewEVM(blockCtx BlockContext, txCtx TxContext, statedb StateDB, chainConfig
 	return evm
 }
 
-// Reset resets the EVM with a new transaction context.Reset
-// This is not threadsafe and should only be done very cautiously.
+// 用新的交易上下文重置EVM
+//这不是螺纹安全，只应非常谨慎地完成。
 func (evm *EVM) Reset(txCtx TxContext, statedb StateDB) {
 	evm.TxContext = txCtx
 	evm.StateDB = statedb
 }
 
-// Cancel cancels any running EVM operation. This may be called concurrently and
-// it's safe to be called multiple times.
+// 取消取消任何运行EVM操作。这可以同时称为
+//可以安全地称为多次。
 func (evm *EVM) Cancel() {
 	atomic.StoreInt32(&evm.abort, 1)
 }
 
-// Cancelled returns true if Cancel has been called
+// 取消退货如果已调用取消
 func (evm *EVM) Cancelled() bool {
 	return atomic.LoadInt32(&evm.abort) == 1
 }
 
-// Interpreter returns the current interpreter
+// 口译员返回当前的解释器
 func (evm *EVM) Interpreter() *EVMInterpreter {
 	return evm.interpreter
 }
 
-// Call executes the contract associated with the addr with the given input as
-// parameters. It also handles any necessary value transfer required and takes
-// the necessary steps to create accounts and reverses the state in case of an
-// execution error or failed value transfer.
+// 呼叫执行与给定输入相关的ADDR关联的合同
+// 参数。它还处理所需的任何必要的价值转移，并采用
+//在发生帐户并扭转状态的必要步骤
+//执行错误或值转移失败。
+// TODO: 通过EVM执行转账或合约调用
 func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas uint64, value *big.Int) (ret []byte, leftOverGas uint64, err error) {
 	// Fail if we're trying to execute above the call depth limit
 	if evm.depth > int(params.CallCreateDepth) {
@@ -244,13 +245,14 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 	return ret, gas, err
 }
 
-// CallCode executes the contract associated with the addr with the given input
-// as parameters. It also handles any necessary value transfer required and takes
-// the necessary steps to create accounts and reverses the state in case of an
-// execution error or failed value transfer.
+// callCode执行与给定输入相关联的合同
+//作为参数。它还处理所需的任何必要的价值转移，并采用
+//在发生帐户并扭转状态的必要步骤
+//执行错误或值转移失败。
 //
-// CallCode differs from Call in the sense that it executes the given address'
-// code with the caller as context.
+// CallCode与呼叫不同，因为它执行给定的地址'
+//用呼叫者作为上下文代码。
+// TODO:  通过evm调用合约
 func (evm *EVM) CallCode(caller ContractRef, addr common.Address, input []byte, gas uint64, value *big.Int) (ret []byte, leftOverGas uint64, err error) {
 	// Fail if we're trying to execute above the call depth limit
 	if evm.depth > int(params.CallCreateDepth) {
@@ -294,11 +296,13 @@ func (evm *EVM) CallCode(caller ContractRef, addr common.Address, input []byte, 
 	return ret, gas, err
 }
 
-// DelegateCall executes the contract associated with the addr with the given input
-// as parameters. It reverses the state in case of an execution error.
+// 授权授权执行与给定输入相关的与ADDR关联的合同
+//作为参数。如果执行错误，它会逆转状态。
 //
-// DelegateCall differs from CallCode in the sense that it executes the given address'
-// code with the caller as context and the caller is set to the caller of the caller.
+// delegatecall与呼叫码不同，因为它执行给定的地址'
+//用呼叫者作为上下文代码，将呼叫者设置为呼叫者的呼叫者。
+
+// TODO:  通过EVM来委托调用合约
 func (evm *EVM) DelegateCall(caller ContractRef, addr common.Address, input []byte, gas uint64) (ret []byte, leftOverGas uint64, err error) {
 	// Fail if we're trying to execute above the call depth limit
 	if evm.depth > int(params.CallCreateDepth) {
@@ -334,10 +338,12 @@ func (evm *EVM) DelegateCall(caller ContractRef, addr common.Address, input []by
 	return ret, gas, err
 }
 
-// StaticCall executes the contract associated with the addr with the given input
-// as parameters while disallowing any modifications to the state during the call.
-// Opcodes that attempt to perform such modifications will result in exceptions
-// instead of performing the modifications.
+// staticCall执行与给定输入相关的与ADDR关联的合同
+//作为参数，同时不允许在呼叫期间对状态进行任何修改。
+//尝试执行此类修改的opcodes将导致异常
+//而不是执行修改。
+
+// TODO:   通过stariccal来静态调用
 func (evm *EVM) StaticCall(caller ContractRef, addr common.Address, input []byte, gas uint64) (ret []byte, leftOverGas uint64, err error) {
 	// Fail if we're trying to execute above the call depth limit
 	if evm.depth > int(params.CallCreateDepth) {
@@ -402,7 +408,13 @@ func (c *codeAndHash) Hash() common.Hash {
 	return c.hash
 }
 
-// create creates a new contract using code as deployment code.
+
+
+// TODO:   create 和 create2 创建合约地址的两个方法
+
+// 创建使用代码作为部署代码创建新合同。
+
+// TODO:  创建合约？还是创建地址？
 func (evm *EVM) create(caller ContractRef, codeAndHash *codeAndHash, gas uint64, value *big.Int, address common.Address, typ OpCode) ([]byte, common.Address, uint64, error) {
 	// Depth check execution. Fail if we're trying to execute above the
 	// limit.
@@ -495,21 +507,20 @@ func (evm *EVM) create(caller ContractRef, codeAndHash *codeAndHash, gas uint64,
 	return ret, address, contract.Gas, err
 }
 
-// Create creates a new contract using code as deployment code.
+// 创建使用代码作为部署代码创建新合同。
 func (evm *EVM) Create(caller ContractRef, code []byte, gas uint64, value *big.Int) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error) {
 	contractAddr = crypto.CreateAddress(caller.Address(), evm.StateDB.GetNonce(caller.Address()))
 	return evm.create(caller, &codeAndHash{code: code}, gas, value, contractAddr, CREATE)
 }
 
-// Create2 creates a new contract using code as deployment code.
-//
-// The different between Create2 with Create is Create2 uses keccak256(0xff ++ msg.sender ++ salt ++ keccak256(init_code))[12:]
-// instead of the usual sender-and-nonce-hash as the address where the contract is initialized at.
+// Create2使用代码作为部署代码创建新合同。
+//// create2与Create2之间的不同之处在于Create2使用Keccak256（0xff ++ msg.sender ++ salt ++ salt ++ keccak256（init_code））[12：]
+//代替通常的发送者和nonce-hash作为初始化合同的地址。
 func (evm *EVM) Create2(caller ContractRef, code []byte, gas uint64, endowment *big.Int, salt *uint256.Int) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error) {
 	codeAndHash := &codeAndHash{code: code}
 	contractAddr = crypto.CreateAddress2(caller.Address(), salt.Bytes32(), codeAndHash.Hash().Bytes())
 	return evm.create(caller, codeAndHash, gas, endowment, contractAddr, CREATE2)
 }
 
-// ChainConfig returns the environment's chain configuration
+// Chainconfig返回环境的链配置
 func (evm *EVM) ChainConfig() *params.ChainConfig { return evm.chainConfig }

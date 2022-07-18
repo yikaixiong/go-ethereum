@@ -37,42 +37,42 @@ import (
 )
 
 const (
-	// resultQueueSize is the size of channel listening to sealing result.
+	// 结果是聆听密封结果的通道的大小。
 	resultQueueSize = 10
 
-	// txChanSize is the size of channel listening to NewTxsEvent.
-	// The number is referenced from the size of tx pool.
+	// TxChansize是聆听newtxsevent的频道的大小。
+//该数字是从TX池的大小中引用的。
 	txChanSize = 4096
 
-	// chainHeadChanSize is the size of channel listening to ChainHeadEvent.
+	// ChainheadChansize是聆听Chainheadevent的频道的大小。
 	chainHeadChanSize = 10
 
-	// chainSideChanSize is the size of channel listening to ChainSideEvent.
+	// 链式技术是频道聆听幻影的大小。
 	chainSideChanSize = 10
 
-	// resubmitAdjustChanSize is the size of resubmitting interval adjustment channel.
+	// 重新提交的是重新提交间隔调节通道的大小。
 	resubmitAdjustChanSize = 10
 
-	// sealingLogAtDepth is the number of confirmations before logging successful sealing.
+	//SealingLogatDepth是在记录成功密封之前的确认数量。
 	sealingLogAtDepth = 7
 
-	// minRecommitInterval is the minimal time interval to recreate the sealing block with
-	// any newly arrived transactions.
+	// MinRecommitInterval是重现密封块的最小时间间隔
+//任何新来的交易。
 	minRecommitInterval = 1 * time.Second
 
 	// maxRecommitInterval is the maximum time interval to recreate the sealing block with
 	// any newly arrived transactions.
 	maxRecommitInterval = 15 * time.Second
 
-	// intervalAdjustRatio is the impact a single interval adjustment has on sealing work
-	// resubmitting interval.
+	// 间隔justratio是单个间隔调整对密封工作的影响
+//重新提交间隔。
 	intervalAdjustRatio = 0.1
 
-	// intervalAdjustBias is applied during the new resubmit interval calculation in favor of
-	// increasing upper limit or decreasing lower limit so that the limit can be reachable.
+	// 在新的重新提交间隔计算期间应用间隔justbias，有利于
+//增加上限或减小下限，以便可以达到极限。
 	intervalAdjustBias = 200 * 1000.0 * 1000.0
 
-	// staleThreshold is the maximum depth of the acceptable stale block.
+	// 斯塔特雷斯霍尔德是可接受的陈旧块的最大深度。
 	staleThreshold = 7
 )
 
@@ -81,8 +81,8 @@ var (
 	errBlockInterruptedByRecommit = errors.New("recommit interrupt while building block")
 )
 
-// environment is the worker's current environment and holds all
-// information of the sealing block generation.
+// 环境是工人当前的环境，并持有一切
+//密封块生成的信息。
 type environment struct {
 	signer types.Signer
 
@@ -99,7 +99,7 @@ type environment struct {
 	uncles   map[common.Hash]*types.Header
 }
 
-// copy creates a deep copy of environment.
+// 复制创建了深度的环境副本。
 func (env *environment) copy() *environment {
 	cpy := &environment{
 		signer:    env.signer,
@@ -115,8 +115,8 @@ func (env *environment) copy() *environment {
 		gasPool := *env.gasPool
 		cpy.gasPool = &gasPool
 	}
-	// The content of txs and uncles are immutable, unnecessary
-	// to do the expensive deep copy for them.
+	// TXS和叔叔的内容是不变的，不必要的
+//为他们做昂贵的深副本。
 	cpy.txs = make([]*types.Transaction, len(env.txs))
 	copy(cpy.txs, env.txs)
 	cpy.uncles = make(map[common.Hash]*types.Header)
@@ -126,7 +126,7 @@ func (env *environment) copy() *environment {
 	return cpy
 }
 
-// unclelist returns the contained uncles as the list format.
+// Unclelist将包含的叔叔返回列表格式。
 func (env *environment) unclelist() []*types.Header {
 	var uncles []*types.Header
 	for _, uncle := range env.uncles {
@@ -135,9 +135,9 @@ func (env *environment) unclelist() []*types.Header {
 	return uncles
 }
 
-// discard terminates the background prefetcher go-routine. It should
-// always be called for all created environment instances otherwise
-// the go-routine leak can happen.
+// 丢弃终止背景预摘要go-Rutine。它应该
+//始终为所有创建的环境实例呼叫
+//可能发生Go-Routine泄漏。
 func (env *environment) discard() {
 	if env.state == nil {
 		return
@@ -145,7 +145,7 @@ func (env *environment) discard() {
 	env.state.StopPrefetcher()
 }
 
-// task contains all information for consensus engine sealing and result submitting.
+// 任务包含所有有关共识引擎密封和结果提交的信息。
 type task struct {
 	receipts  []*types.Receipt
 	state     *state.StateDB
@@ -159,7 +159,7 @@ const (
 	commitInterruptResubmit
 )
 
-// newWorkReq represents a request for new sealing work submitting with relative interrupt notifier.
+// NewworkReq代表了提交相对中断通知器的新密封工作的请求。
 type newWorkReq struct {
 	interrupt *int32
 	noempty   bool
@@ -173,14 +173,14 @@ type getWorkReq struct {
 	err    chan error
 }
 
-// intervalAdjust represents a resubmitting interval adjustment.
+// 间隔表示重新提交间隔调整。
 type intervalAdjust struct {
 	ratio float64
 	inc   bool
 }
 
-// worker is the main object which takes care of submitting new work to consensus engine
-// and gathering the sealing result.
+// 工人是负责提交新作品的主要对象
+//并收集密封结果。
 type worker struct {
 	config      *Config
 	chainConfig *params.ChainConfig
@@ -275,13 +275,13 @@ func newWorker(config *Config, chainConfig *params.ChainConfig, engine consensus
 		resubmitIntervalCh: make(chan time.Duration),
 		resubmitAdjustCh:   make(chan *intervalAdjust, resubmitAdjustChanSize),
 	}
-	// Subscribe NewTxsEvent for tx pool
+	// 订阅TX池的NEWTXSEVENT
 	worker.txsSub = eth.TxPool().SubscribeNewTxsEvent(worker.txsCh)
-	// Subscribe events for blockchain
+	// 订阅区块链事件
 	worker.chainHeadSub = eth.BlockChain().SubscribeChainHeadEvent(worker.chainHeadCh)
 	worker.chainSideSub = eth.BlockChain().SubscribeChainSideEvent(worker.chainSideCh)
 
-	// Sanitize recommit interval if the user-specified one is too short.
+	// 如果用户指定的时间太短，则消毒推荐间隔。
 	recommit := worker.config.Recommit
 	if recommit < minRecommitInterval {
 		log.Warn("Sanitizing miner recommit interval", "provided", recommit, "updated", minRecommitInterval)
@@ -301,7 +301,7 @@ func newWorker(config *Config, chainConfig *params.ChainConfig, engine consensus
 	return worker
 }
 
-// setEtherbase sets the etherbase used to initialize the block coinbase field.
+//setetherbase设置用于初始化块共插基键字段的醚键。
 func (w *worker) setEtherbase(addr common.Address) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
@@ -314,14 +314,14 @@ func (w *worker) setGasCeil(ceil uint64) {
 	w.config.GasCeil = ceil
 }
 
-// setExtra sets the content used to initialize the block extra field.
+// setExtra设置用于初始化块额外字段的内容。
 func (w *worker) setExtra(extra []byte) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	w.extra = extra
 }
 
-// setRecommitInterval updates the interval for miner sealing work recommitting.
+//SetRecommitInterval更新了矿工密封工作的间隔。
 func (w *worker) setRecommitInterval(interval time.Duration) {
 	select {
 	case w.resubmitIntervalCh <- interval:
@@ -329,17 +329,17 @@ func (w *worker) setRecommitInterval(interval time.Duration) {
 	}
 }
 
-// disablePreseal disables pre-sealing feature
+//禁用销售禁用预密封功能
 func (w *worker) disablePreseal() {
 	atomic.StoreUint32(&w.noempty, 1)
 }
 
-// enablePreseal enables pre-sealing feature
+// 启用PRESEAL启用预密封功能
 func (w *worker) enablePreseal() {
 	atomic.StoreUint32(&w.noempty, 0)
 }
 
-// pending returns the pending state and corresponding block.
+//待处理返回待处理状态和相应的块。
 func (w *worker) pending() (*types.Block, *state.StateDB) {
 	// return a snapshot to avoid contention on currentMu mutex
 	w.snapshotMu.RLock()
@@ -350,7 +350,7 @@ func (w *worker) pending() (*types.Block, *state.StateDB) {
 	return w.snapshotBlock, w.snapshotState.Copy()
 }
 
-// pendingBlock returns pending block.
+// pendendBlock返回待处理块。
 func (w *worker) pendingBlock() *types.Block {
 	// return a snapshot to avoid contention on currentMu mutex
 	w.snapshotMu.RLock()
@@ -358,7 +358,7 @@ func (w *worker) pendingBlock() *types.Block {
 	return w.snapshotBlock
 }
 
-// pendingBlockAndReceipts returns pending block and corresponding receipts.
+// 待blockandReceipts返回待处理的块和相应的收据。
 func (w *worker) pendingBlockAndReceipts() (*types.Block, types.Receipts) {
 	// return a snapshot to avoid contention on currentMu mutex
 	w.snapshotMu.RLock()
@@ -366,13 +366,13 @@ func (w *worker) pendingBlockAndReceipts() (*types.Block, types.Receipts) {
 	return w.snapshotBlock, w.snapshotReceipts
 }
 
-// start sets the running status as 1 and triggers new work submitting.
+// Start将运行状态设置为1，并触发提交的新工作。
 func (w *worker) start() {
 	atomic.StoreInt32(&w.running, 1)
 	w.startCh <- struct{}{}
 }
 
-// stop sets the running status as 0.
+// 停止将运行状态设置为0。
 func (w *worker) stop() {
 	atomic.StoreInt32(&w.running, 0)
 }
@@ -390,7 +390,7 @@ func (w *worker) close() {
 	w.wg.Wait()
 }
 
-// recalcRecommit recalculates the resubmitting interval upon feedback.
+// 重新兑现反馈时重新计算重新提交间隔。
 func recalcRecommit(minRecommit, prev time.Duration, target float64, inc bool) time.Duration {
 	var (
 		prevF = float64(prev.Nanoseconds())
@@ -412,7 +412,7 @@ func recalcRecommit(minRecommit, prev time.Duration, target float64, inc bool) t
 	return time.Duration(int64(next))
 }
 
-// newWorkLoop is a standalone goroutine to submit new sealing work upon received events.
+// Newworkloop是独立的Goroutine，可以在收到的活动中提交新的密封工作。
 func (w *worker) newWorkLoop(recommit time.Duration) {
 	defer w.wg.Done()
 	var (
@@ -510,9 +510,9 @@ func (w *worker) newWorkLoop(recommit time.Duration) {
 	}
 }
 
-// mainLoop is responsible for generating and submitting sealing work based on
-// the received event. It can support two modes: automatically generate task and
-// submit it or return task according to given parameters for various proposes.
+// Mainloop负责基于
+//收到的活动。它可以支持两种模式：自动生成任务和
+//根据给定的参数提交或返回任务，以供各种建议。
 func (w *worker) mainLoop() {
 	defer w.wg.Done()
 	defer w.txsSub.Unsubscribe()
@@ -626,8 +626,8 @@ func (w *worker) mainLoop() {
 	}
 }
 
-// taskLoop is a standalone goroutine to fetch sealing task from the generator and
-// push them to consensus engine.
+// Taskloop是一个独立的Goroutine，可以从发电机和
+//将它们推到共识引擎。
 func (w *worker) taskLoop() {
 	defer w.wg.Done()
 	var (
@@ -677,8 +677,8 @@ func (w *worker) taskLoop() {
 	}
 }
 
-// resultLoop is a standalone goroutine to handle sealing result submitting
-// and flush relative data to the database.
+// Resultloop是独立的goroutine，可以处理密封结果提交
+//和数据库的齐平相对数据。
 func (w *worker) resultLoop() {
 	defer w.wg.Done()
 	for {
@@ -750,7 +750,7 @@ func (w *worker) resultLoop() {
 	}
 }
 
-// makeEnv creates a new environment for the sealing block.
+// Makeenv为密封块创造了一个新的环境。
 func (w *worker) makeEnv(parent *types.Block, header *types.Header, coinbase common.Address) (*environment, error) {
 	// Retrieve the parent state to execute on top and start a prefetcher for
 	// the miner to speed block sealing up a bit.
@@ -783,7 +783,7 @@ func (w *worker) makeEnv(parent *types.Block, header *types.Header, coinbase com
 	return env, nil
 }
 
-// commitUncle adds the given block to uncle block set, returns error if failed to add.
+// commituncle将给定的块添加到叔叔块集中，如果无法添加，则返回错误。
 func (w *worker) commitUncle(env *environment, uncle *types.Header) error {
 	if w.isTTDReached(env.header) {
 		return errors.New("ignore uncle for beacon block")
@@ -805,7 +805,7 @@ func (w *worker) commitUncle(env *environment, uncle *types.Header) error {
 	return nil
 }
 
-// updateSnapshot updates pending snapshot block, receipts and state.
+//更新napshot更新挂起快照块，收据和状态。
 func (w *worker) updateSnapshot(env *environment) {
 	w.snapshotMu.Lock()
 	defer w.snapshotMu.Unlock()
@@ -961,9 +961,9 @@ type generateParams struct {
 	noTxs      bool           // Flag whether an empty block without any transaction is expected
 }
 
-// prepareWork constructs the sealing task according to the given parameters,
-// either based on the last chain head or specified parent. In this function
-// the pending transactions are not filled yet, only the empty task returned.
+// 准备工作根据给定参数构造密封任务，
+//基于最后一个链头或指定的父。在此功能中
+//尚未填写待处理的交易，仅返回空的任务。
 func (w *worker) prepareWork(genParams *generateParams) (*environment, error) {
 	w.mu.RLock()
 	defer w.mu.RUnlock()
@@ -1043,9 +1043,9 @@ func (w *worker) prepareWork(genParams *generateParams) (*environment, error) {
 	return env, nil
 }
 
-// fillTransactions retrieves the pending transactions from the txpool and fills them
-// into the given sealing block. The transaction selection and ordering strategy can
-// be customized with the plugin in the future.
+// Filltransactions从TXPOOL中检索待处理的交易，并填充它们
+//进入给定的密封块。交易选择和订购策略可以
+//将来使用插件定制。
 func (w *worker) fillTransactions(interrupt *int32, env *environment) error {
 	// Split the pending transactions into locals and remotes
 	// Fill the block with all available pending transactions.
@@ -1072,7 +1072,7 @@ func (w *worker) fillTransactions(interrupt *int32, env *environment) error {
 	return nil
 }
 
-// generateWork generates a sealing block based on the given parameters.
+// 生成工程基于给定参数生成密封块。
 func (w *worker) generateWork(params *generateParams) (*types.Block, error) {
 	work, err := w.prepareWork(params)
 	if err != nil {
@@ -1086,8 +1086,8 @@ func (w *worker) generateWork(params *generateParams) (*types.Block, error) {
 	return w.engine.FinalizeAndAssemble(w.chain, work.header, work.state, work.txs, work.unclelist(), work.receipts)
 }
 
-// commitWork generates several new sealing tasks based on the parent block
-// and submit them to the sealer.
+// Commitwork基于父块生成了几个新的密封任务
+//并将其提交给密封剂。
 func (w *worker) commitWork(interrupt *int32, noempty bool, timestamp int64) {
 	start := time.Now()
 
@@ -1129,10 +1129,10 @@ func (w *worker) commitWork(interrupt *int32, noempty bool, timestamp int64) {
 	w.current = work
 }
 
-// commit runs any post-transaction state modifications, assembles the final block
-// and commits new work if consensus engine is running.
-// Note the assumption is held that the mutation is allowed to the passed env, do
-// the deep copy first.
+// 提交运行任何交易后状态修改，组装最终块
+//如果共识引擎正在运行，则进行新作品。
+//注意认为该突变被允许传递给Env，DO
+//先副本。
 func (w *worker) commit(env *environment, interval func(), update bool, start time.Time) error {
 	if w.isRunning() {
 		if interval != nil {
@@ -1166,9 +1166,9 @@ func (w *worker) commit(env *environment, interval func(), update bool, start ti
 	return nil
 }
 
-// getSealingBlock generates the sealing block based on the given parameters.
-// The generation result will be passed back via the given channel no matter
-// the generation itself succeeds or not.
+// geteAlingBlock根据给定参数生成密封块。
+//生成结果将通过给定频道传递给
+//一代人本身成功。
 func (w *worker) getSealingBlock(parent common.Hash, timestamp uint64, coinbase common.Address, random common.Hash, noTxs bool) (chan *types.Block, chan error, error) {
 	var (
 		resCh = make(chan *types.Block, 1)
@@ -1196,14 +1196,14 @@ func (w *worker) getSealingBlock(parent common.Hash, timestamp uint64, coinbase 
 	}
 }
 
-// isTTDReached returns the indicator if the given block has reached the total
-// terminal difficulty for The Merge transition.
+// 如果给定的块达到总数
+//合并过渡的终端难度。
 func (w *worker) isTTDReached(header *types.Header) bool {
 	td, ttd := w.chain.GetTd(header.ParentHash, header.Number.Uint64()-1), w.chain.Config().TerminalTotalDifficulty
 	return td != nil && ttd != nil && td.Cmp(ttd) >= 0
 }
 
-// copyReceipts makes a deep copy of the given receipts.
+// 版权所有的给定收据的深层副本。
 func copyReceipts(receipts []*types.Receipt) []*types.Receipt {
 	result := make([]*types.Receipt, len(receipts))
 	for i, l := range receipts {
@@ -1221,7 +1221,7 @@ func (w *worker) postSideBlock(event core.ChainSideEvent) {
 	}
 }
 
-// totalFees computes total consumed miner fees in ETH. Block transactions and receipts have to have the same order.
+// TotalFees计算ETH中的总消费矿工费用。块交易和收据必须具有相同的订单。
 func totalFees(block *types.Block, receipts []*types.Receipt) *big.Float {
 	feesWei := new(big.Int)
 	for i, tx := range block.Transactions() {

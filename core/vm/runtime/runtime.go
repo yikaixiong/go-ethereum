@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package runtime
 
@@ -29,8 +29,8 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 )
 
-// Config is a basic type specifying certain configuration flags for running
-// the EVM.
+// 配置是一种基本类型，指定运行的某些配置标志
+// EVM。
 type Config struct {
 	ChainConfig *params.ChainConfig
 	Difficulty  *big.Int
@@ -49,7 +49,7 @@ type Config struct {
 	GetHashFn func(n uint64) common.Hash
 }
 
-// sets defaults on the config
+//在配置上设置默认值
 func setDefaults(cfg *Config) {
 	if cfg.ChainConfig == nil {
 		cfg.ChainConfig = &params.ChainConfig{
@@ -99,11 +99,11 @@ func setDefaults(cfg *Config) {
 	}
 }
 
-// Execute executes the code using the input as call data during the execution.
-// It returns the EVM's return value, the new state and an error if it failed.
+//在执行过程中使用输入作为呼叫数据执行代码。
+//它返回EVM的返回值，新状态和错误，如果失败。
 //
-// Execute sets up an in-memory, temporary, environment for the execution of
-// the given code. It makes sure that it's restored to its original state afterwards.
+//执行设置一个内存，临时的环境，以执行
+//给定代码。它可以确保其恢复到其原始状态。
 func Execute(code, input []byte, cfg *Config) ([]byte, *state.StateDB, error) {
 	if cfg == nil {
 		cfg = new(Config)
@@ -136,7 +136,7 @@ func Execute(code, input []byte, cfg *Config) ([]byte, *state.StateDB, error) {
 	return ret, cfg.State, err
 }
 
-// Create executes the code using the EVM create method
+// 创建使用EVM创建方法执行代码
 func Create(input []byte, cfg *Config) ([]byte, common.Address, uint64, error) {
 	if cfg == nil {
 		cfg = new(Config)
@@ -163,11 +163,11 @@ func Create(input []byte, cfg *Config) ([]byte, common.Address, uint64, error) {
 	return code, address, leftOverGas, err
 }
 
-// Call executes the code given by the contract's address. It will return the
-// EVM's return value or an error if it failed.
+// 呼叫执行合同地址给出的代码。它将返回
+// EVM的返回值或错误（如果失败）。
 //
-// Call, unlike Execute, requires a config and also requires the State field to
-// be set.
+//与执行不同的呼叫需要配置，还需要状态字段
+//设置。
 func Call(address common.Address, input []byte, cfg *Config) ([]byte, uint64, error) {
 	setDefaults(cfg)
 

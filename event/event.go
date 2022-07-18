@@ -1,20 +1,20 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package event deals with subscriptions to real-time events.
+//包装事件处理实时事件的订阅。
 package event
 
 import (
@@ -25,19 +25,19 @@ import (
 	"time"
 )
 
-// TypeMuxEvent is a time-tagged notification pushed to subscribers.
+// Typemuxevent是将订户推荐的时间标签通知。
 type TypeMuxEvent struct {
 	Time time.Time
 	Data interface{}
 }
 
-// A TypeMux dispatches events to registered receivers. Receivers can be
-// registered to handle events of certain type. Any operation
-// called after mux is stopped will return ErrMuxClosed.
+// A Typemux将事件分配给注册接收器。接收者可以
+//注册以处理某些类型的事件。任何操作
+//停止mux后打电话将返回errmuxclcled。
 //
-// The zero value is ready to use.
+//零值准备使用。
 //
-// Deprecated: use Feed
+//弃用：使用feed
 type TypeMux struct {
 	mutex   sync.RWMutex
 	subm    map[reflect.Type][]*TypeMuxSubscription
@@ -47,9 +47,9 @@ type TypeMux struct {
 // ErrMuxClosed is returned when Posting on a closed TypeMux.
 var ErrMuxClosed = errors.New("event: mux closed")
 
-// Subscribe creates a subscription for events of the given types. The
-// subscription's channel is closed when it is unsubscribed
-// or the mux is closed.
+// 订阅为给定类型的事件创建订阅。这
+//未订阅时订阅的渠道已关闭
+//或MUX关闭。
 func (mux *TypeMux) Subscribe(types ...interface{}) *TypeMuxSubscription {
 	sub := newsub(mux)
 	mux.mutex.Lock()
@@ -78,8 +78,8 @@ func (mux *TypeMux) Subscribe(types ...interface{}) *TypeMuxSubscription {
 	return sub
 }
 
-// Post sends an event to all receivers registered for the given type.
-// It returns ErrMuxClosed if the mux has been stopped.
+// 帖子将事件发送给给定类型的所有接收器。
+//如果已停止MUX，它将返回ErrmuxClicles。
 func (mux *TypeMux) Post(ev interface{}) error {
 	event := &TypeMuxEvent{
 		Time: time.Now(),
@@ -99,9 +99,9 @@ func (mux *TypeMux) Post(ev interface{}) error {
 	return nil
 }
 
-// Stop closes a mux. The mux can no longer be used.
-// Future Post calls will fail with ErrMuxClosed.
-// Stop blocks until all current deliveries have finished.
+// 停止关闭Mux。不再使用MUX。
+//未来的帖子通话将随着ERRMUXCLASE的失败。
+//停止块，直到所有当前交货完成。
 func (mux *TypeMux) Stop() {
 	mux.mutex.Lock()
 	defer mux.mutex.Unlock()

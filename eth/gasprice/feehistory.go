@@ -39,12 +39,12 @@ var (
 )
 
 const (
-	// maxBlockFetchers is the max number of goroutines to spin up to pull blocks
-	// for the fee history calculation (mostly relevant for LES).
+	// maxblockfettchers是要旋转以拉块的最大goroutines数
+//用于费用历史记录计算（主要与LE相关）。
 	maxBlockFetchers = 4
 )
 
-// blockFees represents a single block for processing
+// Blockfees代表一个用于处理的单个块
 type blockFees struct {
 	// set by the caller
 	blockNumber uint64
@@ -132,11 +132,11 @@ func (oracle *Oracle) processBlock(bf *blockFees, percentiles []float64) {
 	}
 }
 
-// resolveBlockRange resolves the specified block range to absolute block numbers while also
-// enforcing backend specific limitations. The pending block and corresponding receipts are
-// also returned if requested and available.
-// Note: an error is only returned if retrieving the head header has failed. If there are no
-// retrievable blocks in the specified range then zero block count is returned with no error.
+//ResolveBlockRange将指定的块范围解析为绝对块号，同时也
+//执行后端特定的限制。待处理的块和相应的收据是
+//如果要求并可返回。
+//注意：仅当检索头标头失败时才会返回错误。如果没有
+//指定范围内的可检索块，然后返回零块计数，没有错误。
 func (oracle *Oracle) resolveBlockRange(ctx context.Context, lastBlock rpc.BlockNumber, blocks int) (*types.Block, []*types.Receipt, uint64, int, error) {
 	var (
 		headBlock       rpc.BlockNumber
@@ -177,19 +177,19 @@ func (oracle *Oracle) resolveBlockRange(ctx context.Context, lastBlock rpc.Block
 	return pendingBlock, pendingReceipts, uint64(lastBlock), blocks, nil
 }
 
-// FeeHistory returns data relevant for fee estimation based on the specified range of blocks.
-// The range can be specified either with absolute block numbers or ending with the latest
-// or pending block. Backends may or may not support gathering data from the pending block
-// or blocks older than a certain age (specified in maxHistory). The first block of the
-// actually processed range is returned to avoid ambiguity when parts of the requested range
-// are not available or when the head has changed during processing this request.
-// Three arrays are returned based on the processed blocks:
-// - reward: the requested percentiles of effective priority fees per gas of transactions in each
-//   block, sorted in ascending order and weighted by gas used.
-// - baseFee: base fee per gas in the given block
-// - gasUsedRatio: gasUsed/gasLimit in the given block
-// Note: baseFee includes the next block after the newest of the returned range, because this
-// value can be derived from the newest block.
+//费用历史返回基于指定块范围的费用估算相关的数据。
+//可以用绝对块号指定该范围或以最新结束
+//或待处理块。后端可能会或可能不支持从待处理块收集数据
+//或比一定年龄的年龄（在MaxHistory中指定）。第一个块
+//返回实际处理的范围以避免歧义，当时范围的部分
+//在处理此请求期间不可用或何时更改头。
+//根据处理的块返回三个数组：
+//-奖励：每次交易的有效优先费用的要求百分比
+//块，按升序排序，并通过使用的气体加权。
+//-基础：给定块中每气的基本费用
+//-气毒：在给定块中的气体/气体
+//注意：BaseFee包括返回范围最新范围之后的下一个块，因为这
+//值可以从最新块派生。
 func (oracle *Oracle) FeeHistory(ctx context.Context, blocks int, unresolvedLastBlock rpc.BlockNumber, rewardPercentiles []float64) (*big.Int, [][]*big.Int, []*big.Int, []float64, error) {
 	if blocks < 1 {
 		return common.Big0, nil, nil, nil, nil // returning with no data and no error means there are no retrievable blocks

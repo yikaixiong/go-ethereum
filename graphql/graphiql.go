@@ -1,25 +1,24 @@
-// The MIT License (MIT)
+//麻省理工学院许可证（MIT）
 //
-// Copyright (c) 2016 Muhammed Thanish
+//版权（C）2016 Muhammed anthish
 //
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
+//特此免费授予任何获得副本的人的权限
+//此软件和相关文档文件（“软件”）
+//在软件中无限制，包括无限制的权利
+//使用，复制，修改，合并，发布，分发，转销和/或出售
+//该软件的副本，并允许软件的人
+//遵守以下条件，以此为此：
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+//上述版权通知和此许可通知应包含
+//复制软件的大量部分。
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
+//该软件是“原样”提供的，没有任何形式的保证，明确或
+//暗示，包括但不限于适销性保证，
+//适合特定目的和非侵权的健身。在任何情况下都不会
+//作者或版权持有人应对任何索赔，损害或其他责任负责
+//责任，无论是在合同，侵权的诉讼中还是其他责任。
+//与软件或使用或与使用或其他交易有关
+// 软件。
 package graphql
 
 import (
@@ -28,10 +27,10 @@ import (
 	"net/http"
 )
 
-// GraphiQL is an in-browser IDE for exploring GraphiQL APIs.
-// This handler returns GraphiQL when requested.
+// GraphIQL是用于探索GraphIQL API的浏览器IDE。
+//此处理程序在要求时返回graphiql。
 //
-// For more information, see https://github.com/graphql/graphiql.
+//有关更多信息，请参见https://github.com/graphql/graphiql。
 type GraphiQL struct{}
 
 func respond(w http.ResponseWriter, body []byte, code int) {

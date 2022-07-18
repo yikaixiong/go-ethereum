@@ -23,11 +23,11 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-// EVMLogger is used to collect execution traces from an EVM transaction
-// execution. CaptureState is called for each step of the VM with the
-// current VM state.
-// Note that reference types are actual VM data structures; make copies
-// if you need to retain them beyond the current call.
+// EVMLOGGER用于从EVM事务中收集执行跟踪
+// 执行。caftreastate均为VM的每个步骤都调用
+//当前的VM状态。
+//请注意，参考类型是实际的VM数据结构；制作副本
+//如果您需要将它们保留在当前电话之外。
 type EVMLogger interface {
 	// Transaction level
 	CaptureTxStart(gasLimit uint64)

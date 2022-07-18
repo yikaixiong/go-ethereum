@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-// SyslogHandler opens a connection to the system syslog daemon by calling
-// syslog.New and writes all records to it.
+// sysloghandler致电与系统syslog守护程序打开连接
+// syslog.new和写所有记录。
 func SyslogHandler(priority syslog.Priority, tag string, fmtr Format) (Handler, error) {
 	wr, err := syslog.New(priority, tag)
 	return sharedSyslog(fmtr, wr, err)

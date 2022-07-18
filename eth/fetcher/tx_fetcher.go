@@ -1,18 +1,18 @@
-// Copyright 2019 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2019年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package fetcher
 
@@ -125,24 +125,23 @@ type txDrop struct {
 	peer string
 }
 
-// TxFetcher is responsible for retrieving new transaction based on announcements.
+// TXFetcher负责根据公告检索新交易。
 //
-// The fetcher operates in 3 stages:
-//   - Transactions that are newly discovered are moved into a wait list.
-//   - After ~500ms passes, transactions from the wait list that have not been
-//     broadcast to us in whole are moved into a queueing area.
-//   - When a connected peer doesn't have in-flight retrieval requests, any
-//     transaction queued up (and announced by the peer) are allocated to the
-//     peer and moved into a fetching status until it's fulfilled or fails.
+// fetcher在3个阶段运行：
+//  - 新发现的交易被移至等待列表中。
+//- 〜500ms通过后，从尚未的等待列表中的交易
+//整体向我们广播已移至排队区域。
+//-当连接的对等方没有飞行中检索请求时
+//交易排队（并由同行宣布）分配给
+//同行并进入获取状态，直到实现或失败为止。
 //
-// The invariants of the fetcher are:
-//   - Each tracked transaction (hash) must only be present in one of the
-//     three stages. This ensures that the fetcher operates akin to a finite
-//     state automata and there's do data leak.
-//   - Each peer that announced transactions may be scheduled retrievals, but
-//     only ever one concurrently. This ensures we can immediately know what is
-//     missing from a reply and reschedule it.
-type TxFetcher struct {
+// fetcher的不变性是：
+//-每个跟踪交易（哈希）必须仅存在于其中一个
+//三个阶段。这确保了Fetcher类似于有限的操作
+//状态自动机和数据泄漏。
+//-宣布交易的每个同行都可以安排检索，但是
+//仅同时发生。这确保我们可以立即知道什么是
+//答复中缺少并重新安排它。type TxFetcher struct {
 	notify  chan *txAnnounce
 	cleanup chan *txDelivery
 	drop    chan *txDrop
@@ -217,11 +216,11 @@ func (f *TxFetcher) Notify(peer string, hashes []common.Hash) error {
 	// Keep track of all the announced transactions
 	txAnnounceInMeter.Mark(int64(len(hashes)))
 
-	// Skip any transaction announcements that we already know of, or that we've
-	// previously marked as cheap and discarded. This check is of course racey,
-	// because multiple concurrent notifies will still manage to pass it, but it's
-	// still valuable to check here because it runs concurrent  to the internal
-	// loop, so anything caught here is time saved internally.
+	// 跳过我们已经知道的任何交易公告，或者我们已经知道
+//以前被标记为便宜和丢弃。这张检查当然是种族的，
+//因为多个并发通知仍然可以通过它，但是它是
+//在这里检查仍然很有价值，因为它与内部并发
+//循环，所以这里捕获的任何东西都是内部节省的时间。
 	var (
 		unknowns               = make([]common.Hash, 0, len(hashes))
 		duplicate, underpriced int64
@@ -682,12 +681,12 @@ func (f *TxFetcher) loop() {
 	}
 }
 
-// rescheduleWait iterates over all the transactions currently in the waitlist
-// and schedules the movement into the fetcher for the earliest.
+// 重新安排在候补名单中当前的所有交易中迭代
+//并将运动安排为最早的fetcher。
 //
-// The method has a granularity of 'gatherSlack', since there's not much point in
-// spinning over all the transactions just to maybe find one that should trigger
-// a few ms earlier.
+//该方法具有“ gatherslack”的粒度，因为
+//在所有交易中旋转，只是为了找到应该触发的交易
+//一些MS。
 func (f *TxFetcher) rescheduleWait(timer *mclock.Timer, trigger chan struct{}) {
 	if *timer != nil {
 		(*timer).Stop()
@@ -708,20 +707,20 @@ func (f *TxFetcher) rescheduleWait(timer *mclock.Timer, trigger chan struct{}) {
 	})
 }
 
-// rescheduleTimeout iterates over all the transactions currently in flight and
-// schedules a cleanup run when the first would trigger.
+// 重新安排时间遍历当前飞行中的所有交易，
+//在第一个触发时计划清理运行。
 //
-// The method has a granularity of 'gatherSlack', since there's not much point in
-// spinning over all the transactions just to maybe find one that should trigger
-// a few ms earlier.
+//该方法具有“ gatherslack”的粒度，因为
+//在所有交易中旋转，只是为了找到应该触发的交易
+//一些MS。
 //
-// This method is a bit "flaky" "by design". In theory the timeout timer only ever
-// should be rescheduled if some request is pending. In practice, a timeout will
-// cause the timer to be rescheduled every 5 secs (until the peer comes through or
-// disconnects). This is a limitation of the fetcher code because we don't trac
-// pending requests and timed out requests separatey. Without double tracking, if
-// we simply didn't reschedule the timer on all-timeout then the timer would never
-// be set again since len(request) > 0 => something's running.
+//此方法有点“片状”“设计”。从理论上讲，超时计时器只有
+//如果某些请求待定，则应重新安排。实际上，超时会
+//导致计时器每5秒重新安排（直到同伴通过或
+//断开连接）。这是Fetcher代码的限制，因为我们没有trac
+//等待请求和定时请求分开。没有双重跟踪，如果
+//我们根本没有在所有时间内重新安排计时器，那么计时器永远不会
+//再次设置，因为Len（请求）> 0 =>某些东西正在运行。
 func (f *TxFetcher) rescheduleTimeout(timer *mclock.Timer, trigger chan struct{}) {
 	if *timer != nil {
 		(*timer).Stop()

@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package filters
 
@@ -32,8 +32,8 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 )
 
-// filter is a helper struct that holds meta information over the filter type
-// and associated subscription in the event system.
+// 过滤器是一个辅助结构，可在过滤器类型上保存元信息
+//事件系统中的相关订阅。
 type filter struct {
 	typ      Type
 	deadline *time.Timer // filter is inactiv when deadline triggers
@@ -43,8 +43,8 @@ type filter struct {
 	s        *Subscription // associated subscription in event system
 }
 
-// FilterAPI offers support to create and manage filters. This will allow external clients to retrieve various
-// information related to the Ethereum protocol such als blocks, transactions and logs.
+// Filterapi提供支持和管理过滤器的支持。这将使外部客户能够检索各种
+//与以太坊协议相关的信息此类ALS块，交易和日志。
 type FilterAPI struct {
 	backend   Backend
 	events    *EventSystem
@@ -66,8 +66,8 @@ func NewFilterAPI(backend Backend, lightMode bool, timeout time.Duration) *Filte
 	return api
 }
 
-// timeoutLoop runs at the interval set by 'timeout' and deletes filters
-// that have not been recently used. It is started when the API is created.
+// TimeOutloop以“超时”设置的间隔运行，并删除过滤器
+//最近未使用的。它是在创建API时开始的。
 func (api *FilterAPI) timeoutLoop(timeout time.Duration) {
 	var toUninstall []*Subscription
 	ticker := time.NewTicker(timeout)
@@ -96,11 +96,11 @@ func (api *FilterAPI) timeoutLoop(timeout time.Duration) {
 	}
 }
 
-// NewPendingTransactionFilter creates a filter that fetches pending transaction hashes
-// as transactions enter the pending state.
+//newpendingTransactionFilter创建一个滤波器，以获取待处理的交易哈希
+//当交易输入待处理状态时。
 //
-// It is part of the filter package because this filter can be used through the
-// `eth_getFilterChanges` polling method that is also used for log filters.
+//它是过滤器包的一部分，因为可以通过
+//也用于日志滤波器的ETH_GETFILTERCHANG'STERFILTERCHANG'STHERING COLLing方法。
 func (api *FilterAPI) NewPendingTransactionFilter() rpc.ID {
 	var (
 		pendingTxs   = make(chan []common.Hash)
@@ -132,8 +132,8 @@ func (api *FilterAPI) NewPendingTransactionFilter() rpc.ID {
 	return pendingTxSub.ID
 }
 
-// NewPendingTransactions creates a subscription that is triggered each time a transaction
-// enters the transaction pool and was signed from one of the transactions this nodes manages.
+// newpendingTransactions创建了每次交易时都会触发的订阅
+//进入交易池，并从该点头管理的一项交易中签署。
 func (api *FilterAPI) NewPendingTransactions(ctx context.Context) (*rpc.Subscription, error) {
 	notifier, supported := rpc.NotifierFromContext(ctx)
 	if !supported {
@@ -167,8 +167,8 @@ func (api *FilterAPI) NewPendingTransactions(ctx context.Context) (*rpc.Subscrip
 	return rpcSub, nil
 }
 
-// NewBlockFilter creates a filter that fetches blocks that are imported into the chain.
-// It is part of the filter package since polling goes with eth_getFilterChanges.
+//NewBlockFilter创建了一个过滤器，该过滤器获取导入到链条中的块。
+//它是过滤器包的一部分，因为轮询与ETH_GETFILTERCHANGES一起使用。
 func (api *FilterAPI) NewBlockFilter() rpc.ID {
 	var (
 		headers   = make(chan *types.Header)
@@ -230,7 +230,7 @@ func (api *FilterAPI) NewHeads(ctx context.Context) (*rpc.Subscription, error) {
 	return rpcSub, nil
 }
 
-// Logs creates a subscription that fires for all new log that match the given filter criteria.
+// 日志创建了一个订阅，该订阅为与给定过滤器标准匹配的所有新日志发射。
 func (api *FilterAPI) Logs(ctx context.Context, crit FilterCriteria) (*rpc.Subscription, error) {
 	notifier, supported := rpc.NotifierFromContext(ctx)
 	if !supported {
@@ -273,17 +273,17 @@ func (api *FilterAPI) Logs(ctx context.Context, crit FilterCriteria) (*rpc.Subsc
 // Same as ethereum.FilterQuery but with UnmarshalJSON() method.
 type FilterCriteria ethereum.FilterQuery
 
-// NewFilter creates a new filter and returns the filter id. It can be
-// used to retrieve logs when the state changes. This method cannot be
-// used to fetch logs that are already stored in the state.
+// NewFilter创建一个新的过滤器并返回过滤器ID。有可能
+//在状态更改时用于检索日志。这个方法不能是
+//用于获取已经存储在该州的日志。
 //
-// Default criteria for the from and to block are "latest".
-// Using "latest" as block number will return logs for mined blocks.
-// Using "pending" as block number returns logs for not yet mined (pending) blocks.
-// In case logs are removed (chain reorg) previously returned logs are returned
-// again but with the removed property set to true.
+// from和to Block的默认标准为“最新”。
+//使用“最新” AS块号将返回挖掘块的日志。
+//使用“待处理”作为块号返回尚未开采（待处理）块的日志。
+//如果删除日志（链reorg），请返回日志
+//再次，但是将删除的属性设置为true。
 //
-// In case "fromBlock" > "toBlock" an error is returned.
+//如果“ fromblock”>“ toblock”返回错误。
 func (api *FilterAPI) NewFilter(crit FilterCriteria) (rpc.ID, error) {
 	logs := make(chan []*types.Log)
 	logsSub, err := api.events.SubscribeLogs(ethereum.FilterQuery(crit), logs)

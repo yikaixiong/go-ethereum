@@ -1,18 +1,18 @@
-// Copyright 2015 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2015年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
 package core
 
@@ -30,8 +30,8 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 )
 
-// BlockGen creates blocks for testing.
-// See GenerateChain for a detailed explanation.
+//Blockgen创建用于测试的块。
+//有关详细说明，请参见Generatechain。
 type BlockGen struct {
 	i       int
 	parent  *types.Block
@@ -48,8 +48,8 @@ type BlockGen struct {
 	engine consensus.Engine
 }
 
-// SetCoinbase sets the coinbase of the generated block.
-// It can be called at most once.
+// SetCoinbase设置了生成块的共插基。
+//最多可以一次称呼它。
 func (b *BlockGen) SetCoinbase(addr common.Address) {
 	if b.gasPool != nil {
 		if len(b.txs) > 0 {
@@ -61,31 +61,31 @@ func (b *BlockGen) SetCoinbase(addr common.Address) {
 	b.gasPool = new(GasPool).AddGas(b.header.GasLimit)
 }
 
-// SetExtra sets the extra data field of the generated block.
+// SetExtra设置生成块的额外数据字段。
 func (b *BlockGen) SetExtra(data []byte) {
 	b.header.Extra = data
 }
 
-// SetNonce sets the nonce field of the generated block.
+// SetNonce设置生成块的NONCE字段。
 func (b *BlockGen) SetNonce(nonce types.BlockNonce) {
 	b.header.Nonce = nonce
 }
 
-// SetDifficulty sets the difficulty field of the generated block. This method is
-// useful for Clique tests where the difficulty does not depend on time. For the
-// ethash tests, please use OffsetTime, which implicitly recalculates the diff.
+// setDifficulty设置了生成块的难度字段。此方法是
+//对于难度不取决于时间的集团测试有用。为了
+// ETHASH测试，请使用偏置时间，该偏置时间隐含地重新计算差异。
 func (b *BlockGen) SetDifficulty(diff *big.Int) {
 	b.header.Difficulty = diff
 }
 
-// AddTx adds a transaction to the generated block. If no coinbase has
-// been set, the block's coinbase is set to the zero address.
+// ADDTX将交易添加到生成的块中。如果没有共插的
+//已设置，该块的共插键设置为零地址。
 //
-// AddTx panics if the transaction cannot be executed. In addition to
-// the protocol-imposed limitations (gas limit, etc.), there are some
-// further limitations on the content of transactions that can be
-// added. Notably, contract code relying on the BLOCKHASH instruction
-// will panic during execution.
+// addtx panics如果无法执行交易。此外
+//协议施加的限制（气体限制等），有一些
+//对可以是交易内容的进一步限制
+// 添加。值得注意的是，依赖Blockhash指令的合同代码
+//在执行过程中会恐慌。
 func (b *BlockGen) AddTx(tx *types.Transaction) {
 	b.AddTxWithChain(nil, tx)
 }

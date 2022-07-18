@@ -1,20 +1,20 @@
-// Copyright 2014 The go-ethereum Authors
-// This file is part of the go-ethereum library.
+//版权所有2014年作者
+//此文件是Go-Ethereum库的一部分。
 //
-// The go-ethereum library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// Go-Ethereum库是免费软件：您可以重新分发它和/或修改
+//根据GNU较少的通用公共许可条款的条款，
+//免费软件基金会（许可证的3版本）或
+//（根据您的选择）任何以后的版本。
 //
-// The go-ethereum library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
+// go-ethereum库是为了希望它有用，
+//但没有任何保修；甚至没有暗示的保证
+//适合或适合特定目的的健身。看到
+// GNU较少的通用公共许可证以获取更多详细信息。
 //
-// You should have received a copy of the GNU Lesser General Public License
-// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
+//您应该收到GNU较少的通用公共许可证的副本
+//与Go-Ethereum库一起。如果不是，请参见<http://www.gnu.org/licenses/>。
 
-// Package trie implements Merkle Patricia Tries.
+//包装Trie实施Merkle Patricia尝试。
 package trie
 
 import (
@@ -39,27 +39,27 @@ var (
 	emptyState = crypto.Keccak256Hash(nil)
 )
 
-// LeafCallback is a callback type invoked when a trie operation reaches a leaf
-// node.
+// LeafCallback是一种回调类型，当Trie操作到达叶子时被调用
+//节点。
 //
-// The paths is a path tuple identifying a particular trie node either in a single
-// trie (account) or a layered trie (account -> storage). Each path in the tuple
-// is in the raw format(32 bytes).
+//路径是一个路径元组，可以在单个中识别特定的Trie节点
+// Trie（帐户）或分层Trie（帐户 - >存储）。元组中的每条路径
+//以原始格式（32个字节）。
 //
-// The hexpath is a composite hexary path identifying the trie node. All the key
-// bytes are converted to the hexary nibbles and composited with the parent path
-// if the trie node is in a layered trie.
+//六边形是识别Trie节点的复合六角路径。所有钥匙
+//将字节转换为六角刺并与父路径合成
+//如果Trie节点在分层的trie中。
 //
-// It's used by state sync and commit to allow handling external references
-// between account and storage tries. And also it's used in the state healing
-// for extracting the raw states(leaf nodes) with corresponding paths.
+//国家同步使用并承诺允许处理外部参考
+//在帐户和存储尝试之间。而且它也用于国家康复
+//用于提取具有相应路径的原始状态（叶节点）。
 type LeafCallback func(paths [][]byte, hexpath []byte, leaf []byte, parent common.Hash) error
 
-// Trie is a Merkle Patricia Trie.
-// The zero value is an empty trie with no database.
-// Use New to create a trie that sits on top of a database.
+// Trie是Merkle Patricia Trie。
+//零值是一个没有数据库的空Trie。
+//使用New来创建位于数据库顶部的TRIE。
 //
-// Trie is not safe for concurrent use.
+// Trie并不安全地使用。
 type Trie struct {
 	db    *Database
 	root  node
